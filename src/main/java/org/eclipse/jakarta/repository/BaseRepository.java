@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.eclipse.jakarta.employee.entity.Employee;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,8 +15,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+@Stateless
 public class BaseRepository<T, ID> implements IBaseRepository<T, ID>{
 
+    @PersistenceContext
     private EntityManager entityManager;
     private final Class<T> entityClass;
 

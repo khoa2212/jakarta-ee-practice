@@ -28,6 +28,6 @@ public class Department implements Serializable {
     @Column(name = "start_date")
     private LocalDate startDate;
 
-//    @OneToMany(mappedBy = "department")
-//    private List<Employee> employees;
+    @OneToMany(mappedBy = "department")
+    private List<Employee> employees;
 }

@@ -22,9 +22,6 @@ public class Employee implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Transient
-    private String fullName;
-
     @Column(name = "date_of_birth")
     private String dateOfBirth;
 
@@ -40,14 +37,10 @@ public class Employee implements Serializable {
     @Column(name = "salary")
     private Integer salary;
 
-//    @Enumerated(EnumType.STRING)
-//    private Gender gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-//    @ManyToOne
-//    @JoinColumn(name = "department_id")
-//    private Department department;
-
-    public String getFullName () {
-        return this.firstName + " " + this.middleName + " " + this.lastName;
-    }
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 }
