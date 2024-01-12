@@ -5,10 +5,7 @@ import org.eclipse.jakarta.employee.service.EmployeeService;
 import org.eclipse.jakarta.hello.Hello;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -21,5 +18,13 @@ public class EmployeeController {
     @Produces({ MediaType.APPLICATION_JSON })
     public List<Employee> getEmployees () {
         return employeeService.getEmployees();
+    }
+
+    @POST
+    @Path("create")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Employee createEmp(Employee newEmp) {
+        System.out.println(newEmp.getEmail());
+        return employeeService.createEmployee(newEmp);
     }
 }
