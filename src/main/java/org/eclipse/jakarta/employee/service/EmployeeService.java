@@ -20,8 +20,7 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee createEmployee(Employee newEmp) {
-        var emp = employeeRepository.create(newEmp);
-        return emp;
+    public void createEmployee(Employee newEmp) {
+        employeeRepository.create(newEmp);
     }
 }

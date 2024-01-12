@@ -23,8 +23,8 @@ public class EmployeeController {
     @POST
     @Path("create")
     @Produces({MediaType.APPLICATION_JSON})
-    public Employee createEmp(Employee newEmp) {
-        System.out.println(newEmp.getEmail());
-        return employeeService.createEmployee(newEmp);
+    public String createEmp(Employee newEmp) {
+        employeeService.createEmployee(newEmp);
+        return "Create Successfully";
     }
 }
