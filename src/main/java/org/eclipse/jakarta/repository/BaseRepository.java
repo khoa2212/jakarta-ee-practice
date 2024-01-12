@@ -15,10 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-@Stateless
 public class BaseRepository<T, ID> implements IBaseRepository<T, ID>{
 
-    @PersistenceContext
     private EntityManager entityManager;
     private final Class<T> entityClass;
 

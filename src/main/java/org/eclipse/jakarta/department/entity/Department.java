@@ -3,6 +3,7 @@ package org.eclipse.jakarta.department.entity;
 import lombok.*;
 import org.eclipse.jakarta.employee.entity.Employee;
 
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -26,6 +27,7 @@ public class Department implements Serializable {
     private String departmentName;
 
     @Column(name = "start_date")
+    @JsonbDateFormat("yyyy-MM-dd")
     private LocalDate startDate;
 
     @OneToMany(mappedBy = "department")
