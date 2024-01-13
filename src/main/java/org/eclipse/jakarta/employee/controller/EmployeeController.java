@@ -7,6 +7,7 @@ import org.eclipse.jakarta.hello.Hello;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("emp")
@@ -23,8 +24,10 @@ public class EmployeeController {
     @POST
     @Path("create")
     @Produces({MediaType.APPLICATION_JSON})
-    public String createEmp(Employee newEmp) {
+    public Response createEmp(Employee newEmp) {
         employeeService.createEmployee(newEmp);
-        return "Create Successfully";
+        return Response.status(Response.Status.OK)
+                .entity("Create employee successfully")
+                .build();
     }
 }

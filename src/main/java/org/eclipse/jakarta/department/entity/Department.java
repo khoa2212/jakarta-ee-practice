@@ -4,6 +4,7 @@ import lombok.*;
 import org.eclipse.jakarta.employee.entity.Employee;
 
 import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -30,6 +31,6 @@ public class Department implements Serializable {
     @JsonbDateFormat("yyyy-MM-dd")
     private LocalDate startDate;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
     private List<Employee> employees;
 }

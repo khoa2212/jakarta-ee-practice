@@ -5,6 +5,7 @@ import lombok.extern.apachecommons.CommonsLog;
 import org.eclipse.jakarta.department.entity.Department;
 import org.eclipse.jakarta.enums.Gender;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -40,7 +41,7 @@ public class Employee implements Serializable {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 }
