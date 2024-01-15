@@ -16,11 +16,12 @@ public class DepartmentService {
     DepartmentRepository departmentRepository;
 
     public List<Department> getDepartments() {
+        System.out.println("here");
         return departmentRepository.findAll();
     }
 
-    public void createDepartment(Department newDep) {
-        departmentRepository.create(newDep);
+    public Department createDepartment(Department newDep) {
+        return departmentRepository.create(newDep);
     }
 
     public Optional<Department> getDeparmentById (Long id) {

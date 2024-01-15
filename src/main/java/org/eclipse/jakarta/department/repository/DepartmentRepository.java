@@ -26,6 +26,7 @@ public class DepartmentRepository {
     }
 
     public List<Department> findAll() {
+        System.out.println("here repository");
         logger.info("Getting all department");
         return em.createQuery("SELECT d FROM Department d", Department.class).getResultList();
     }

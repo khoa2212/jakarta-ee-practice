@@ -28,7 +28,7 @@ public class DepartmentController {
     @Path("create")
     @Produces({MediaType.APPLICATION_JSON})
     public Response createDepartments(Department department) {
-        departmentService.createDepartment(department);
-        return Response.ok(department).build();
+        var addedDep = departmentService.createDepartment(department);
+        return Response.ok(addedDep).build();
     }
 }
