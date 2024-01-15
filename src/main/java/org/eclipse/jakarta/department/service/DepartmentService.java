@@ -8,6 +8,7 @@ import org.eclipse.jakarta.employee.repository.EmployeeRepository;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class DepartmentService {
@@ -20,5 +21,9 @@ public class DepartmentService {
 
     public void createDepartment(Department newDep) {
         departmentRepository.create(newDep);
+    }
+
+    public Optional<Department> getDeparmentById (Long id) {
+        return this.departmentRepository.findById(id);
     }
 }

@@ -2,7 +2,6 @@ package org.eclipse.jakarta.department.controller;
 
 import org.eclipse.jakarta.department.entity.Department;
 import org.eclipse.jakarta.department.service.DepartmentService;
-import org.eclipse.jakarta.employee.entity.Employee;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
