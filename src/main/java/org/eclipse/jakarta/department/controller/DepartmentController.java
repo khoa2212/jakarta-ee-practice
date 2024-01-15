@@ -30,8 +30,6 @@ public class DepartmentController {
     @Produces({MediaType.APPLICATION_JSON})
     public Response createDepartments(Department department) {
         departmentService.createDepartment(department);
-        return Response.status(Response.Status.OK)
-                .entity("Create department successfully")
-                .build();
+        return Response.ok(department).build();
     }
 }

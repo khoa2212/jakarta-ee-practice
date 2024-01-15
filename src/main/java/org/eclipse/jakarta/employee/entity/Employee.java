@@ -6,6 +6,7 @@ import org.eclipse.jakarta.department.entity.Department;
 import org.eclipse.jakarta.enums.Gender;
 
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 

@@ -5,6 +5,7 @@ import org.eclipse.jakarta.employee.entity.Employee;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -22,15 +23,19 @@ public class Department implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonbProperty("id")
     private Long id;
 
     @Column(name = "department_name")
+    @JsonbProperty("departmentName")
     private String departmentName;
 
     @Column(name = "start_date")
     @JsonbDateFormat("yyyy-MM-dd")
+    @JsonbProperty("startDate")
     private LocalDate startDate;
 
     @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    @JsonbTransient()
     private List<Employee> employees;
 }
