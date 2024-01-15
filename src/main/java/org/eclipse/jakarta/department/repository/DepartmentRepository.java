@@ -20,6 +20,7 @@ public class DepartmentRepository {
     private EntityManager em;
 
     public Department create(Department dep) {
+        System.out.println("here create repository");
         logger.info("Creating department");
         em.persist(dep);
         return dep;

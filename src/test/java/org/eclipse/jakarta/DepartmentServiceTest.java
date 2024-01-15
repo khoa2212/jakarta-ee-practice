@@ -43,7 +43,7 @@ public class DepartmentServiceTest {
     @Test
     public void getDepartments() {
         List<Department> list = departmentService.getDepartments();
-        System.out.println("ljds");
+        System.out.println(list.size());
         assertEquals(0, list.size());
     }
 }

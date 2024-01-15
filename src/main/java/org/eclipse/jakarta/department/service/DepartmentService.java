@@ -21,6 +21,7 @@ public class DepartmentService {
     }
 
     public Department createDepartment(Department newDep) {
+        System.out.println("here createDepartment");
         return departmentRepository.create(newDep);
     }
 
