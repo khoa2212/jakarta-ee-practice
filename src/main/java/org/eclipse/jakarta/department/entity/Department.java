@@ -35,7 +35,7 @@ public class Department implements Serializable {
     @JsonbProperty("startDate")
     private LocalDate startDate;
 
-    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
-    @JsonbTransient()
-    private List<Employee> employees;
+//    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+//    @JsonbTransient()
+//    private List<Employee> employees;
 }
