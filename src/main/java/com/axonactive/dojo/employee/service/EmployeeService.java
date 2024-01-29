@@ -1,6 +1,9 @@
 package com.axonactive.dojo.employee.service;
 
 import com.axonactive.dojo.assignment.dao.AssignmentDao;
+import com.axonactive.dojo.base.exception.BadRequestException;
+import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.employee.dto.AddEmployeeRequestDTO;
 import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.employee.dao.EmployeeDAO;
 import com.axonactive.dojo.department.dao.DepartmentDAO;
@@ -34,8 +37,17 @@ public class EmployeeService {
 //        }
     }
 
-    public List<Employee> get(Long dpt) {
+    public List<Employee> get(Long dpt) throws EntityNotFoundException {
+        throw new EntityNotFoundException("Employee Not Found.");
+//        throw new BadRequestException("Bad request");
 
-        return employeeDAO.getEmployeeByDepartmentID(dpt);
+//        return employeeDAO.getEmployeeByDepartmentID(dpt);
+    }
+
+    public void createEmployeeFromDto(AddEmployeeRequestDTO newEmp) {
+        Employee employee = new Employee();
+        employee.setFirstName(newEmp.getFirstName());
+        employee.setLastName(newEmp.getLastName());
+        employeeDAO.add(employee);
     }
 }

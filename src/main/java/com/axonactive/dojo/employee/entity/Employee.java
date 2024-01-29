@@ -22,6 +22,8 @@ public class Employee extends BaseEntity {
     private String dateOfBirth;
     @NotBlank
     private String firstName;
+
+    @NotBlank
     private String lastName;
     private String middleName;
     private Integer salary;
