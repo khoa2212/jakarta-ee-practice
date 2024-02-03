@@ -5,9 +5,7 @@ import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.project.entity.Project;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -15,6 +13,7 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(name = "UQ_employee_id_project_id", columnNames = { "employee_id", "project_id" }) })
 public class Assignment extends BaseEntity {
 
     private int numberOfHours;

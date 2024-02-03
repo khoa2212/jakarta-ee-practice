@@ -5,6 +5,7 @@ import com.axonactive.dojo.department.entity.Department;
 import lombok.*;
 import com.axonactive.dojo.enums.Gender;
 
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
 import jakarta.persistence.Column;
 
@@ -27,6 +28,8 @@ public class Employee extends BaseEntity {
 
     private String middleName;
     private Double salary;
+
+    @JsonbDateFormat("yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)

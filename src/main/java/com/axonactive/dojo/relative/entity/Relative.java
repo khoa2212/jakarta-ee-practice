@@ -13,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "relatives")
 public class Relative extends BaseEntity {
 
     private String fullName;

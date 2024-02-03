@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Entity
 public class Department extends BaseEntity {
 
-    private String name;
+    private String departmentName;
 
     private LocalDate startDate;
 
