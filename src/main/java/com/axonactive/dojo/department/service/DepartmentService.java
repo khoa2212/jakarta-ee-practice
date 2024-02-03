@@ -14,16 +14,10 @@ public class DepartmentService {
     DepartmentDAO departmentDAO;
 
     public List<Department> getDepartments() {
-        System.out.println("here");
         return departmentDAO.findAll();
     }
-//
-//    public Department createDepartment(Department newDep) {
-//        System.out.println("here createDepartment");
-//        return departmentDAO.create(newDep);
-//    }
 
-    public Optional<Department> getDeparmentById (Long id) {
+    public Optional<Department> getDepartmentById (Long id) {
         return this.departmentDAO.findById(id);
     }
 }

@@ -19,7 +19,7 @@ public class EmployeeService {
     EmployeeDAO employeeDAO;
 
     @Inject
-    DepartmentDAO departmentDAO;
+    DepartmentDAO departmentService;
 
     @Inject
     AssignmentDao assignmentDAO;
@@ -28,26 +28,24 @@ public class EmployeeService {
         return employeeDAO.findAll();
     }
 
-    public void createEmployee(Employee newEmp) {
-//        var department = this.departmentRepository.findById(newEmp.getDepartmentId());
-//
-//        if(department.isPresent()) {
-//            newEmp.setDepartment(department.get());
-//            employeeRepository.create(newEmp);
-//        }
-    }
+    public Employee add(AddEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+        var department = this.departmentService.findById(reqDTO.getDepartmentId());
 
-    public List<Employee> get(Long dpt) throws EntityNotFoundException {
-        throw new EntityNotFoundException("Employee Not Found.");
-//        throw new BadRequestException("Bad request");
+        if(!department.isPresent()) {
+            throw new EntityNotFoundException("Department not found");
+        }
+        var newEmp = Employee
+                .builder()
+                .firstName(reqDTO.getFirstName())
+                .middleName(reqDTO.getMiddleName())
+                .lastName(reqDTO.getLastName())
+                .dateOfBirth(reqDTO.getDateOfBirth())
+                .gender(reqDTO.getGender())
+                .salary(reqDTO.getSalary())
+                .build();
 
-//        return employeeDAO.getEmployeeByDepartmentID(dpt);
-    }
+        employeeDAO.add(newEmp);
 
-    public void createEmployeeFromDto(AddEmployeeRequestDTO newEmp) {
-        Employee employee = new Employee();
-        employee.setFirstName(newEmp.getFirstName());
-        employee.setLastName(newEmp.getLastName());
-        employeeDAO.add(employee);
+        return newEmp;
     }
 }

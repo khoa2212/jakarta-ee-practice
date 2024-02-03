@@ -25,6 +25,4 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                 .setParameter("departmentID", departmentID)
                 .getResultList();
     }
-
-//    public List<Employee> get()
 }

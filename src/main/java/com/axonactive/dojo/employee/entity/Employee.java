@@ -6,10 +6,9 @@ import lombok.*;
 import com.axonactive.dojo.enums.Gender;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
+import jakarta.persistence.Column;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -19,19 +18,21 @@ import java.io.Serializable;
 @Builder
 public class Employee extends BaseEntity {
 
-    private String dateOfBirth;
-    @NotBlank
+
+    @Column(nullable = false)
     private String firstName;
 
-    @NotBlank
+    @Column(nullable = false)
     private String lastName;
+
     private String middleName;
-    private Integer salary;
+    private Double salary;
+    private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Department department;
 
 }
