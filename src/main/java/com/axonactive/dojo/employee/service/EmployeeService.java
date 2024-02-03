@@ -1,7 +1,5 @@
 package com.axonactive.dojo.employee.service;
 
-import com.axonactive.dojo.assignment.dao.AssignmentDao;
-import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.employee.dto.AddEmployeeRequestDTO;
 import com.axonactive.dojo.employee.entity.Employee;
@@ -16,13 +14,10 @@ import java.util.List;
 public class EmployeeService {
 
     @Inject
-    EmployeeDAO employeeDAO;
+    private EmployeeDAO employeeDAO;
 
     @Inject
-    DepartmentDAO departmentService;
-
-    @Inject
-    AssignmentDao assignmentDAO;
+    private DepartmentDAO departmentService;
 
     public List<Employee> getEmployees() {
         return employeeDAO.findAll();

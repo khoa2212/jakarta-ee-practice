@@ -176,7 +176,26 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.flywaydb</groupId>
+						<artifactId>flyway-maven-plugin</artifactId>
+						<version>${flyway-plugin.version}</version>
+						<configuration>
+							<configFiles>
+								<configFile>src/main/resources/config/local/flyway.properties</configFile>
+							</configFiles>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

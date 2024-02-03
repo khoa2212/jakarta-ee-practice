@@ -4,12 +4,11 @@ import com.axonactive.dojo.assignment.entity.Assignment;
 import com.axonactive.dojo.base.dao.BaseDAO;
 
 import javax.ejb.Stateless;
-import java.util.List;
 
 @Stateless
-public class AssignmentDao extends BaseDAO<Assignment> {
+public class AssignmentDAO extends BaseDAO<Assignment> {
 
-    public AssignmentDao() {
+    public AssignmentDAO() {
         super(Assignment.class);
     }
 

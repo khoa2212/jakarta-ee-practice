@@ -33,6 +33,7 @@ public class Employee extends BaseEntity {
     private Gender gender;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "department_id")
     private Department department;
 
 }

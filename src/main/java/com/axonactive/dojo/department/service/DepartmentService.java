@@ -11,7 +11,7 @@ import java.util.Optional;
 @Stateless
 public class DepartmentService {
     @Inject
-    DepartmentDAO departmentDAO;
+    private DepartmentDAO departmentDAO;
 
     public List<Department> getDepartments() {
         return departmentDAO.findAll();
