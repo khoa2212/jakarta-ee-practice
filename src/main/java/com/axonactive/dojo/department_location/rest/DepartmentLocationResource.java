@@ -2,13 +2,11 @@ package com.axonactive.dojo.department_location.rest;
 
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
-import com.axonactive.dojo.department_location.dto.CreateDepartmentLocationRequestDTO;
-import com.axonactive.dojo.department_location.dto.DepartmentLocationDTO;
-import com.axonactive.dojo.department_location.dto.DepartmentLocationListResponseDTO;
-import com.axonactive.dojo.department_location.dto.UpdateDepartmentLocationRequestDTO;
+import com.axonactive.dojo.department_location.dto.*;
 import com.axonactive.dojo.department_location.service.DepartmentLocationService;
 
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -47,5 +45,14 @@ public class DepartmentLocationResource {
     public Response update(@Valid UpdateDepartmentLocationRequestDTO updateDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
         DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.update(updateDepartmentLocationRequestDTO);
         return Response.ok().entity(departmentLocationDTO).build();
+    }
+
+    @DELETE
+    @Path("delete")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response delete(@Valid DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO) throws EntityNotFoundException {
+        JsonObject jobj = this.departmentLocationService.delete(deleteDepartmentLocationRequestDTO);
+        return Response.ok().entity(jobj).build();
     }
 }

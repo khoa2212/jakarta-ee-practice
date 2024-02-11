@@ -57,7 +57,7 @@ public class DepartmentResource {
     @Path("delete")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response update(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
+    public Response delete(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
         JsonObject jobj = this.departmentService.deleteSoftly(deleteDepartmentRequestDTO);
         return Response.ok().entity(jobj).build();
     }

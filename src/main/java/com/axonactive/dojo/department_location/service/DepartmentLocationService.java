@@ -9,16 +9,14 @@ import com.axonactive.dojo.department.mapper.DepartmentMapper;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.department.service.DepartmentService;
 import com.axonactive.dojo.department_location.dao.DepartmentLocationDAO;
-import com.axonactive.dojo.department_location.dto.CreateDepartmentLocationRequestDTO;
-import com.axonactive.dojo.department_location.dto.DepartmentLocationDTO;
-import com.axonactive.dojo.department_location.dto.DepartmentLocationListResponseDTO;
-import com.axonactive.dojo.department_location.dto.UpdateDepartmentLocationRequestDTO;
+import com.axonactive.dojo.department_location.dto.*;
 import com.axonactive.dojo.department_location.entity.DepartmentLocation;
 import com.axonactive.dojo.department_location.mapper.DepartmentLocationMapper;
 import com.axonactive.dojo.department_location.message.DepartmentLocationMessage;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,5 +113,17 @@ public class DepartmentLocationService {
 
         DepartmentLocation updatedDepartmentLocation = this.departmentLocationDAO.update(departmentLocation);
         return this.departmentLocationMapper.toDTO(updatedDepartmentLocation);
+    }
+
+    public JsonObject delete(DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO) throws EntityNotFoundException {
+        Optional<DepartmentLocation> optionalDepartmentLocation = this.departmentLocationDAO.findById(deleteDepartmentLocationRequestDTO.getId());
+
+        if(optionalDepartmentLocation.isEmpty()) {
+            throw new EntityNotFoundException(DepartmentLocationMessage.NOT_FOUND_LOCATION);
+        }
+
+        this.departmentLocationDAO.delete(deleteDepartmentLocationRequestDTO.getId());
+
+        return DepartmentLocationMessage.deleteSuccessMessage();
     }
 }
