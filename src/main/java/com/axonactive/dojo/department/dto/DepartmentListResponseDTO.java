@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class DepartmentListResponseDTO {
-    List<Department> departmentList;
+    List<DepartmentDTO> departments;
     Long totalCount;
     Integer lastPage;
 }

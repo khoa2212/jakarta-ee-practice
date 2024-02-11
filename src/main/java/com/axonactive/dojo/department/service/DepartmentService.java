@@ -1,8 +1,10 @@
 package com.axonactive.dojo.department.service;
 
+import com.axonactive.dojo.department.dto.DepartmentDTO;
 import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.dao.DepartmentDAO;
+import com.axonactive.dojo.department.mapper.DepartmentMapper;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -14,13 +16,19 @@ public class DepartmentService {
     @Inject
     private DepartmentDAO departmentDAO;
 
+    @Inject
+    private DepartmentMapper departmentMapper;
+
     public DepartmentListResponseDTO findDepartments(Integer pageNumber, Integer pageSize) {
-        List<Department> departmentList = this.departmentDAO.findDepartments(pageNumber, pageSize);
+        List<Department> departments = this.departmentDAO.findDepartments(pageNumber, pageSize);
+        List<DepartmentDTO> departmentDTOS = this.departmentMapper.toListDTO(departments);
+
         Long count = this.departmentDAO.findTotalCount();
+
         Integer lastPage = (count.intValue() / pageSize) + 1;
         DepartmentListResponseDTO departmentListResponseDTO = DepartmentListResponseDTO
                                                                         .builder()
-                                                                        .departmentList(departmentList)
+                                                                        .departments(departmentDTOS)
                                                                         .totalCount(count)
                                                                         .lastPage(lastPage)
                                                                         .build();
