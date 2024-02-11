@@ -2,16 +2,16 @@ CREATE TABLE department (
     id                      INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     start_date              TIMESTAMP,
     department_name         VARCHAR(200),
-    created_at              TIMESTAMP,
-    updated_at              TIMESTAMP
+    created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE department_location (
     id                      INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     location                VARCHAR(100),
     department_id           INT,
-    created_at              TIMESTAMP,
-    updated_at              TIMESTAMP
+    created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE employee (
@@ -23,8 +23,8 @@ CREATE TABLE employee (
     gender                  VARCHAR(10),
     date_of_birth           TIMESTAMP,
     department_id           INT,
-    created_at              TIMESTAMP,
-    updated_at              TIMESTAMP
+    created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE project (
@@ -32,8 +32,8 @@ CREATE TABLE project (
     project_name            VARCHAR(100),
     area                    VARCHAR(100),
     department_id           INT,
-    created_at              TIMESTAMP,
-    updated_at              TIMESTAMP
+    created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE assignment (
@@ -41,8 +41,8 @@ CREATE TABLE assignment (
     number_of_hour          INTEGER,
     employee_id             INT,
     project_id              INT,
-    created_at              TIMESTAMP,
-    updated_at              TIMESTAMP
+    created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE relatives (
@@ -52,6 +52,6 @@ CREATE TABLE relatives (
     phone_number            VARCHAR(15),
     relationship            VARCHAR(100),
     employee_id             INT,
-    created_at              TIMESTAMP,
-    updated_at              TIMESTAMP
+    created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
