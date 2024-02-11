@@ -21,10 +21,18 @@ public class DepartmentResource {
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getDepartments(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
+    public Response findDepartments(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                            @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) {
         DepartmentListResponseDTO departmentListResponseDTO = this.departmentService.findDepartments(pageNumber, pageSize);
         return Response.ok().entity(departmentListResponseDTO).build();
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
+        DepartmentDTO departmentDTO = this.departmentService.findById(id);
+        return Response.ok().entity(departmentDTO).build();
     }
 
     @POST

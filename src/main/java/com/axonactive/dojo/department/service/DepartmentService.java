@@ -41,8 +41,14 @@ public class DepartmentService {
         return departmentListResponseDTO;
     }
 
-    public Optional<Department> findById (Long id) {
-        return this.departmentDAO.findById(id);
+    public DepartmentDTO findById (Long id) throws EntityNotFoundException {
+        Optional<Department> department = this.departmentDAO.findById(id);
+
+        if(department.isEmpty()) {
+            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
+        }
+
+        return this.departmentMapper.toDTO(department.get());
     }
 
     public DepartmentDTO add(CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {

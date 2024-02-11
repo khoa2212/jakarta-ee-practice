@@ -1,6 +1,7 @@
 package com.axonactive.dojo.department_location.entity;
 
 import com.axonactive.dojo.base.entity.BaseEntity;
+import com.axonactive.dojo.department.entity.Department;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,5 @@ public class DepartmentLocation extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "department_id")
-    private DepartmentLocation departmentLocation;
+    private Department department;
 }
