@@ -2,6 +2,7 @@ package com.axonactive.dojo.employee.entity;
 
 import com.axonactive.dojo.base.entity.BaseEntity;
 import com.axonactive.dojo.department.entity.Department;
+import com.axonactive.dojo.enums.Status;
 import lombok.*;
 import com.axonactive.dojo.enums.Gender;
 
@@ -34,6 +35,9 @@ public class Employee extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "department_id")

@@ -2,6 +2,7 @@ package com.axonactive.dojo.department.entity;
 
 import com.axonactive.dojo.base.entity.BaseEntity;
 import com.axonactive.dojo.department.dao.DepartmentDAO;
+import com.axonactive.dojo.enums.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,4 +21,6 @@ public class Department extends BaseEntity {
 
     private LocalDate startDate;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

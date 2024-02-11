@@ -22,14 +22,14 @@ public class DepartmentDAO extends BaseDAO<Department> {
     public List<Department> findDepartments(Integer pageNumber, Integer pageSize) {
         Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
-        Query query = entityManager.createQuery("from Department d order by lower(d.departmentName)");
+        Query query = entityManager.createQuery("from Department d where d.status = 'ACTIVE' order by lower(d.departmentName)");
         query.setFirstResult(offset);
         query.setMaxResults(pageSize);
         return query.getResultList();
     }
 
     public Long findTotalCount() {
-        Query query = entityManager.createQuery("select count(d.id) from Department d");
+        Query query = entityManager.createQuery("select count(d.id) from Department d where d.status = 'ACTIVE'");
         Long count = (Long)query.getSingleResult();
         return count;
     }
