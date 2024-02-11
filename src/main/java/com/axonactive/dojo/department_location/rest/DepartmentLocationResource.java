@@ -5,6 +5,7 @@ import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.department_location.dto.CreateDepartmentLocationRequestDTO;
 import com.axonactive.dojo.department_location.dto.DepartmentLocationDTO;
 import com.axonactive.dojo.department_location.dto.DepartmentLocationListResponseDTO;
+import com.axonactive.dojo.department_location.dto.UpdateDepartmentLocationRequestDTO;
 import com.axonactive.dojo.department_location.service.DepartmentLocationService;
 
 import javax.inject.Inject;
@@ -36,6 +37,15 @@ public class DepartmentLocationResource {
     @Consumes({MediaType.APPLICATION_JSON})
     public Response add(@Valid CreateDepartmentLocationRequestDTO createDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
         DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.add(createDepartmentLocationRequestDTO);
+        return Response.ok().entity(departmentLocationDTO).build();
+    }
+
+    @PUT
+    @Path("update")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response update(@Valid UpdateDepartmentLocationRequestDTO updateDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
+        DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.update(updateDepartmentLocationRequestDTO);
         return Response.ok().entity(departmentLocationDTO).build();
     }
 }

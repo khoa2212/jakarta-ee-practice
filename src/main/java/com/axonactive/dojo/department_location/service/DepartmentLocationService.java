@@ -12,6 +12,7 @@ import com.axonactive.dojo.department_location.dao.DepartmentLocationDAO;
 import com.axonactive.dojo.department_location.dto.CreateDepartmentLocationRequestDTO;
 import com.axonactive.dojo.department_location.dto.DepartmentLocationDTO;
 import com.axonactive.dojo.department_location.dto.DepartmentLocationListResponseDTO;
+import com.axonactive.dojo.department_location.dto.UpdateDepartmentLocationRequestDTO;
 import com.axonactive.dojo.department_location.entity.DepartmentLocation;
 import com.axonactive.dojo.department_location.mapper.DepartmentLocationMapper;
 import com.axonactive.dojo.department_location.message.DepartmentLocationMessage;
@@ -74,21 +75,45 @@ public class DepartmentLocationService {
             throw new BadRequestException(DepartmentLocationMessage.EXISTED_LOCATION);
         }
 
-        System.out.println("------------------------- " + department.toString() + " --------------------------------");
-
         DepartmentLocation newDepartmentLocation = DepartmentLocation
                 .builder()
                 .location(createDepartmentLocationRequestDTO.getLocation())
                 .department(department.get())
                 .build();
 
-        System.out.println("----------------------------------------------");
-
         DepartmentLocation departmentLocation = this.departmentLocationDAO.add(newDepartmentLocation);
 
+        return this.departmentLocationMapper.toDTO(departmentLocation);
+    }
 
-        DepartmentLocation departmentLocation1 = this.departmentLocationDAO.update(departmentLocation);
+    public DepartmentLocationDTO update(UpdateDepartmentLocationRequestDTO updateDepartmentLocationRequestDTO) throws EntityNotFoundException, BadRequestException {
+        Optional<Department> department = this.departmentDAO.findById(updateDepartmentLocationRequestDTO.getDepartmentId());
 
-        return this.departmentLocationMapper.toDTO(departmentLocation1);
+        if(department.isEmpty()) {
+            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
+        }
+
+        Optional<DepartmentLocation> optionalDepartmentLocation = this.departmentLocationDAO.findById(updateDepartmentLocationRequestDTO.getId());
+
+        if(optionalDepartmentLocation.isEmpty()) {
+            throw new EntityNotFoundException(DepartmentLocationMessage.NOT_FOUND_LOCATION);
+        }
+
+        Optional<DepartmentLocation> optionalDepartmentLocation1 = this.departmentLocationDAO
+                .findDepartmentLocationByDepartmentId(
+                        updateDepartmentLocationRequestDTO.getLocation().trim().toLowerCase(),
+                        updateDepartmentLocationRequestDTO.getDepartmentId());
+
+        if(optionalDepartmentLocation1.isPresent()) {
+            throw new BadRequestException(DepartmentLocationMessage.EXISTED_LOCATION);
+        }
+
+        DepartmentLocation departmentLocation = optionalDepartmentLocation.get();
+
+        departmentLocation.setLocation(updateDepartmentLocationRequestDTO.getLocation());
+        departmentLocation.setDepartment(department.get());
+
+        DepartmentLocation updatedDepartmentLocation = this.departmentLocationDAO.update(departmentLocation);
+        return this.departmentLocationMapper.toDTO(updatedDepartmentLocation);
     }
 }
