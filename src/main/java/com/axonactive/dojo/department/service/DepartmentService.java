@@ -44,7 +44,7 @@ public class DepartmentService {
     public DepartmentDTO findById (Long id) throws EntityNotFoundException {
         Optional<Department> department = this.departmentDAO.findById(id);
 
-        if(department.isEmpty()) {
+        if(department.isEmpty() || department.get().getStatus() == Status.DELETED) {
             throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
         }
 
@@ -73,7 +73,7 @@ public class DepartmentService {
     public DepartmentDTO update(UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
         Optional<Department> optionalDepartment = this.departmentDAO.findById(updateDepartmentRequestDTO.getId());
 
-        if(optionalDepartment.isEmpty()) {
+        if(optionalDepartment.isEmpty() || optionalDepartment.get().getStatus() == Status.DELETED) {
             throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
         }
 
@@ -98,7 +98,7 @@ public class DepartmentService {
 
         Optional<Department> optionalDepartment = this.departmentDAO.findById(deleteDepartmentRequestDTO.getId());
 
-        if(optionalDepartment.isEmpty()) {
+        if(optionalDepartment.isEmpty() || optionalDepartment.get().getStatus() == Status.DELETED) {
             throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
         }
 

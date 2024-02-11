@@ -35,7 +35,7 @@ public class DepartmentDAO extends BaseDAO<Department> {
     }
 
     public Optional<Department> findByDepartmentName(String departmentName) {
-        Query query = entityManager.createQuery("select d from Department d where lower(d.departmentName) = :departmentName", Department.class);
+        Query query = entityManager.createQuery("select d from Department d where lower(d.departmentName) = :departmentName and d.status = 'ACTIVE'", Department.class);
         query.setParameter("departmentName", departmentName);
 
         List<Department> l = query.getResultList();

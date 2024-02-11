@@ -6,6 +6,7 @@ import com.axonactive.dojo.department_location.entity.DepartmentLocation;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class DepartmentLocationDAO extends BaseDAO<DepartmentLocation> {
@@ -13,7 +14,7 @@ public class DepartmentLocationDAO extends BaseDAO<DepartmentLocation> {
         super(DepartmentLocation.class);
     }
 
-    public List<DepartmentLocation> findDepartmentLocationByDepartmentId(Long departmentId, Integer pageNumber, Integer pageSize) {
+    public List<DepartmentLocation> findDepartmentsLocationByDepartmentId(Long departmentId, Integer pageNumber, Integer pageSize) {
         Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
         Query query = entityManager.createQuery("select dl from DepartmentLocation dl where dl.department.id = :departmentId", DepartmentLocation.class);
@@ -29,5 +30,18 @@ public class DepartmentLocationDAO extends BaseDAO<DepartmentLocation> {
         query.setParameter("departmentId", departmentId);
         Long count = (Long)query.getSingleResult();
         return count;
+    }
+
+    public Optional<DepartmentLocation> findDepartmentLocationByDepartmentId(String location, Long departmentId) {
+        Query query = entityManager.createQuery("select dl from DepartmentLocation dl where lower(dl.location) = :location and dl.department.id = :departmentId", DepartmentLocation.class);
+        query.setParameter("location", location).setParameter("departmentId", departmentId);
+
+        List<DepartmentLocation> l = query.getResultList();
+
+        if(l.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(l.get(0));
     }
 }

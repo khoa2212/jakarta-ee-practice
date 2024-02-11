@@ -1,11 +1,14 @@
 package com.axonactive.dojo.department_location.rest;
 
+import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.department_location.dto.CreateDepartmentLocationRequestDTO;
 import com.axonactive.dojo.department_location.dto.DepartmentLocationDTO;
 import com.axonactive.dojo.department_location.dto.DepartmentLocationListResponseDTO;
 import com.axonactive.dojo.department_location.service.DepartmentLocationService;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,7 +26,16 @@ public class DepartmentLocationResource {
     public Response findDepartmentLocationByDepartmentId(@PathParam("departmentId") Long departmentId,
                                                          @DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                                          @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) throws EntityNotFoundException {
-        DepartmentLocationListResponseDTO departmentLocationListResponseDTO = this.departmentLocationService.findDepartmentLocationByDepartmentId(departmentId, pageNumber, pageSize);
+        DepartmentLocationListResponseDTO departmentLocationListResponseDTO = this.departmentLocationService.findDepartmentsLocationByDepartmentId(departmentId, pageNumber, pageSize);
         return Response.ok().entity(departmentLocationListResponseDTO).build();
+    }
+
+    @POST
+    @Path("add")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response add(@Valid CreateDepartmentLocationRequestDTO createDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
+        DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.add(createDepartmentLocationRequestDTO);
+        return Response.ok().entity(departmentLocationDTO).build();
     }
 }
