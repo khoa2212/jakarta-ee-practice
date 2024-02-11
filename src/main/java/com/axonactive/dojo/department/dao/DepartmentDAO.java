@@ -33,4 +33,17 @@ public class DepartmentDAO extends BaseDAO<Department> {
         Long count = (Long)query.getSingleResult();
         return count;
     }
+
+    public Optional<Department> findByDepartmentName(String departmentName) {
+        Query query = entityManager.createQuery("select d from Department d where lower(d.departmentName) = :departmentName", Department.class);
+        query.setParameter("departmentName", departmentName);
+
+        List<Department> l = query.getResultList();
+
+        if(l.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return  Optional.of(l.get(0));
+    }
 }

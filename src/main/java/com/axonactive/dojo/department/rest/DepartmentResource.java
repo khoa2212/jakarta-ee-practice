@@ -1,12 +1,13 @@
 package com.axonactive.dojo.department.rest;
 
-import com.axonactive.dojo.department.dto.CreateDepartmentRequestDTO;
-import com.axonactive.dojo.department.dto.DepartmentDTO;
-import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
+import com.axonactive.dojo.base.exception.BadRequestException;
+import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.department.dto.*;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.service.DepartmentService;
 
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -27,11 +28,29 @@ public class DepartmentResource {
     }
 
     @POST
-    @Path("create")
+    @Path("add")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response createDepartments(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) {
+    public Response add(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
         DepartmentDTO departmentDTO = this.departmentService.add(createDepartmentRequestDTO);
         return Response.ok().entity(departmentDTO).build();
+    }
+
+    @PUT
+    @Path("update")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
+        DepartmentDTO departmentDTO = this.departmentService.update(updateDepartmentRequestDTO);
+        return Response.ok().entity(departmentDTO).build();
+    }
+
+    @DELETE
+    @Path("delete")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response update(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
+        JsonObject jobj = this.departmentService.deleteSoftly(deleteDepartmentRequestDTO);
+        return Response.ok().entity(jobj).build();
     }
 }
