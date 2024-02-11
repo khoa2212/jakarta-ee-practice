@@ -39,7 +39,7 @@ public class Employee extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
 

@@ -1,9 +1,13 @@
 package com.axonactive.dojo.department.rest;
 
+import com.axonactive.dojo.department.dto.CreateDepartmentRequestDTO;
+import com.axonactive.dojo.department.dto.DepartmentDTO;
 import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
+import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.service.DepartmentService;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -22,11 +26,12 @@ public class DepartmentResource {
         return Response.ok().entity(departmentListResponseDTO).build();
     }
 
-//    @POST
-//    @Path("create")
-//    @Produces({MediaType.APPLICATION_JSON})
-//    public Response createDepartments(Department department) {
-//        var addedDep = departmentService.createDepartment(department);
-//        return Response.ok(addedDep).build();
-//    }
+    @POST
+    @Path("create")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response createDepartments(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) {
+        DepartmentDTO departmentDTO = this.departmentService.add(createDepartmentRequestDTO);
+        return Response.ok().entity(departmentDTO).build();
+    }
 }

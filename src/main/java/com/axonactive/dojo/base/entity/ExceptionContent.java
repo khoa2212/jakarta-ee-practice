@@ -7,10 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.json.JsonArrayBuilder;
+
 @Getter
 @Setter
 @AllArgsConstructor
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ExceptionContent {
     private boolean success;
     private int statusCode;
