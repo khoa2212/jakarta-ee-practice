@@ -1,7 +1,9 @@
 package com.axonactive.dojo.employee.rest;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
-import com.axonactive.dojo.employee.dto.AddEmployeeRequestDTO;
+import com.axonactive.dojo.employee.dto.CreateEmployeeRequestDTO;
+import com.axonactive.dojo.employee.dto.EmployeeDTO;
+import com.axonactive.dojo.employee.dto.EmployeeListResponseDTO;
 import com.axonactive.dojo.employee.service.EmployeeService;
 
 import javax.inject.Inject;
@@ -14,20 +16,23 @@ import javax.ws.rs.core.*;
 public class EmployeeResource {
 
     @Inject
-    EmployeeService employeeService;
+    private EmployeeService employeeService;
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getEmployees() {
-        return Response.ok().entity(employeeService.getEmployees()).build();
+    public Response findEmployees(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
+                                 @DefaultValue("10") @QueryParam("pageSize") Integer pageSize,
+                                 @DefaultValue("0") @QueryParam("departmentId") Long departmentId) throws EntityNotFoundException {
+        EmployeeListResponseDTO employeeListResponseDTO = this.employeeService.findEmployees(departmentId, pageNumber, pageSize);
+        return Response.ok().entity(employeeListResponseDTO).build();
     }
 
     @POST
-    @Path("create")
+    @Path("add")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response createEmp(@Valid AddEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
-        var result = employeeService.add(reqDTO);
-        return Response.ok(result).build();
+    public Response createEmp(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+        EmployeeDTO employeeDTO = this.employeeService.add(reqDTO);
+        return Response.ok(employeeDTO).build();
     }
 }

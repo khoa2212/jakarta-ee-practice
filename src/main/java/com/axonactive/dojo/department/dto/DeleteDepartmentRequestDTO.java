@@ -11,6 +11,6 @@ import javax.validation.constraints.NotNull;
 @Builder
 @ToString
 public class DeleteDepartmentRequestDTO {
-    @NotNull(message = "department's id is required")
+    @NotNull(message = "Department's id is required")
     private Long id;
 }

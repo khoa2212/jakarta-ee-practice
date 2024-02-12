@@ -7,6 +7,7 @@ import com.axonactive.dojo.employee.entity.Employee;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.validation.constraints.Null;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -18,11 +19,39 @@ public class EmployeeDAO extends BaseDAO<Employee> {
         super(Employee.class);
     }
 
-    public List<Employee> getEmployeeByDepartmentID (Long departmentID) {
-        return entityManager.createQuery("SELECT e " +
-                "FROM Employee e " +
-                "WHERE e.department.id = :departmentID", Employee.class)
-                .setParameter("departmentID", departmentID)
+    public List<Employee> findEmployeesByDepartmentId (Long departmentId, Integer pageNumber, Integer pageSize) {
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
+        return entityManager.createQuery("select e " +
+                "from Employee e " +
+                "where e.department.id = :departmentId and e.status = 'ACTIVE'", Employee.class)
+                .setParameter("departmentId", departmentId)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
                 .getResultList();
+    }
+
+    public List<Employee> findEmployees (Integer pageNumber, Integer pageSize) {
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
+        return entityManager.createQuery("select e from Employee e where e.status = 'ACTIVE'", Employee.class)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    public Long findTotalCount() {
+        Query query = entityManager.createQuery("select count(e.id) from Employee e where e.status = 'ACTIVE'");
+        Long count = (Long)query.getSingleResult();
+        return count;
+    }
+
+    public Long findTotalCountWithDepartmentId(Long departmentId) {
+        Query query = entityManager
+                .createQuery("select count(e.id) from Employee e where e.department.id = :departmentId and e.status = 'ACTIVE'")
+                .setParameter("departmentId", departmentId);
+
+        Long count = (Long)query.getSingleResult();
+        return count;
     }
 }

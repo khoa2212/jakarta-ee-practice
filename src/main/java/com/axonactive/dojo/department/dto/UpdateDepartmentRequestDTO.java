@@ -16,17 +16,17 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class UpdateDepartmentRequestDTO {
-    @NotNull(message = "department's id is required")
+    @NotNull(message = "Department's id is required")
     private Long id;
 
-    @NotBlank(message = "department 's name must not be blank")
+    @NotBlank(message = "Department 's name must not be blank")
     private String departmentName;
 
-    @NotNull(message = "department 's start date is required")
+    @NotNull(message = "Department 's start date is required")
     @JsonbDateFormat("yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotNull(message = "department 's status is required")
+    @NotNull(message = "Department 's status is required")
     @ValueOfEnum(enumClass = Status.class)
     private String status;
 }

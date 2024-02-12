@@ -2,6 +2,7 @@ package com.axonactive.dojo.base.dao;
 
 import com.axonactive.dojo.base.entity.BaseEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@SuperBuilder
 public abstract class BaseDAO<T extends BaseEntity> {
     @PersistenceContext
     protected EntityManager entityManager;
