@@ -3,6 +3,7 @@ package com.axonactive.dojo.assignment.rest;
 import com.axonactive.dojo.assignment.dto.AssignmentDTO;
 import com.axonactive.dojo.assignment.dto.AssignmentListResponseDTO;
 import com.axonactive.dojo.assignment.dto.CreateAssignmentRequestDTO;
+import com.axonactive.dojo.assignment.dto.UpdateAssignmentRequestDTO;
 import com.axonactive.dojo.assignment.service.AssignmentService;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
@@ -33,10 +34,20 @@ public class AssignmentResource {
     }
 
     @POST
+    @Path("add")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     public Response add(@Valid CreateAssignmentRequestDTO requestDTO) throws BadRequestException, EntityNotFoundException {
         AssignmentDTO assignmentDTO = this.assignmentService.add(requestDTO);
+        return Response.ok().entity(assignmentDTO).build();
+    }
+
+    @PUT
+    @Path("update")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response update(@Valid UpdateAssignmentRequestDTO requestDTO) throws BadRequestException, EntityNotFoundException {
+        AssignmentDTO assignmentDTO = this.assignmentService.update(requestDTO);
         return Response.ok().entity(assignmentDTO).build();
     }
 
