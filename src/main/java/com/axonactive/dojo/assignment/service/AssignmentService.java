@@ -1,10 +1,7 @@
 package com.axonactive.dojo.assignment.service;
 
 import com.axonactive.dojo.assignment.dao.AssignmentDAO;
-import com.axonactive.dojo.assignment.dto.AssignmentDTO;
-import com.axonactive.dojo.assignment.dto.AssignmentListResponseDTO;
-import com.axonactive.dojo.assignment.dto.CreateAssignmentRequestDTO;
-import com.axonactive.dojo.assignment.dto.UpdateAssignmentRequestDTO;
+import com.axonactive.dojo.assignment.dto.*;
 import com.axonactive.dojo.assignment.entity.Assignment;
 import com.axonactive.dojo.assignment.mapper.AssignmentMapper;
 import com.axonactive.dojo.assignment.message.AssignmentMessage;
@@ -20,6 +17,7 @@ import com.axonactive.dojo.project.message.ProjectMessage;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import java.util.List;
 import java.util.Optional;
 
@@ -151,6 +149,18 @@ public class AssignmentService {
         Assignment updatedAssignment = this.assignmentDAO.add(assignment);
 
         return this.assignmentMapper.toDTO(updatedAssignment);
+    }
+
+    public JsonObject delete(DeleteAssignmentRequestDTO requestDTO) throws EntityNotFoundException {
+        Optional<Assignment> optionalAssignment = this.assignmentDAO.findById(requestDTO.getId());
+
+        if (optionalAssignment.isEmpty()) {
+            throw new EntityNotFoundException(AssignmentMessage.NOT_FOUND_ASSIGNMENT);
+        }
+
+        this.assignmentDAO.delete(requestDTO.getId());
+
+        return AssignmentMessage.deleteSuccessMessage();
     }
 
 //    public List<AssignmentDTO> findAllAssignmentsByProjectId(Long projectId) throws EntityNotFoundException {

@@ -1,9 +1,6 @@
 package com.axonactive.dojo.assignment.rest;
 
-import com.axonactive.dojo.assignment.dto.AssignmentDTO;
-import com.axonactive.dojo.assignment.dto.AssignmentListResponseDTO;
-import com.axonactive.dojo.assignment.dto.CreateAssignmentRequestDTO;
-import com.axonactive.dojo.assignment.dto.UpdateAssignmentRequestDTO;
+import com.axonactive.dojo.assignment.dto.*;
 import com.axonactive.dojo.assignment.service.AssignmentService;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
@@ -11,6 +8,7 @@ import lombok.Getter;
 import lombok.Value;
 
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -49,6 +47,15 @@ public class AssignmentResource {
     public Response update(@Valid UpdateAssignmentRequestDTO requestDTO) throws BadRequestException, EntityNotFoundException {
         AssignmentDTO assignmentDTO = this.assignmentService.update(requestDTO);
         return Response.ok().entity(assignmentDTO).build();
+    }
+
+    @DELETE
+    @Path("delete")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response update(@Valid DeleteAssignmentRequestDTO requestDTO) throws EntityNotFoundException {
+        JsonObject jobj = this.assignmentService.delete(requestDTO);
+        return Response.ok().entity(jobj).build();
     }
 
 //    @GET
