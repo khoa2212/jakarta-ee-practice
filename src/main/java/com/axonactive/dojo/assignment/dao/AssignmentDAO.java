@@ -8,6 +8,8 @@ import com.axonactive.dojo.project.entity.Project;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 @Stateless
 public class AssignmentDAO extends BaseDAO<Assignment> {
@@ -36,6 +38,27 @@ public class AssignmentDAO extends BaseDAO<Assignment> {
         query.setFirstResult(offset);
         query.setMaxResults(pageSize);
         return query.getResultList();
+    }
+
+    public List<Assignment> findAllAssignmentsByProjectId(Long projectId){
+        Query query = entityManager.createQuery("select a from Assignment a where a.project.id = :projectId", Assignment.class);
+        query.setParameter("projectId", projectId);
+
+        return query.getResultList();
+    }
+
+    public Optional<Assignment> findAssignmentByEmployeeIdAndProjectId(Long employeeId, Long projectId) {
+        Query query = entityManager.createQuery("select a from Assignment a where a.project.id = :projectId and a.employee.id = :employeeId", Assignment.class);
+        query.setParameter("projectId", projectId);
+        query.setParameter("employeeId", employeeId);
+
+        List<Assignment> l = query.getResultList();
+
+        if(l.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(l.get(0));
     }
 
     public Long findTotalCountByProjectId(Long projectId) {

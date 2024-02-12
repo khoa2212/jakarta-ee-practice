@@ -3,8 +3,11 @@ package com.axonactive.dojo.assignment.service;
 import com.axonactive.dojo.assignment.dao.AssignmentDAO;
 import com.axonactive.dojo.assignment.dto.AssignmentDTO;
 import com.axonactive.dojo.assignment.dto.AssignmentListResponseDTO;
+import com.axonactive.dojo.assignment.dto.CreateAssignmentRequestDTO;
 import com.axonactive.dojo.assignment.entity.Assignment;
 import com.axonactive.dojo.assignment.mapper.AssignmentMapper;
+import com.axonactive.dojo.assignment.message.AssignmentMessage;
+import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.employee.dao.EmployeeDAO;
 import com.axonactive.dojo.employee.entity.Employee;
@@ -75,4 +78,48 @@ public class AssignmentService {
                 .lastPage((totalCount.intValue() / pageSize) + 1)
                 .build();
     }
+
+    public AssignmentDTO add(CreateAssignmentRequestDTO requestDTO) throws EntityNotFoundException, BadRequestException {
+        Optional<Employee> optionalEmployee = this.employeeDAO.findById(requestDTO.getEmployeeId());
+
+        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
+            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
+        }
+
+        Optional<Project> optionalProject = this.projectDAO.findById(requestDTO.getProjectId());
+
+        if(optionalProject.isEmpty() || optionalProject.get().getStatus() == Status.DELETED) {
+            throw new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT);
+        }
+
+        Optional<Assignment> optionalAssignment = this.assignmentDAO
+                .findAssignmentByEmployeeIdAndProjectId(requestDTO.getEmployeeId(), requestDTO.getProjectId());
+
+        if(optionalAssignment.isPresent()) {
+            throw new BadRequestException(AssignmentMessage.EXISTED_ASSIGNMENT);
+        }
+
+        Assignment newAssignment = Assignment
+                .builder()
+                .employee(optionalEmployee.get())
+                .project(optionalProject.get())
+                .numberOfHour(requestDTO.getNumberOfHour())
+                .build();
+
+        Assignment assignment = this.assignmentDAO.add(newAssignment);
+
+        return this.assignmentMapper.toDTO(assignment);
+    }
+
+//    public List<AssignmentDTO> findAllAssignmentsByProjectId(Long projectId) throws EntityNotFoundException {
+//        Optional<Project> optionalProject = this.projectDAO.findById(projectId);
+//
+//        if(optionalProject.isEmpty() || optionalProject.get().getStatus() == Status.DELETED) {
+//            throw new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT);
+//        }
+//
+//        List<Assignment> assignments = this.assignmentDAO.findAllAssignmentsByProjectId(projectId);
+//
+//        return this.assignmentMapper.toListDTO(assignments);
+//    }
 }
