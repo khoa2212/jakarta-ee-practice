@@ -4,6 +4,7 @@ import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.employee.dto.CreateEmployeeRequestDTO;
 import com.axonactive.dojo.employee.dto.EmployeeDTO;
 import com.axonactive.dojo.employee.dto.EmployeeListResponseDTO;
+import com.axonactive.dojo.employee.dto.UpdateEmployeeRequestDTO;
 import com.axonactive.dojo.employee.service.EmployeeService;
 
 import javax.inject.Inject;
@@ -31,8 +32,17 @@ public class EmployeeResource {
     @Path("add")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response createEmp(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+    public Response add(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         EmployeeDTO employeeDTO = this.employeeService.add(reqDTO);
         return Response.ok(employeeDTO).build();
+    }
+
+    @PUT
+    @Path("update")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response update(@Valid UpdateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+        EmployeeDTO employeeDTO = this.employeeService.update(reqDTO);
+        return Response.ok().entity(employeeDTO).build();
     }
 }

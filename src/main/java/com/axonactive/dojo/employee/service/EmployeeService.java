@@ -6,10 +6,12 @@ import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.employee.dto.CreateEmployeeRequestDTO;
 import com.axonactive.dojo.employee.dto.EmployeeDTO;
 import com.axonactive.dojo.employee.dto.EmployeeListResponseDTO;
+import com.axonactive.dojo.employee.dto.UpdateEmployeeRequestDTO;
 import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.employee.dao.EmployeeDAO;
 import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.employee.mapper.EmployeeMapper;
+import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
 
@@ -87,5 +89,34 @@ public class EmployeeService {
         Employee employee = employeeDAO.add(newEmployee);
 
         return this.employeeMapper.toDTO(employee);
+    }
+
+    public EmployeeDTO update(UpdateEmployeeRequestDTO requestDTO) throws EntityNotFoundException {
+        Optional<Employee> optionalEmployee = this.employeeDAO.findById(requestDTO.getId());
+
+        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
+            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
+        }
+
+        Optional<Department> department = this.departmentDAO.findById(requestDTO.getDepartmentId());
+
+        if(department.isEmpty() || department.get().getStatus() == Status.DELETED) {
+            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
+        }
+
+        Employee employee = optionalEmployee.get();
+
+        employee.setFirstName(requestDTO.getFirstName());
+        employee.setLastName(requestDTO.getLastName());
+        employee.setMiddleName(requestDTO.getMiddleName());
+        employee.setGender(Gender.valueOf(requestDTO.getGender()));
+        employee.setSalary(requestDTO.getSalary());
+        employee.setDateOfBirth(requestDTO.getDateOfBirth());
+        employee.setStatus(Status.ACTIVE);
+        employee.setDepartment(department.get());
+
+        Employee updatedEmployee = this.employeeDAO.update(employee);
+
+        return this.employeeMapper.toDTO(updatedEmployee);
     }
 }
