@@ -7,6 +7,7 @@ import com.axonactive.dojo.department.dto.*;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.department.mapper.DepartmentMapper;
+import com.axonactive.dojo.employee.dto.EmployeeDTO;
 import com.axonactive.dojo.enums.Status;
 
 import javax.ejb.Stateless;
@@ -24,6 +25,11 @@ public class DepartmentService {
 
     @Inject
     private DepartmentMapper departmentMapper;
+
+    public List<DepartmentDTO> findAll() {
+        List<Department> departments = this.departmentDAO.findAll();
+        return this.departmentMapper.toListDTO(departments);
+    }
 
     public DepartmentListResponseDTO findDepartments(Integer pageNumber, Integer pageSize) {
         List<Department> departments = this.departmentDAO.findDepartments(pageNumber, pageSize);

@@ -39,7 +39,7 @@ public class EmployeeService {
         if(departmentId > 0) {
             Optional<Department> department = this.departmentDAO.findById(departmentId);
 
-            if(!department.isPresent()) {
+            if(department.isEmpty() || department.get().getStatus() == Status.DELETED) {
                 throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
             }
 

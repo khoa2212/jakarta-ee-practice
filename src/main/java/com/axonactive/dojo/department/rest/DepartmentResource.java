@@ -12,12 +12,21 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("departments")
 public class DepartmentResource {
 
     @Inject
     DepartmentService departmentService;
+
+    @GET
+    @Path("all")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response findAll() {
+        List<DepartmentDTO> departmentDTOS = this.departmentService.findAll();
+        return Response.ok().entity(departmentDTOS).build();
+    }
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON })
