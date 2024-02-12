@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Table(uniqueConstraints = { @UniqueConstraint(name = "UQ_employee_id_project_id", columnNames = { "employee_id", "project_id" }) })
 public class Assignment extends BaseEntity {
 
-    private int numberOfHours;
+    private int numberOfHour;
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
