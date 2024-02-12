@@ -1,13 +1,11 @@
 package com.axonactive.dojo.employee.rest;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
-import com.axonactive.dojo.employee.dto.CreateEmployeeRequestDTO;
-import com.axonactive.dojo.employee.dto.EmployeeDTO;
-import com.axonactive.dojo.employee.dto.EmployeeListResponseDTO;
-import com.axonactive.dojo.employee.dto.UpdateEmployeeRequestDTO;
+import com.axonactive.dojo.employee.dto.*;
 import com.axonactive.dojo.employee.service.EmployeeService;
 
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -45,4 +43,14 @@ public class EmployeeResource {
         EmployeeDTO employeeDTO = this.employeeService.update(reqDTO);
         return Response.ok().entity(employeeDTO).build();
     }
+
+    @DELETE
+    @Path("delete")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response delete(@Valid DeleteEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+        JsonObject jobj = this.employeeService.deleteSoftly(reqDTO);
+        return Response.ok().entity(jobj).build();
+    }
+
 }

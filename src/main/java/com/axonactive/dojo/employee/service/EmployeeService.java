@@ -3,10 +3,7 @@ package com.axonactive.dojo.employee.service;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.message.DepartmentMessage;
-import com.axonactive.dojo.employee.dto.CreateEmployeeRequestDTO;
-import com.axonactive.dojo.employee.dto.EmployeeDTO;
-import com.axonactive.dojo.employee.dto.EmployeeListResponseDTO;
-import com.axonactive.dojo.employee.dto.UpdateEmployeeRequestDTO;
+import com.axonactive.dojo.employee.dto.*;
 import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.employee.dao.EmployeeDAO;
 import com.axonactive.dojo.department.dao.DepartmentDAO;
@@ -14,9 +11,11 @@ import com.axonactive.dojo.employee.mapper.EmployeeMapper;
 import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
+import netscape.javascript.JSObject;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,5 +117,20 @@ public class EmployeeService {
         Employee updatedEmployee = this.employeeDAO.update(employee);
 
         return this.employeeMapper.toDTO(updatedEmployee);
+    }
+
+    public JsonObject deleteSoftly(DeleteEmployeeRequestDTO requestDTO) throws EntityNotFoundException {
+        Optional<Employee> optionalEmployee = this.employeeDAO.findById(requestDTO.getId());
+
+        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
+            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
+        }
+
+        Employee employee = optionalEmployee.get();
+        employee.setStatus(Status.DELETED);
+
+        this.employeeDAO.update(employee);
+
+        return EmployeeMessage.deleteSuccessMessage();
     }
 }
