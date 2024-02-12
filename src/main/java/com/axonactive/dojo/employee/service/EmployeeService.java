@@ -66,6 +66,16 @@ public class EmployeeService {
                 .build();
     }
 
+    public EmployeeDTO findById(Long id) throws EntityNotFoundException {
+        Optional<Employee> optionalEmployee = this.employeeDAO.findById(id);
+
+        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
+            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
+        }
+
+        return this.employeeMapper.toDTO(optionalEmployee.get());
+    }
+
     public EmployeeDTO add(CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         Optional<Department> department = this.departmentDAO.findById(reqDTO.getDepartmentId());
 

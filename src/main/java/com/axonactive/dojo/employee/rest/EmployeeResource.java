@@ -25,6 +25,13 @@ public class EmployeeResource {
         EmployeeListResponseDTO employeeListResponseDTO = this.employeeService.findEmployees(departmentId, pageNumber, pageSize);
         return Response.ok().entity(employeeListResponseDTO).build();
     }
+    @GET
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
+        EmployeeDTO employeeDTO = this.employeeService.findById(id);
+        return Response.ok().entity(employeeDTO).build();
+    }
 
     @POST
     @Path("add")
