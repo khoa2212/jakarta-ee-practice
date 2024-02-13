@@ -7,6 +7,7 @@ import com.axonactive.dojo.assignment.mapper.AssignmentMapper;
 import com.axonactive.dojo.assignment.message.AssignmentMessage;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.employee.dao.EmployeeDAO;
 import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.employee.message.EmployeeMessage;
@@ -151,7 +152,7 @@ public class AssignmentService {
         return this.assignmentMapper.toDTO(updatedAssignment);
     }
 
-    public JsonObject delete(DeleteAssignmentRequestDTO requestDTO) throws EntityNotFoundException {
+    public DeleteSuccessMessage delete(DeleteAssignmentRequestDTO requestDTO) throws EntityNotFoundException {
         Optional<Assignment> optionalAssignment = this.assignmentDAO.findById(requestDTO.getId());
 
         if (optionalAssignment.isEmpty()) {

@@ -2,6 +2,7 @@ package com.axonactive.dojo.department.service;
 
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.department.dto.*;
 import com.axonactive.dojo.department.entity.Department;
@@ -100,7 +101,7 @@ public class DepartmentService {
         return this.departmentMapper.toDTO(updatedDepartment);
     }
 
-    public JsonObject deleteSoftly(DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException {
+    public DeleteSuccessMessage deleteSoftly(DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException {
 
         Optional<Department> optionalDepartment = this.departmentDAO.findById(deleteDepartmentRequestDTO.getId());
 

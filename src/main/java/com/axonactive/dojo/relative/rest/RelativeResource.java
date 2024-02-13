@@ -1,8 +1,13 @@
 package com.axonactive.dojo.relative.rest;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
 import com.axonactive.dojo.relative.dto.RelativeListResponseDTO;
 import com.axonactive.dojo.relative.service.RelativeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -10,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("relatives")
+@Api(tags = "Relatives API")
 public class RelativeResource {
 
     @Inject
@@ -18,6 +24,18 @@ public class RelativeResource {
     @GET
     @Path("employee/{employeeId}")
     @Produces({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Get all relative list with pagination")
+    @ApiResponses({
+            @ApiResponse(
+                    code = 200,
+                    message = "Get all relative list successfully",
+                    response = RelativeListResponseDTO.class, responseContainer = "List"
+            ),
+            @ApiResponse(
+                    code = 500,
+                    message = "Request cannot be fulfilled through browser due to server-side problems"
+            )
+    })
     public Response findRelativesByEmployeeId(@PathParam("employeeId") Long employeeId,
                                               @DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                               @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) throws EntityNotFoundException {

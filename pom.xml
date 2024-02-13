@@ -32,6 +32,11 @@
 		<jacoco.version>0.8.11</jacoco.version>
 		<org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
 		<lombok-mapstruct-binding-version>0.2.0</lombok-mapstruct-binding-version>
+		<io-swagger-version>1.6.13</io-swagger-version>
+		<log4j2.version>2.19.0</log4j2.version>
+		<download-maven-plugin-version>1.8.0</download-maven-plugin-version>
+		<maven-resources-plugin-version>3.3.0</maven-resources-plugin-version>
+		<replacer-version>1.5.3</replacer-version>
 	</properties>
 
 	<distributionManagement>
@@ -149,6 +154,19 @@
 			<version>${org.mapstruct.version}</version>
 		</dependency>
 
+		<!-- Swagger -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${io-swagger-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-jaxrs</artifactId>
+			<version>${io-swagger-version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -186,6 +204,7 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
+
 			<!-- Upload war file to WildFly deployment  -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -201,6 +220,140 @@
 						<configuration>
 							<fromFile>${project.build.directory}/${project.build.finalName}.war</fromFile>
 							<url>file://${env.JBOSS_HOME}/standalone/deployments</url>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- swagger plugin:  downloads the latest swagger-ui & unpack to target folder -->
+			<plugin>
+				<groupId>com.googlecode.maven-download-plugin</groupId>
+				<artifactId>download-maven-plugin</artifactId>
+				<version>${download-maven-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>swagger-ui</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<skipCache>false</skipCache>
+							<url>https://github.com/swagger-api/swagger-ui/archive/master.tar.gz</url>
+							<unpack>true</unpack>
+							<outputDirectory>${project.build.directory}/swagger</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- swagger plugin: copy unpack swagger folder to docs folder -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}/docs</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/swagger/swagger-ui-master/dist</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- move do a token substitution in Swagger-UI’s index.html & point to http://localhost:8080/dojo/api/swagger.json -->
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<version>${replacer-version}</version>
+				<artifactId>replacer</artifactId>
+				<executions>
+					<execution>
+						<id>replace-swagger-json-location</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>${project.build.directory}/${project.build.finalName}/docs/swagger-initializer.js</file>
+					<replacements>
+						<replacement>
+							<token>https://petstore.swagger.io/v2/swagger.json</token>
+							<value>http://localhost:8080/dojo/swagger/swagger.json</value>
+						</replacement>
+						<replacement>
+							<token>deepLinking: true</token>
+							<value>deepLinking: true, validatorUrl : false</value>
+						</replacement>
+					</replacements>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>com/axonactive/dojo/**</include>
+					</includes>
+					<excludes>
+						<exclude>com/axonactive/dojo/base/**</exclude>
+						<exclude>**/entity/**</exclude>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/constants/**</exclude>
+						<exclude>**/rest/**</exclude>
+						<exclude>**/dao/**</exclude>
+					</excludes>
+				</configuration>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report-integration</id>
+						<goals>
+							<goal>report-integration</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>PACKAGE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.80</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
 						</configuration>
 					</execution>
 				</executions>

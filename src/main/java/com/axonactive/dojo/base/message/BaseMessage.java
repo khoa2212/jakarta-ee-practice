@@ -6,10 +6,7 @@ import javax.json.JsonObjectBuilder;
 
 public class BaseMessage {
 
-    public static JsonObject deleteSuccessMessage() {
-        JsonObjectBuilder jobj = Json.createObjectBuilder();
-        jobj.add("success", true);
-
-        return jobj.build();
+    public static DeleteSuccessMessage deleteSuccessMessage() {
+        return new DeleteSuccessMessage();
     }
 }

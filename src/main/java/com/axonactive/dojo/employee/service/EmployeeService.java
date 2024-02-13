@@ -1,6 +1,7 @@
 package com.axonactive.dojo.employee.service;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.employee.dto.*;
@@ -129,7 +130,7 @@ public class EmployeeService {
         return this.employeeMapper.toDTO(updatedEmployee);
     }
 
-    public JsonObject deleteSoftly(DeleteEmployeeRequestDTO requestDTO) throws EntityNotFoundException {
+    public DeleteSuccessMessage deleteSoftly(DeleteEmployeeRequestDTO requestDTO) throws EntityNotFoundException {
         Optional<Employee> optionalEmployee = this.employeeDAO.findById(requestDTO.getId());
 
         if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {

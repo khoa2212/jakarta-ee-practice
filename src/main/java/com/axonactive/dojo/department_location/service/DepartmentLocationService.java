@@ -2,6 +2,7 @@ package com.axonactive.dojo.department_location.service;
 
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.department.dto.DepartmentDTO;
 import com.axonactive.dojo.department.entity.Department;
@@ -115,7 +116,7 @@ public class DepartmentLocationService {
         return this.departmentLocationMapper.toDTO(updatedDepartmentLocation);
     }
 
-    public JsonObject delete(DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO) throws EntityNotFoundException {
+    public DeleteSuccessMessage delete(DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO) throws EntityNotFoundException {
         Optional<DepartmentLocation> optionalDepartmentLocation = this.departmentLocationDAO.findById(deleteDepartmentLocationRequestDTO.getId());
 
         if(optionalDepartmentLocation.isEmpty()) {
