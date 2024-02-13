@@ -4,9 +4,10 @@ import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.department.dto.*;
-import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.service.DepartmentService;
 import io.swagger.annotations.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -22,6 +23,8 @@ public class DepartmentResource {
 
     @Inject
     private DepartmentService departmentService;
+
+    private static final Logger logger = LogManager.getLogger(DepartmentResource.class);
 
     @GET
     @Path("all")
@@ -39,6 +42,7 @@ public class DepartmentResource {
             )
     })
     public Response findAll() {
+        logger.info("Attempting to get all department list...");
         List<DepartmentDTO> departmentDTOS = this.departmentService.findAll();
         return Response.ok().entity(departmentDTOS).build();
     }
@@ -59,6 +63,7 @@ public class DepartmentResource {
     })
     public Response findDepartments(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                            @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) {
+        logger.info("Attempting to get all department list with pagination...");
         DepartmentListResponseDTO departmentListResponseDTO = this.departmentService.findDepartments(pageNumber, pageSize);
         return Response.ok().entity(departmentListResponseDTO).build();
     }
@@ -79,6 +84,7 @@ public class DepartmentResource {
             )
     })
     public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
+        logger.info("Attempting to get department by id...");
         DepartmentDTO departmentDTO = this.departmentService.findById(id);
         return Response.ok().entity(departmentDTO).build();
     }
@@ -105,6 +111,7 @@ public class DepartmentResource {
             )
     })
     public Response add(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
+        logger.debug("Adding " + createDepartmentRequestDTO.toString());
         DepartmentDTO departmentDTO = this.departmentService.add(createDepartmentRequestDTO);
         return Response.ok().entity(departmentDTO).build();
     }
@@ -131,6 +138,7 @@ public class DepartmentResource {
             )
     })
     public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
+        logger.debug("Updating " + updateDepartmentRequestDTO.toString());
         DepartmentDTO departmentDTO = this.departmentService.update(updateDepartmentRequestDTO);
         return Response.ok().entity(departmentDTO).build();
     }
@@ -157,6 +165,7 @@ public class DepartmentResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     public Response delete(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
+        logger.debug("Deleting " + deleteDepartmentRequestDTO.toString());
         DeleteSuccessMessage result = this.departmentService.deleteSoftly(deleteDepartmentRequestDTO);
         return Response.ok().entity(result).build();
     }

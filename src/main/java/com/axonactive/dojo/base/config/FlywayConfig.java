@@ -2,6 +2,7 @@ package com.axonactive.dojo.base.config;
 
 import org.flywaydb.core.Flyway;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -17,6 +18,7 @@ public class FlywayConfig {
     @Resource(lookup = "java:/PostgresDS")
     DataSource dataSource;
 
+    @PostConstruct
     public void migrate() {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)

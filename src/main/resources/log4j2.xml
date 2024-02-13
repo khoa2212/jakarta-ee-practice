@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <!--Logging Properties-->
+        <Property name="LOG_PATTERN">%-5p | %d{yyyy-MM-dd HH:mm:ss} | %X{mail} | %m%n</Property>
+        <Property name="LOG_ROOT">${env:JBOSS_HOME}/customization/log</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+        </Console>
+
+        <!-- Rolling File Appender -->
+        <RollingFile name="dojo" fileName="${LOG_ROOT}/dojo.log"
+                     filePattern="${LOG_ROOT}/dojo-%d{yyyy-MM-dd}-%i.log">
+            <LevelRangeFilter minLevel="FATAL" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${LOG_ROOT}">
+                    <IfLastModified age="14d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.axonactive.dojo" level="info" additivity="false">
+            <AppenderRef ref="dojo" />
+            <AppenderRef ref="console" />
+        </Logger>
+
+        <Logger name="com.axonactive.dojo" level="debug" additivity="false">
+            <AppenderRef ref="console" />
+        </Logger>
+
+        <!-- Root Logger Configuration -->
+        <Root level="all" additivity="false">
+            <AppenderRef ref="dojo" />
+            <AppenderRef ref="console" />
+        </Root>
+    </Loggers>
+</Configuration>
