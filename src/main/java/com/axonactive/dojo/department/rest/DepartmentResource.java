@@ -9,6 +9,7 @@ import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.validation.Valid;
