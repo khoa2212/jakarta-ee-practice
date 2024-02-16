@@ -2,11 +2,11 @@ package com.axonactive.dojo.employee.rest;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
-import com.axonactive.dojo.department.dto.DepartmentDTO;
-import com.axonactive.dojo.department_location.dto.DepartmentLocationListResponseDTO;
 import com.axonactive.dojo.employee.dto.*;
 import com.axonactive.dojo.employee.service.EmployeeService;
 import io.swagger.annotations.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -19,6 +19,7 @@ import javax.ws.rs.core.*;
 @Api(tags = "Employees API")
 public class EmployeeResource {
 
+    private static final Logger logger = LogManager.getLogger(EmployeeResource.class);
     @Inject
     private EmployeeService employeeService;
 
@@ -39,6 +40,7 @@ public class EmployeeResource {
     public Response findEmployees(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                  @DefaultValue("10") @QueryParam("pageSize") Integer pageSize,
                                  @DefaultValue("0") @QueryParam("departmentId") Long departmentId) throws EntityNotFoundException {
+        logger.info("Attempting to get all employee list with pagination...");
         EmployeeListResponseDTO employeeListResponseDTO = this.employeeService.findEmployees(departmentId, pageNumber, pageSize);
         return Response.ok().entity(employeeListResponseDTO).build();
     }

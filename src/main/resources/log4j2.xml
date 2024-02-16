@@ -35,10 +35,6 @@
             <AppenderRef ref="console" />
         </Logger>
 
-        <Logger name="com.axonactive.dojo" level="debug" additivity="false">
-            <AppenderRef ref="console" />
-        </Logger>
-
         <!-- Root Logger Configuration -->
         <Root level="all" additivity="false">
             <AppenderRef ref="dojo" />
