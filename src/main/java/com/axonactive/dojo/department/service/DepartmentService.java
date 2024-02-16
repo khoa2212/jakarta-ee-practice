@@ -69,7 +69,7 @@ public class DepartmentService {
         Department newDepartment = Department.builder()
                 .departmentName(createDepartmentRequestDTO.getDepartmentName().trim())
                 .startDate(createDepartmentRequestDTO.getStartDate())
-                .status(Status.valueOf(createDepartmentRequestDTO.getStatus()))
+                .status(Status.ACTIVE)
                 .build();
 
         Department department = this.departmentDAO.add(newDepartment);
@@ -94,7 +94,7 @@ public class DepartmentService {
 
         department.setDepartmentName(updateDepartmentRequestDTO.getDepartmentName());
         department.setStartDate(updateDepartmentRequestDTO.getStartDate());
-        department.setStatus(Status.valueOf(updateDepartmentRequestDTO.getStatus()));
+        department.setStatus(Status.ACTIVE);
 
         Department updatedDepartment = this.departmentDAO.update(department);
 

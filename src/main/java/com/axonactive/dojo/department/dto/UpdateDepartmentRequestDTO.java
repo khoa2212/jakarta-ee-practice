@@ -25,8 +25,4 @@ public class UpdateDepartmentRequestDTO {
     @NotNull(message = "Department 's start date is required")
     @JsonbDateFormat("yyyy-MM-dd")
     private LocalDate startDate;
-
-    @NotNull(message = "Department 's status is required")
-    @ValueOfEnum(enumClass = Status.class)
-    private String status;
 }
