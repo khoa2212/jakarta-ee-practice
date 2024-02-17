@@ -112,7 +112,7 @@ public class DepartmentResource {
             )
     })
     public Response add(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
-        logger.debug("Adding " + createDepartmentRequestDTO.toString());
+        logger.info("Adding " + createDepartmentRequestDTO.toString());
         DepartmentDTO departmentDTO = this.departmentService.add(createDepartmentRequestDTO);
         return Response.ok().entity(departmentDTO).build();
     }
@@ -139,7 +139,7 @@ public class DepartmentResource {
             )
     })
     public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
-        logger.debug("Updating " + updateDepartmentRequestDTO.toString());
+        logger.info("Updating " + updateDepartmentRequestDTO.toString());
         DepartmentDTO departmentDTO = this.departmentService.update(updateDepartmentRequestDTO);
         return Response.ok().entity(departmentDTO).build();
     }
@@ -166,7 +166,7 @@ public class DepartmentResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     public Response delete(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
-        logger.debug("Deleting " + deleteDepartmentRequestDTO.toString());
+        logger.info("Deleting " + deleteDepartmentRequestDTO.toString());
         DeleteSuccessMessage result = this.departmentService.deleteSoftly(deleteDepartmentRequestDTO);
         return Response.ok().entity(result).build();
     }

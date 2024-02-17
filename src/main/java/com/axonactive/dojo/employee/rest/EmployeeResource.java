@@ -60,6 +60,7 @@ public class EmployeeResource {
             )
     })
     public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
+        logger.info(String.format("Attempting to find employee with %d...", id));
         EmployeeDTO employeeDTO = this.employeeService.findById(id);
         return Response.ok().entity(employeeDTO).build();
     }
@@ -86,6 +87,7 @@ public class EmployeeResource {
             )
     })
     public Response add(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+        logger.info("Adding " + reqDTO.toString());
         EmployeeDTO employeeDTO = this.employeeService.add(reqDTO);
         return Response.ok(employeeDTO).build();
     }
@@ -112,6 +114,7 @@ public class EmployeeResource {
             )
     })
     public Response update(@Valid UpdateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+        logger.info("Updating " + reqDTO.toString());
         EmployeeDTO employeeDTO = this.employeeService.update(reqDTO);
         return Response.ok().entity(employeeDTO).build();
     }
@@ -138,6 +141,7 @@ public class EmployeeResource {
             )
     })
     public Response delete(@Valid DeleteEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+        logger.info("Delete " + reqDTO.toString());
         DeleteSuccessMessage result = this.employeeService.deleteSoftly(reqDTO);
         return Response.ok().entity(result).build();
     }

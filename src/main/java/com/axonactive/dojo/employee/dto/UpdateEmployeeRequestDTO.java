@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class UpdateEmployeeRequestDTO {
     @NotNull(message = "Employee's id is required")
     private Long id;

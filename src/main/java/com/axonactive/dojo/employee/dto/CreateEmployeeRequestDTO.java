@@ -2,10 +2,7 @@ package com.axonactive.dojo.employee.dto;
 
 import com.axonactive.dojo.base.validations.ValueOfEnum;
 import com.axonactive.dojo.enums.Gender;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.jetbrains.annotations.Nullable;
 
 import javax.json.bind.annotation.JsonbDateFormat;
@@ -18,6 +15,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class CreateEmployeeRequestDTO {
     @NotBlank(message = "First name is required")
     private String firstName;
