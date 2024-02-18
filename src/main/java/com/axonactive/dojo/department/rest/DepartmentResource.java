@@ -3,6 +3,7 @@ package com.axonactive.dojo.department.rest;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
+import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.dto.*;
 import com.axonactive.dojo.department.service.DepartmentService;
 import io.swagger.annotations.*;
@@ -43,7 +44,8 @@ public class DepartmentResource {
             )
     })
     public Response findAll() {
-        logger.info("Attempting to get all department list...");
+        logger.info(LoggerMessage.findAllMessage("department"));
+
         List<DepartmentDTO> departmentDTOS = this.departmentService.findAll();
         return Response.ok().entity(departmentDTOS).build();
     }
@@ -64,7 +66,8 @@ public class DepartmentResource {
     })
     public Response findDepartments(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                            @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) {
-        logger.info("Attempting to get all department list with pagination...");
+        logger.info(LoggerMessage.findPaginatedListMessage("department"));
+
         DepartmentListResponseDTO departmentListResponseDTO = this.departmentService.findDepartments(pageNumber, pageSize);
         return Response.ok().entity(departmentListResponseDTO).build();
     }
@@ -85,7 +88,8 @@ public class DepartmentResource {
             )
     })
     public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
-        logger.info("Attempting to get department by id...");
+        logger.info(LoggerMessage.findByIdMessage("department", id));
+
         DepartmentDTO departmentDTO = this.departmentService.findById(id);
         return Response.ok().entity(departmentDTO).build();
     }
@@ -112,7 +116,8 @@ public class DepartmentResource {
             )
     })
     public Response add(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
-        logger.info("Adding " + createDepartmentRequestDTO.toString());
+        logger.info(LoggerMessage.addMessage(createDepartmentRequestDTO.toString()));
+
         DepartmentDTO departmentDTO = this.departmentService.add(createDepartmentRequestDTO);
         return Response.ok().entity(departmentDTO).build();
     }
@@ -139,7 +144,8 @@ public class DepartmentResource {
             )
     })
     public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
-        logger.info("Updating " + updateDepartmentRequestDTO.toString());
+        logger.info(LoggerMessage.updateMessage(updateDepartmentRequestDTO.toString()));
+
         DepartmentDTO departmentDTO = this.departmentService.update(updateDepartmentRequestDTO);
         return Response.ok().entity(departmentDTO).build();
     }
@@ -166,7 +172,8 @@ public class DepartmentResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     public Response delete(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
-        logger.info("Deleting " + deleteDepartmentRequestDTO.toString());
+        logger.info(LoggerMessage.deleteMessage(deleteDepartmentRequestDTO.toString()));
+
         DeleteSuccessMessage result = this.departmentService.deleteSoftly(deleteDepartmentRequestDTO);
         return Response.ok().entity(result).build();
     }

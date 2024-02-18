@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class DeleteEmployeeRequestDTO {
     @NotNull(message = "Employee's id is required")
     private Long id;

@@ -5,9 +5,14 @@ import com.axonactive.dojo.assignment.dto.AssignmentListResponseDTO;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
+import com.axonactive.dojo.base.message.LoggerMessage;
+import com.axonactive.dojo.department.rest.DepartmentResource;
 import com.axonactive.dojo.department_location.dto.*;
 import com.axonactive.dojo.department_location.service.DepartmentLocationService;
+import com.axonactive.dojo.employee.rest.EmployeeResource;
 import io.swagger.annotations.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -20,7 +25,7 @@ import javax.ws.rs.core.Response;
 @Api(tags = "Department locations API")
 public class DepartmentLocationResource {
 
-
+    private static final Logger logger = LogManager.getLogger(DepartmentLocationResource.class);
     @Inject
     private DepartmentLocationService departmentLocationService;
 
@@ -42,6 +47,8 @@ public class DepartmentLocationResource {
     public Response findDepartmentLocationByDepartmentId(@PathParam("departmentId") Long departmentId,
                                                          @DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                                          @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) throws EntityNotFoundException {
+        logger.info(LoggerMessage.findPaginatedListMessage("department location"));
+
         DepartmentLocationListResponseDTO departmentLocationListResponseDTO = this.departmentLocationService.findDepartmentsLocationByDepartmentId(departmentId, pageNumber, pageSize);
         return Response.ok().entity(departmentLocationListResponseDTO).build();
     }
@@ -68,6 +75,8 @@ public class DepartmentLocationResource {
             )
     })
     public Response add(@Valid CreateDepartmentLocationRequestDTO createDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
+        logger.info(LoggerMessage.addMessage(createDepartmentLocationRequestDTO.toString()));
+
         DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.add(createDepartmentLocationRequestDTO);
         return Response.ok().entity(departmentLocationDTO).build();
     }
@@ -94,6 +103,8 @@ public class DepartmentLocationResource {
             )
     })
     public Response update(@Valid UpdateDepartmentLocationRequestDTO updateDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
+        logger.info(LoggerMessage.updateMessage(updateDepartmentLocationRequestDTO.toString()));
+
         DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.update(updateDepartmentLocationRequestDTO);
         return Response.ok().entity(departmentLocationDTO).build();
     }
@@ -120,6 +131,8 @@ public class DepartmentLocationResource {
             )
     })
     public Response delete(@Valid DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO) throws EntityNotFoundException {
+        logger.info(LoggerMessage.deleteMessage(deleteDepartmentLocationRequestDTO.toString()));
+
         DeleteSuccessMessage result = this.departmentLocationService.delete(deleteDepartmentLocationRequestDTO);
         return Response.ok().entity(result).build();
     }

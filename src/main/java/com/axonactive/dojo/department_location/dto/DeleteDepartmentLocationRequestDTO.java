@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class DeleteDepartmentLocationRequestDTO {
     @NotNull(message = "Department location's id is required")
     private Long id;

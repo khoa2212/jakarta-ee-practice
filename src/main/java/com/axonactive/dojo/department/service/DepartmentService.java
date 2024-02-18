@@ -86,7 +86,8 @@ public class DepartmentService {
 
         Optional<Department> optionalDepartment1 = this.departmentDAO.findByDepartmentName(updateDepartmentRequestDTO.getDepartmentName().toLowerCase().trim());
 
-        if(optionalDepartment1.isPresent()) {
+        if(optionalDepartment1.isPresent()
+                && optionalDepartment.get().getId() != updateDepartmentRequestDTO.getId()) {
             throw new BadRequestException(DepartmentMessage.EXISTED_NAME);
         }
 

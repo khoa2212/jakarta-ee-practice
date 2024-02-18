@@ -1,13 +1,17 @@
 package com.axonactive.dojo.relative.rest;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
+import com.axonactive.dojo.employee.rest.EmployeeResource;
 import com.axonactive.dojo.relative.dto.RelativeListResponseDTO;
 import com.axonactive.dojo.relative.service.RelativeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -17,6 +21,8 @@ import javax.ws.rs.core.Response;
 @Path("relatives")
 @Api(tags = "Relatives API")
 public class RelativeResource {
+
+    private static final Logger logger = LogManager.getLogger(RelativeResource.class);
 
     @Inject
     private RelativeService relativeService;
@@ -39,6 +45,8 @@ public class RelativeResource {
     public Response findRelativesByEmployeeId(@PathParam("employeeId") Long employeeId,
                                               @DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                               @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) throws EntityNotFoundException {
+        logger.info(LoggerMessage.findPaginatedListMessage("relative"));
+
         RelativeListResponseDTO relativeListResponseDTO = this.relativeService.findRelativesByEmployeeId(employeeId, pageNumber, pageSize);
         return Response.ok().entity(relativeListResponseDTO).build();
     }

@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class UpdateAssignmentRequestDTO {
 
     @NotNull(message = "Assignment's id is required")

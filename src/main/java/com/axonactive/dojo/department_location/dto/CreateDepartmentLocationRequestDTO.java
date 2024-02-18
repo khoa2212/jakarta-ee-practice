@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class CreateDepartmentLocationRequestDTO {
 
     @NotBlank(message = "Location must not be blank")

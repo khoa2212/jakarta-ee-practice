@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class CreateAssignmentRequestDTO {
 
     @NotNull(message = "Project's id is required")
