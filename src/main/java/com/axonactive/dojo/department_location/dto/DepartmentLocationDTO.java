@@ -1,6 +1,7 @@
 package com.axonactive.dojo.department_location.dto;
 
 
+import com.axonactive.dojo.department.entity.Department;
 import lombok.*;
 
 @Getter
@@ -11,4 +12,5 @@ import lombok.*;
 public class DepartmentLocationDTO {
     private Long id;
     private String location;
+    private Department department;
 }

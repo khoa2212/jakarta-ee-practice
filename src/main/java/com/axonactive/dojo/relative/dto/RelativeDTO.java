@@ -12,8 +12,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 public class RelativeDTO {
+    private Long id;
     private String fullName;
     private Gender gender;
     private String phoneNumber;
     private String relationship;
+    private Employee employee;
 }

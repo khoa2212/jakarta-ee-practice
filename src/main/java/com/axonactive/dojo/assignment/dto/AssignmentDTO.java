@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @Builder
 public class AssignmentDTO {
+    private Long id;
     private int numberOfHour;
     private Employee employee;
     private Project project;
