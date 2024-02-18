@@ -46,4 +46,11 @@ public class DepartmentDAO extends BaseDAO<Department> {
 
         return  Optional.of(l.get(0));
     }
+
+    @Override
+    public List<Department> findAll() {
+        Query query = entityManager.createQuery("select d from Department d where d.status = 'ACTIVE'", Department.class);
+
+        return query.getResultList();
+    }
 }

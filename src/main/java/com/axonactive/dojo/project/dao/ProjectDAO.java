@@ -1,6 +1,7 @@
 package com.axonactive.dojo.project.dao;
 
 import com.axonactive.dojo.base.dao.BaseDAO;
+import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.project.entity.Project;
 
@@ -48,5 +49,12 @@ public class ProjectDAO extends BaseDAO<Project> {
 
         Long count = (Long)query.getSingleResult();
         return count;
+    }
+
+    @Override
+    public List<Project> findAll() {
+        Query query = entityManager.createQuery("select p from Project p where p.status = 'ACTIVE'", Project.class);
+
+        return query.getResultList();
     }
 }
