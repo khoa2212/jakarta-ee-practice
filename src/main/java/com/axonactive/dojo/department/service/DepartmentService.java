@@ -17,6 +17,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Stateless
@@ -87,7 +88,7 @@ public class DepartmentService {
         Optional<Department> optionalDepartment1 = this.departmentDAO.findByDepartmentName(updateDepartmentRequestDTO.getDepartmentName().toLowerCase().trim());
 
         if(optionalDepartment1.isPresent()
-                && optionalDepartment.get().getId() != updateDepartmentRequestDTO.getId()) {
+                && !Objects.equals(optionalDepartment1.get().getId(), updateDepartmentRequestDTO.getId())) {
             throw new BadRequestException(DepartmentMessage.EXISTED_NAME);
         }
 
