@@ -1,2 +1,54 @@
-FROM quay.io/wildfly/wildfly:26.1.3.Final-jdk17
-COPY target/jakartaee-hello-world.war /opt/jboss/wildfly/standalone/deployments/
+# # # # # # # # # #
+# Build WAR file  #
+# # # # # # # # # #
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS buildserver
+
+# Maven env
+ENV PROJECT_DIR /usr/dojo/api
+
+# Create and copy project into maven mount
+WORKDIR $PROJECT_DIR
+COPY . $PROJECT_DIR
+
+# Package the project
+RUN mvn -f $PROJECT_DIR/pom.xml clean package -DskipTests
+
+# # # # # # # # # #
+# Config Wildfly  #
+# # # # # # # # # #
+FROM quay.io/wildfly/wildfly:26.1.3.Final-jdk17 as deployer
+
+# Appserver
+ENV WILDFLY_USER admin
+ENV WILDFLY_PASS andy9999
+ENV DATASOURCE_NAME $DATASOURCE_NAME
+
+# Database
+ENV DB_NAME $DB_NAME
+ENV DB_USER $DB_USER
+ENV DB_PASS $DB_PASS
+ENV DB_URI $DB_URI
+
+ENV POSTGRES_DRIVER postgresql-42.7.1
+
+# Misc
+ENV JBOSS_CLI /opt/jboss/wildfly/bin/jboss-cli.sh
+ENV DEPLOYMENT_DIR /opt/jboss/wildfly/standalone/deployments/
+
+# Copying files to mount
+COPY src/main/resources/$POSTGRES_DRIVER.jar $DEPLOYMENT_DIR
+# COPY target/*.war $DEPLOYMENT_DIR
+
+# Setting up WildFly Admin Console
+RUN echo "=> Adding WildFly administrator"
+RUN /opt/jboss/wildfly/bin/add-user.sh $WILDFLY_USER $WILDFLY_PASS --silent
+
+COPY --from=buildserver /usr/dojo/api/target/*.war $DEPLOYMENT_DIR
+# Exposing HTTP and Admin ports
+EXPOSE 8080 9990
+
+# Run script to add postgres driver to create datasource, then start wildfly
+COPY add-db-driver.sh /opt/scripts/
+USER root
+RUN chmod +x /opt/scripts/add-db-driver.sh
+CMD ["/bin/bash", "/opt/scripts/add-db-driver.sh"]

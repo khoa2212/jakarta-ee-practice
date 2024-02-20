@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=postgres
+    ports:
+      - "5434:5432"
+  api:
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_URI=${DB_URI}
+      - DATASOURCE_NAME=${DATASOURCE_NAME}
+      - WILDFLY_USER=${WILDFLY_USER}
+      - WILDFLY_PASS=${WILDFLY_PASS}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+      - "9991:9990"
+    depends_on:
+      - db
