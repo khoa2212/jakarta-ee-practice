@@ -54,4 +54,54 @@ public class EmployeeDAO extends BaseDAO<Employee> {
         Long count = (Long)query.getSingleResult();
         return count;
     }
+
+    public Long findTotalCountWithNameAndDepartmentId(Long departmentId, String name) {
+        Query query = entityManager
+                .createQuery("select count(e.id) from Employee e where e.department.id = :departmentId " +
+                        "and e.status = 'ACTIVE' " +
+                        "and (lower(concat(e.firstName, ' ', e.lastName)) like :name or lower(concat(e.middleName, ' ', e.firstName, ' ', e.lastName)) like :name)")
+                .setParameter("departmentId", departmentId)
+                .setParameter("name", "%" + name.toLowerCase() + "%");
+
+        Long count = (Long)query.getSingleResult();
+        return count;
+    }
+
+    public Long findTotalCountWithName(String name) {
+        Query query = entityManager
+                .createQuery("select count(e.id) from Employee e where e.status = 'ACTIVE' " +
+                        "and (lower(concat(e.firstName, ' ', e.lastName)) like :name or lower(concat(e.middleName, ' ', e.firstName, ' ', e.lastName)) like :name)")
+                .setParameter("name", "%" + name.toLowerCase() + "%");
+
+        Long count = (Long)query.getSingleResult();
+        return count;
+    }
+
+    public List<Employee> findEmployeesByNameAndDepartmentId(Long departmentId, Integer pageNumber, Integer pageSize, String name) {
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
+
+        return entityManager.createQuery("select e " +
+                        "from Employee e " +
+                        "where e.department.id = :departmentId and e.status = 'ACTIVE' " +
+                        "and (lower(concat(e.firstName, ' ', e.lastName)) like :name or lower(concat(e.middleName, ' ', e.firstName, ' ', e.lastName)) like :name)", Employee.class)
+                .setParameter("departmentId", departmentId)
+                .setParameter("name", "%" + name.toLowerCase() + "%")
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    public List<Employee> findEmployeesByName(Integer pageNumber, Integer pageSize, String name) {
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
+        return entityManager.createQuery("select e " +
+                        "from Employee e " +
+                        "where e.status = 'ACTIVE' " +
+                        "and (lower(concat(e.firstName, ' ', e.lastName)) like :name or lower(concat(e.middleName, ' ', e.firstName, ' ', e.lastName)) like :name)", Employee.class)
+                .setParameter("name", "%" + name.toLowerCase() + "%")
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
 }

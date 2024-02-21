@@ -40,10 +40,11 @@ public class EmployeeResource {
     })
     public Response findEmployees(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                  @DefaultValue("10") @QueryParam("pageSize") Integer pageSize,
-                                 @DefaultValue("0") @QueryParam("departmentId") Long departmentId) throws EntityNotFoundException {
+                                 @DefaultValue("0") @QueryParam("departmentId") Long departmentId,
+                                 @DefaultValue("") @QueryParam("name") String name) throws EntityNotFoundException {
         logger.info(LoggerMessage.findPaginatedListMessage("employee"));
 
-        EmployeeListResponseDTO employeeListResponseDTO = this.employeeService.findEmployees(departmentId, pageNumber, pageSize);
+        EmployeeListResponseDTO employeeListResponseDTO = this.employeeService.findEmployees(departmentId, pageNumber, pageSize, name);
         return Response.ok().entity(employeeListResponseDTO).build();
     }
     @GET

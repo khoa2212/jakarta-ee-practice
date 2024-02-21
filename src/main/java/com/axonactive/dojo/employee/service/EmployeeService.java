@@ -18,6 +18,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Stateless
@@ -32,7 +33,7 @@ public class EmployeeService {
     @Inject
     private EmployeeMapper employeeMapper;
 
-    public EmployeeListResponseDTO findEmployees(Long departmentId, Integer pageNumber, Integer pageSize) throws EntityNotFoundException {
+    public EmployeeListResponseDTO findEmployees(Long departmentId, Integer pageNumber, Integer pageSize, String name) throws EntityNotFoundException {
         List<Employee> employees;
         List<EmployeeDTO> employeeDTOS;
         Long totalCount = 0L;
@@ -44,9 +45,30 @@ public class EmployeeService {
                 throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
             }
 
-            employees = this.employeeDAO.findEmployeesByDepartmentId(departmentId, pageNumber, pageSize);
+            if(name != null && name.length() != 0) {
+                employees = this.employeeDAO.findEmployeesByNameAndDepartmentId(departmentId, pageNumber, pageSize, name);
+                totalCount = this.employeeDAO.findTotalCountWithNameAndDepartmentId(departmentId, name);
+            }
+            else {
+                employees = this.employeeDAO.findEmployeesByDepartmentId(departmentId, pageNumber, pageSize);
+                totalCount = this.employeeDAO.findTotalCountWithDepartmentId(departmentId);
+            }
+
             employeeDTOS = this.employeeMapper.toListDTO(employees);
-            totalCount = this.employeeDAO.findTotalCountWithDepartmentId(departmentId);
+
+            return EmployeeListResponseDTO
+                    .builder()
+                    .employees(employeeDTOS)
+                    .totalCount(totalCount)
+                    .lastPage((totalCount.intValue() / pageSize) + 1)
+                    .build();
+        }
+
+        if(name != null && name.length() != 0) {
+            employees = this.employeeDAO.findEmployeesByName(pageNumber, pageSize, name);
+
+            employeeDTOS = this.employeeMapper.toListDTO(employees);
+            totalCount = this.employeeDAO.findTotalCountWithName(name);
             return EmployeeListResponseDTO
                     .builder()
                     .employees(employeeDTOS)
