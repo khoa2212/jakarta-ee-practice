@@ -36,15 +36,8 @@ public class ProjectResource {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Get all projects list")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get all projects list successfully",
-                    response = ProjectDTO.class, responseContainer = "List"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get all projects list successfully", response = ProjectDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findAll() {
         logger.info(LoggerMessage.findAllMessage("project"));
@@ -57,15 +50,8 @@ public class ProjectResource {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Get all project list with pagination")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get all project list successfully",
-                    response = ProjectListResponseDTO.class, responseContainer = "List"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get all project list successfully", response = ProjectListResponseDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findProjects(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                  @DefaultValue("10") @QueryParam("pageSize") Integer pageSize,
@@ -81,15 +67,8 @@ public class ProjectResource {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Get project by id")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get project successfully",
-                    response = ProjectDTO.class
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get project successfully", response = ProjectDTO.class),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
         logger.info(LoggerMessage.findByIdMessage("project", id));

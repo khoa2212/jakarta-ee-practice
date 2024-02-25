@@ -36,15 +36,8 @@ public class AssignmentResource {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Get all assignment list with pagination")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get all assignment list successfully",
-                    response = AssignmentListResponseDTO.class, responseContainer = "List"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get all assignment list successfully", response = AssignmentListResponseDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findAssignments(@DefaultValue("1") @QueryParam("projectId") Long projectId,
                                     @DefaultValue("0") @QueryParam("employeeId") Long employeeId,
@@ -63,19 +56,9 @@ public class AssignmentResource {
     @ApiOperation(value = "Create new assignment")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Create assignment successfully",
-                    response = AssignmentDTO.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Create assignment successfully", response = AssignmentDTO.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response add(@Valid CreateAssignmentRequestDTO requestDTO) throws BadRequestException, EntityNotFoundException {
         logger.info(LoggerMessage.addMessage(requestDTO.toString()));
@@ -91,19 +74,9 @@ public class AssignmentResource {
     @ApiOperation(value = "Update assignment")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Update assignment successfully",
-                    response = AssignmentDTO.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Update assignment successfully", response = AssignmentDTO.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response update(@Valid UpdateAssignmentRequestDTO requestDTO) throws BadRequestException, EntityNotFoundException {
         logger.info(LoggerMessage.updateMessage(requestDTO.toString()));
@@ -119,19 +92,9 @@ public class AssignmentResource {
     @ApiOperation(value = "Delete assignment")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Delete assignment successfully",
-                    response = DeleteSuccessMessage.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Delete assignment successfully", response = DeleteSuccessMessage.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response update(@Valid DeleteAssignmentRequestDTO requestDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.deleteMessage(requestDTO.toString()));
@@ -147,7 +110,4 @@ public class AssignmentResource {
 //        List<AssignmentDTO> assignmentDTOS = this.assignmentService.findAllAssignmentsByProjectId(projectId);
 //        return Response.ok().entity(assignmentDTOS).build();
 //    }
-
-
-
 }
