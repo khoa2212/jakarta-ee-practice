@@ -97,14 +97,14 @@ public class EmployeeResource {
     @ApiOperation(value = "Delete employee")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Delete employee successfully", response = DeleteSuccessMessage.class),
+            @ApiResponse(code = 204, message = "Delete employee successfully"),
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response delete(@Valid DeleteEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.deleteMessage(reqDTO.toString()));
         DeleteSuccessMessage result = this.employeeService.deleteSoftly(reqDTO);
-        return Response.ok().entity(result).build();
+        return Response.noContent().build();
     }
 
 }

@@ -89,7 +89,7 @@ public class DepartmentLocationResource {
     @ApiOperation(value = "Delete department location")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Delete department location successfully", response = DeleteSuccessMessage.class),
+            @ApiResponse(code = 204, message = "Delete department location successfully"),
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
@@ -97,6 +97,6 @@ public class DepartmentLocationResource {
         logger.info(LoggerMessage.deleteMessage(deleteDepartmentLocationRequestDTO.toString()));
 
         DeleteSuccessMessage result = this.departmentLocationService.delete(deleteDepartmentLocationRequestDTO);
-        return Response.ok().entity(result).build();
+        return Response.noContent().build();
     }
 }
