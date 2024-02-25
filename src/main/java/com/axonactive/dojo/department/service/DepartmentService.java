@@ -34,7 +34,9 @@ public class DepartmentService {
     }
 
     public DepartmentListResponseDTO findDepartments(Integer pageNumber, Integer pageSize) {
-        List<Department> departments = this.departmentDAO.findDepartments(pageNumber, pageSize);
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
+        List<Department> departments = this.departmentDAO.findDepartments(offset, pageSize);
         List<DepartmentDTO> departmentDTOS = this.departmentMapper.toListDTO(departments);
 
         Long count = this.departmentDAO.findTotalCount();
@@ -50,13 +52,11 @@ public class DepartmentService {
     }
 
     public DepartmentDTO findById (Long id) throws EntityNotFoundException {
-        Optional<Department> department = this.departmentDAO.findById(id);
+        Department department = this.departmentDAO
+                .findActiveDepartmentById(id)
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-        if(department.isEmpty() || department.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-        }
-
-        return this.departmentMapper.toDTO(department.get());
+        return this.departmentMapper.toDTO(department);
     }
 
     public DepartmentDTO add(CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
@@ -79,20 +79,16 @@ public class DepartmentService {
     }
 
     public DepartmentDTO update(UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
-        Optional<Department> optionalDepartment = this.departmentDAO.findById(updateDepartmentRequestDTO.getId());
+        Department department = this.departmentDAO
+                .findActiveDepartmentById(updateDepartmentRequestDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-        if(optionalDepartment.isEmpty() || optionalDepartment.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-        }
+        Optional<Department> optionalDepartment = this.departmentDAO.findByDepartmentName(updateDepartmentRequestDTO.getDepartmentName().toLowerCase().trim());
 
-        Optional<Department> optionalDepartment1 = this.departmentDAO.findByDepartmentName(updateDepartmentRequestDTO.getDepartmentName().toLowerCase().trim());
-
-        if(optionalDepartment1.isPresent()
-                && !Objects.equals(optionalDepartment1.get().getId(), updateDepartmentRequestDTO.getId())) {
+        if(optionalDepartment.isPresent()
+                && !Objects.equals(optionalDepartment.get().getId(), updateDepartmentRequestDTO.getId())) {
             throw new BadRequestException(DepartmentMessage.EXISTED_NAME);
         }
-
-        Department department = optionalDepartment.get();
 
         department.setDepartmentName(updateDepartmentRequestDTO.getDepartmentName());
         department.setStartDate(updateDepartmentRequestDTO.getStartDate());
@@ -105,13 +101,9 @@ public class DepartmentService {
 
     public DeleteSuccessMessage deleteSoftly(DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException {
 
-        Optional<Department> optionalDepartment = this.departmentDAO.findById(deleteDepartmentRequestDTO.getId());
-
-        if(optionalDepartment.isEmpty() || optionalDepartment.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-        }
-
-        Department department = optionalDepartment.get();
+        Department department = this.departmentDAO
+                .findActiveDepartmentById(deleteDepartmentRequestDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
         department.setStatus(Status.DELETED);
 

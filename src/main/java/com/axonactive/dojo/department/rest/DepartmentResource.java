@@ -33,15 +33,8 @@ public class DepartmentResource {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Get all department list")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get all department list successfully",
-                    response = DepartmentDTO.class, responseContainer = "List"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get all department list successfully", response = DepartmentDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findAll() {
         logger.info(LoggerMessage.findAllMessage("department"));
@@ -54,15 +47,8 @@ public class DepartmentResource {
     @Produces({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Get all department list with pagination")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get all department list successfully",
-                    response = DepartmentListResponseDTO.class, responseContainer = "List"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get all department list successfully", response = DepartmentListResponseDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findDepartments(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                            @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) {
@@ -77,15 +63,8 @@ public class DepartmentResource {
     @Produces({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Get department by id")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get department successfully",
-                    response = DepartmentDTO.class
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get department successfully", response = DepartmentDTO.class),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
         logger.info(LoggerMessage.findByIdMessage("department", id));
@@ -101,19 +80,9 @@ public class DepartmentResource {
     @ApiOperation(value = "Create new department")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Create department successfully",
-                    response = DepartmentDTO.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Create department successfully", response = DepartmentDTO.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response add(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
         logger.info(LoggerMessage.addMessage(createDepartmentRequestDTO.toString()));
@@ -129,19 +98,9 @@ public class DepartmentResource {
     @ApiOperation(value = "Update department ")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Update department successfully",
-                    response = DepartmentDTO.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Update department successfully", response = DepartmentDTO.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
         logger.info(LoggerMessage.updateMessage(updateDepartmentRequestDTO.toString()));
@@ -155,19 +114,9 @@ public class DepartmentResource {
     @ApiOperation(value = "Delete softly department")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Delete department successfully",
-                    response = DeleteSuccessMessage.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Delete department successfully", response = DeleteSuccessMessage.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})

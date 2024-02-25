@@ -19,9 +19,7 @@ public class DepartmentDAO extends BaseDAO<Department> {
         super(Department.class);
     }
 
-    public List<Department> findDepartments(Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
-
+    public List<Department> findDepartments(Integer offset, Integer pageSize) {
         Query query = entityManager.createQuery("from Department d where d.status = 'ACTIVE' order by lower(d.departmentName)");
         query.setFirstResult(offset);
         query.setMaxResults(pageSize);
@@ -35,16 +33,21 @@ public class DepartmentDAO extends BaseDAO<Department> {
     }
 
     public Optional<Department> findByDepartmentName(String departmentName) {
-        Query query = entityManager.createQuery("select d from Department d where lower(d.departmentName) = :departmentName and d.status = 'ACTIVE'", Department.class);
-        query.setParameter("departmentName", departmentName);
+        Department department = entityManager
+                .createQuery("select d from Department d where lower(d.departmentName) = :departmentName and d.status = 'ACTIVE'", Department.class)
+                .setParameter("departmentName", departmentName)
+                .getResultList().stream().findFirst().orElse(null);
 
-        List<Department> l = query.getResultList();
+        return Optional.ofNullable(department);
+    }
 
-        if(l.isEmpty()) {
-            return Optional.empty();
-        }
+    public Optional<Department> findActiveDepartmentById(Long id) {
+        Department department = entityManager
+                .createQuery("select d from Department d where d.id = :id and d.status = 'ACTIVE'", Department.class)
+                .setParameter("id", id)
+                .getResultList().stream().findFirst().orElse(null);
 
-        return  Optional.of(l.get(0));
+        return Optional.ofNullable(department);
     }
 
     @Override

@@ -20,6 +20,7 @@ import javax.json.JsonObject;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Stateless
 public class EmployeeService {
@@ -38,20 +39,20 @@ public class EmployeeService {
         List<EmployeeDTO> employeeDTOS;
         Long totalCount = 0L;
 
-        if(departmentId > 0) {
-            Optional<Department> department = this.departmentDAO.findById(departmentId);
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
-            if(department.isEmpty() || department.get().getStatus() == Status.DELETED) {
-                throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-            }
+        if(departmentId > 0) {
+            Department department = this.departmentDAO
+                    .findActiveDepartmentById(departmentId)
+                    .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
             if(name != null && name.length() != 0) {
-                employees = this.employeeDAO.findEmployeesByNameAndDepartmentId(departmentId, pageNumber, pageSize, name);
-                totalCount = this.employeeDAO.findTotalCountWithNameAndDepartmentId(departmentId, name);
+                employees = this.employeeDAO.findEmployeesByNameAndDepartmentId(department.getId(), offset, pageSize, name);
+                totalCount = this.employeeDAO.findTotalCountWithNameAndDepartmentId(department.getId(), name);
             }
             else {
-                employees = this.employeeDAO.findEmployeesByDepartmentId(departmentId, pageNumber, pageSize);
-                totalCount = this.employeeDAO.findTotalCountWithDepartmentId(departmentId);
+                employees = this.employeeDAO.findEmployeesByDepartmentId(department.getId(), offset, pageSize);
+                totalCount = this.employeeDAO.findTotalCountWithDepartmentId(department.getId());
             }
 
             employeeDTOS = this.employeeMapper.toListDTO(employees);
@@ -65,7 +66,7 @@ public class EmployeeService {
         }
 
         if(name != null && name.length() != 0) {
-            employees = this.employeeDAO.findEmployeesByName(pageNumber, pageSize, name);
+            employees = this.employeeDAO.findEmployeesByName(offset, pageSize, name);
 
             employeeDTOS = this.employeeMapper.toListDTO(employees);
             totalCount = this.employeeDAO.findTotalCountWithName(name);
@@ -77,7 +78,7 @@ public class EmployeeService {
                     .build();
         }
 
-        employees = this.employeeDAO.findEmployees(pageNumber, pageSize);
+        employees = this.employeeDAO.findEmployees(offset, pageSize);
         employeeDTOS = this.employeeMapper.toListDTO(employees);
         totalCount = this.employeeDAO.findTotalCount();
 
@@ -90,21 +91,17 @@ public class EmployeeService {
     }
 
     public EmployeeDTO findById(Long id) throws EntityNotFoundException {
-        Optional<Employee> optionalEmployee = this.employeeDAO.findById(id);
+        Employee employee = this.employeeDAO
+                .findActiveEmployeeById(id)
+                .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
-        }
-
-        return this.employeeMapper.toDTO(optionalEmployee.get());
+        return this.employeeMapper.toDTO(employee);
     }
 
     public EmployeeDTO add(CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
-        Optional<Department> department = this.departmentDAO.findById(reqDTO.getDepartmentId());
-
-        if(department.isEmpty() || department.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-        }
+        Department department = this.departmentDAO
+                .findActiveDepartmentById(reqDTO.getDepartmentId())
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
         Employee newEmployee = Employee
                 .builder()
@@ -115,7 +112,7 @@ public class EmployeeService {
                 .gender(Gender.valueOf(reqDTO.getGender()))
                 .salary(reqDTO.getSalary())
                 .status(Status.ACTIVE)
-                .department(department.get())
+                .department(department)
                 .build();
 
         Employee employee = employeeDAO.add(newEmployee);
@@ -124,19 +121,13 @@ public class EmployeeService {
     }
 
     public EmployeeDTO update(UpdateEmployeeRequestDTO requestDTO) throws EntityNotFoundException {
-        Optional<Employee> optionalEmployee = this.employeeDAO.findById(requestDTO.getId());
+        Employee employee = this.employeeDAO
+                .findActiveEmployeeById(requestDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
-        }
-
-        Optional<Department> department = this.departmentDAO.findById(requestDTO.getDepartmentId());
-
-        if(department.isEmpty() || department.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-        }
-
-        Employee employee = optionalEmployee.get();
+        Department department = this.departmentDAO
+                .findActiveDepartmentById(requestDTO.getDepartmentId())
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
         employee.setFirstName(requestDTO.getFirstName());
         employee.setLastName(requestDTO.getLastName());
@@ -145,7 +136,7 @@ public class EmployeeService {
         employee.setSalary(requestDTO.getSalary());
         employee.setDateOfBirth(requestDTO.getDateOfBirth());
         employee.setStatus(Status.ACTIVE);
-        employee.setDepartment(department.get());
+        employee.setDepartment(department);
 
         Employee updatedEmployee = this.employeeDAO.update(employee);
 
@@ -153,13 +144,10 @@ public class EmployeeService {
     }
 
     public DeleteSuccessMessage deleteSoftly(DeleteEmployeeRequestDTO requestDTO) throws EntityNotFoundException {
-        Optional<Employee> optionalEmployee = this.employeeDAO.findById(requestDTO.getId());
+        Employee employee = this.employeeDAO
+                .findActiveEmployeeById(requestDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
-        }
-
-        Employee employee = optionalEmployee.get();
         employee.setStatus(Status.DELETED);
 
         this.employeeDAO.update(employee);

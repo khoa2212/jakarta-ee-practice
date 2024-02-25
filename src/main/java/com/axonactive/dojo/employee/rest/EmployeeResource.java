@@ -28,15 +28,8 @@ public class EmployeeResource {
     @Produces({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Get all employee list with pagination")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get all employee list successfully",
-                    response = EmployeeListResponseDTO.class, responseContainer = "List"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get all employee list successfully", response = EmployeeListResponseDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findEmployees(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
                                  @DefaultValue("10") @QueryParam("pageSize") Integer pageSize,
@@ -52,15 +45,8 @@ public class EmployeeResource {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Get employee by id")
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Get employee successfully",
-                    response = EmployeeDTO.class, responseContainer = "List"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Get employee successfully", response = EmployeeDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
         logger.info(LoggerMessage.findByIdMessage("employee", id));
@@ -76,19 +62,9 @@ public class EmployeeResource {
     @ApiOperation(value = "Create new employee")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Create employee successfully",
-                    response = EmployeeDTO.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Create employee successfully", response = EmployeeDTO.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response add(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.addMessage(reqDTO.toString()));
@@ -104,19 +80,9 @@ public class EmployeeResource {
     @ApiOperation(value = "Update employee")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Update employee successfully",
-                    response = EmployeeDTO.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Update employee successfully", response = EmployeeDTO.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response update(@Valid UpdateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.updateMessage(reqDTO.toString()));
@@ -131,19 +97,9 @@ public class EmployeeResource {
     @ApiOperation(value = "Delete employee")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(
-                    code = 200,
-                    message = "Delete employee successfully",
-                    response = DeleteSuccessMessage.class
-            ),
-            @ApiResponse(
-                    code = 400,
-                    message = "Request sent to the server is invalid"
-            ),
-            @ApiResponse(
-                    code = 500,
-                    message = "Request cannot be fulfilled through browser due to server-side problems"
-            )
+            @ApiResponse(code = 200, message = "Delete employee successfully", response = DeleteSuccessMessage.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response delete(@Valid DeleteEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.deleteMessage(reqDTO.toString()));

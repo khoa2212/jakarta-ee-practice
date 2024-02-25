@@ -19,8 +19,7 @@ public class EmployeeDAO extends BaseDAO<Employee> {
         super(Employee.class);
     }
 
-    public List<Employee> findEmployeesByDepartmentId (Long departmentId, Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+    public List<Employee> findEmployeesByDepartmentId (Long departmentId, Integer offset, Integer pageSize) {
 
         return entityManager.createQuery("select e " +
                 "from Employee e " +
@@ -31,8 +30,7 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                 .getResultList();
     }
 
-    public List<Employee> findEmployees (Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+    public List<Employee> findEmployees (Integer offset, Integer pageSize) {
 
         return entityManager.createQuery("select e from Employee e where e.status = 'ACTIVE'", Employee.class)
                 .setFirstResult(offset)
@@ -77,9 +75,7 @@ public class EmployeeDAO extends BaseDAO<Employee> {
         return count;
     }
 
-    public List<Employee> findEmployeesByNameAndDepartmentId(Long departmentId, Integer pageNumber, Integer pageSize, String name) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
-
+    public List<Employee> findEmployeesByNameAndDepartmentId(Long departmentId, Integer offset, Integer pageSize, String name) {
 
         return entityManager.createQuery("select e " +
                         "from Employee e " +
@@ -92,8 +88,7 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                 .getResultList();
     }
 
-    public List<Employee> findEmployeesByName(Integer pageNumber, Integer pageSize, String name) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+    public List<Employee> findEmployeesByName(Integer offset, Integer pageSize, String name) {
 
         return entityManager.createQuery("select e " +
                         "from Employee e " +
@@ -103,5 +98,15 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
                 .getResultList();
+    }
+
+    public Optional<Employee> findActiveEmployeeById(Long id) {
+        Employee employee = entityManager.createQuery("select e from Employee e " +
+                "where e.id = :id " +
+                "and e.status = 'ACTIVE'", Employee.class)
+                .setParameter("id", id)
+                .getResultList().stream().findFirst().orElse(null);
+
+        return Optional.ofNullable(employee);
     }
 }
