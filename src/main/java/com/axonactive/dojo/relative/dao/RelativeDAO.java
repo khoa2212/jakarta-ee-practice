@@ -14,9 +14,7 @@ public class RelativeDAO extends BaseDAO<Relative> {
         super(Relative.class);
     }
 
-    public List<Relative> findRelativesByEmployeeId(Long employeeId, Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
-
+    public List<Relative> findRelativesByEmployeeId(Long employeeId, Integer offset, Integer pageSize) {
         Query query = entityManager.createQuery("select r from Relative r where r.employee.id = :employeeId", Relative.class);
         query.setParameter("employeeId", employeeId);
 

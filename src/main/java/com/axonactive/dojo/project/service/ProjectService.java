@@ -39,16 +39,16 @@ public class ProjectService {
         List<ProjectDTO> projectDTOS;
         Long totalCount = 0L;
 
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
         if(departmentId > 0) {
-            Optional<Department> department = this.departmentDAO.findById(departmentId);
+            Department department = this.departmentDAO
+                    .findActiveDepartmentById(departmentId)
+                    .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-            if(department.isEmpty() || department.get().getStatus() == Status.DELETED) {
-                throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-            }
-
-            projects = this.projectDAO.findProjectsByDepartmentId(departmentId, pageNumber, pageSize);
+            projects = this.projectDAO.findProjectsByDepartmentId(department.getId(), offset, pageSize);
             projectDTOS = this.projectMapper.toListDTO(projects);
-            totalCount = this.projectDAO.findTotalCountWithDepartmentId(departmentId);
+            totalCount = this.projectDAO.findTotalCountWithDepartmentId(department.getId());
             return ProjectListResponseDTO
                     .builder()
                     .projects(projectDTOS)
@@ -57,7 +57,7 @@ public class ProjectService {
                     .build();
         }
 
-        projects = this.projectDAO.findProjects(pageNumber, pageSize);
+        projects = this.projectDAO.findProjects(offset, pageSize);
         projectDTOS = this.projectMapper.toListDTO(projects);
         totalCount = this.projectDAO.findTotalCount();
 
@@ -70,12 +70,8 @@ public class ProjectService {
     }
 
     public ProjectDTO findById(Long id) throws EntityNotFoundException {
-        Optional<Project> optionalProject = this.projectDAO.findById(id);
+        Project project = this.projectDAO.findActiveProjectById(id).orElseThrow(() -> new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT));
 
-        if(optionalProject.isEmpty() || optionalProject.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT);
-        }
-
-        return this.projectMapper.toDTO(optionalProject.get());
+        return this.projectMapper.toDTO(project);
     }
 }

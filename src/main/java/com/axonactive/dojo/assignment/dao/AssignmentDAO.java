@@ -18,9 +18,7 @@ public class AssignmentDAO extends BaseDAO<Assignment> {
         super(Assignment.class);
     }
 
-    public List<Assignment> findAssignmentsByProjectId(Long projectId, Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
-
+    public List<Assignment> findAssignmentsByProjectId(Long projectId, Integer offset, Integer pageSize) {
         Query query = entityManager.createQuery("select a from Assignment a where a.project.id = :projectId", Assignment.class);
         query.setParameter("projectId", projectId);
 
@@ -29,8 +27,7 @@ public class AssignmentDAO extends BaseDAO<Assignment> {
         return query.getResultList();
     }
 
-    public List<Assignment> findAssignmentsByEmployeeId(Long employeeId, Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+    public List<Assignment> findAssignmentsByEmployeeId(Long employeeId, Integer offset, Integer pageSize) {
 
         Query query = entityManager.createQuery("select a from Assignment a where a.employee.id = :employeeId", Assignment.class);
         query.setParameter("employeeId", employeeId);
@@ -48,17 +45,13 @@ public class AssignmentDAO extends BaseDAO<Assignment> {
     }
 
     public Optional<Assignment> findAssignmentByEmployeeIdAndProjectId(Long employeeId, Long projectId) {
-        Query query = entityManager.createQuery("select a from Assignment a where a.project.id = :projectId and a.employee.id = :employeeId", Assignment.class);
-        query.setParameter("projectId", projectId);
-        query.setParameter("employeeId", employeeId);
+        Assignment assignment = entityManager
+                .createQuery("select a from Assignment a where a.project.id = :projectId and a.employee.id = :employeeId", Assignment.class)
+                .setParameter("projectId", projectId)
+                .setParameter("employeeId", employeeId)
+                .getResultList().stream().findFirst().orElse(null);
 
-        List<Assignment> l = query.getResultList();
-
-        if(l.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(l.get(0));
+        return Optional.ofNullable(assignment);
     }
 
     public Long findTotalCountByProjectId(Long projectId) {

@@ -41,16 +41,16 @@ public class AssignmentService {
         List<AssignmentDTO> assignmentDTOS;
         Long totalCount = 0L;
 
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
         if(employeeId > 0) {
 
-            Optional<Employee> optionalEmployee = this.employeeDAO.findById(employeeId);
+            Employee employee = this.employeeDAO
+                    .findActiveEmployeeById(employeeId)
+                    .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-            if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
-                throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
-            }
-
-            assignments = this.assignmentDAO.findAssignmentsByEmployeeId(employeeId, pageNumber, pageSize);
-            totalCount = this.assignmentDAO.findTotalCountByEmployeeId(employeeId);
+            assignments = this.assignmentDAO.findAssignmentsByEmployeeId(employee.getId(), offset, pageSize);
+            totalCount = this.assignmentDAO.findTotalCountByEmployeeId(employee.getId());
             assignmentDTOS = this.assignmentMapper.toListDTO(assignments);
 
             return AssignmentListResponseDTO
@@ -61,14 +61,12 @@ public class AssignmentService {
                     .build();
         }
 
-        Optional<Project> optionalProject = this.projectDAO.findById(projectId);
+        Project project = this.projectDAO
+                .findActiveProjectById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT));
 
-        if(optionalProject.isEmpty() || optionalProject.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT);
-        }
-
-        assignments = this.assignmentDAO.findAssignmentsByProjectId(projectId, pageNumber, pageSize);
-        totalCount = this.assignmentDAO.findTotalCountByProjectId(projectId);
+        assignments = this.assignmentDAO.findAssignmentsByProjectId(project.getId(), offset, pageSize);
+        totalCount = this.assignmentDAO.findTotalCountByProjectId(project.getId());
         assignmentDTOS = this.assignmentMapper.toListDTO(assignments);
 
         return AssignmentListResponseDTO
@@ -80,20 +78,16 @@ public class AssignmentService {
     }
 
     public AssignmentDTO add(CreateAssignmentRequestDTO requestDTO) throws EntityNotFoundException, BadRequestException {
-        Optional<Employee> optionalEmployee = this.employeeDAO.findById(requestDTO.getEmployeeId());
+        Employee employee = this.employeeDAO
+                .findActiveEmployeeById(requestDTO.getEmployeeId())
+                .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
-        }
-
-        Optional<Project> optionalProject = this.projectDAO.findById(requestDTO.getProjectId());
-
-        if(optionalProject.isEmpty() || optionalProject.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT);
-        }
+        Project project = this.projectDAO
+                .findActiveProjectById(requestDTO.getProjectId())
+                .orElseThrow(() -> new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT));
 
         Optional<Assignment> optionalAssignment = this.assignmentDAO
-                .findAssignmentByEmployeeIdAndProjectId(requestDTO.getEmployeeId(), requestDTO.getProjectId());
+                .findAssignmentByEmployeeIdAndProjectId(employee.getId(), project.getId());
 
         if(optionalAssignment.isPresent()) {
             throw new BadRequestException(AssignmentMessage.EXISTED_ASSIGNMENT);
@@ -101,8 +95,8 @@ public class AssignmentService {
 
         Assignment newAssignment = Assignment
                 .builder()
-                .employee(optionalEmployee.get())
-                .project(optionalProject.get())
+                .employee(employee)
+                .project(project)
                 .numberOfHour(requestDTO.getNumberOfHour())
                 .build();
 
@@ -112,67 +106,45 @@ public class AssignmentService {
     }
 
     public AssignmentDTO update(UpdateAssignmentRequestDTO requestDTO) throws EntityNotFoundException, BadRequestException {
-        Optional<Assignment> optionalAssignment = this.assignmentDAO.findById(requestDTO.getId());
+        Assignment assignment = this.assignmentDAO
+                .findById(requestDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException(AssignmentMessage.NOT_FOUND_ASSIGNMENT));
 
-        if (optionalAssignment.isEmpty()) {
-            throw new EntityNotFoundException(AssignmentMessage.NOT_FOUND_ASSIGNMENT);
-        }
+        Project project = this.projectDAO
+                .findActiveProjectById(requestDTO.getProjectId())
+                .orElseThrow(() -> new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT));
 
-        Optional<Employee> optionalEmployee = this.employeeDAO.findById(requestDTO.getEmployeeId());
+        Employee employee = this.employeeDAO
+                .findActiveEmployeeById(requestDTO.getEmployeeId())
+                .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
-        }
+        if(assignment.getEmployee().getId() != employee.getId() ||
+                assignment.getProject().getId() != project.getId()) {
 
-        Optional<Project> optionalProject = this.projectDAO.findById(requestDTO.getProjectId());
+            Optional<Assignment> optionalAssignment = this.assignmentDAO
+                    .findAssignmentByEmployeeIdAndProjectId(employee.getId(), project.getId());
 
-        if(optionalProject.isEmpty() || optionalProject.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT);
-        }
-
-        Assignment assignment = optionalAssignment.get();
-
-        if(assignment.getEmployee().getId() != requestDTO.getEmployeeId() ||
-                assignment.getProject().getId() != requestDTO.getProjectId()) {
-
-            Optional<Assignment> optionalAssignment1 = this.assignmentDAO
-                    .findAssignmentByEmployeeIdAndProjectId(requestDTO.getEmployeeId(), requestDTO.getProjectId());
-
-            if(optionalAssignment1.isPresent()) {
+            if(optionalAssignment.isPresent()) {
                 throw new BadRequestException(AssignmentMessage.EXISTED_ASSIGNMENT);
             }
         }
 
-        assignment.setEmployee(optionalEmployee.get());
-        assignment.setProject(optionalProject.get());
+        assignment.setEmployee(employee);
+        assignment.setProject(project);
         assignment.setNumberOfHour(requestDTO.getNumberOfHour());
 
-        Assignment updatedAssignment = this.assignmentDAO.add(assignment);
+        Assignment updatedAssignment = this.assignmentDAO.update(assignment);
 
         return this.assignmentMapper.toDTO(updatedAssignment);
     }
 
     public DeleteSuccessMessage delete(DeleteAssignmentRequestDTO requestDTO) throws EntityNotFoundException {
-        Optional<Assignment> optionalAssignment = this.assignmentDAO.findById(requestDTO.getId());
+        Assignment assignment = this.assignmentDAO
+                .findById(requestDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException(AssignmentMessage.NOT_FOUND_ASSIGNMENT));
 
-        if (optionalAssignment.isEmpty()) {
-            throw new EntityNotFoundException(AssignmentMessage.NOT_FOUND_ASSIGNMENT);
-        }
-
-        this.assignmentDAO.delete(requestDTO.getId());
+        this.assignmentDAO.delete(assignment.getId());
 
         return AssignmentMessage.deleteSuccessMessage();
     }
-
-//    public List<AssignmentDTO> findAllAssignmentsByProjectId(Long projectId) throws EntityNotFoundException {
-//        Optional<Project> optionalProject = this.projectDAO.findById(projectId);
-//
-//        if(optionalProject.isEmpty() || optionalProject.get().getStatus() == Status.DELETED) {
-//            throw new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT);
-//        }
-//
-//        List<Assignment> assignments = this.assignmentDAO.findAllAssignmentsByProjectId(projectId);
-//
-//        return this.assignmentMapper.toListDTO(assignments);
-//    }
 }

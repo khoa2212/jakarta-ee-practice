@@ -14,9 +14,7 @@ public class DepartmentLocationDAO extends BaseDAO<DepartmentLocation> {
         super(DepartmentLocation.class);
     }
 
-    public List<DepartmentLocation> findDepartmentsLocationByDepartmentId(Long departmentId, Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
-
+    public List<DepartmentLocation> findDepartmentsLocationByDepartmentId(Long departmentId, Integer offset, Integer pageSize) {
         Query query = entityManager.createQuery("select dl from DepartmentLocation dl where dl.department.id = :departmentId", DepartmentLocation.class);
         query.setParameter("departmentId", departmentId);
 
@@ -33,15 +31,11 @@ public class DepartmentLocationDAO extends BaseDAO<DepartmentLocation> {
     }
 
     public Optional<DepartmentLocation> findDepartmentLocationByDepartmentId(String location, Long departmentId) {
-        Query query = entityManager.createQuery("select dl from DepartmentLocation dl where lower(dl.location) = :location and dl.department.id = :departmentId", DepartmentLocation.class);
-        query.setParameter("location", location).setParameter("departmentId", departmentId);
+        DepartmentLocation departmentLocation = entityManager
+                .createQuery("select dl from DepartmentLocation dl where lower(dl.location) = :location and dl.department.id = :departmentId", DepartmentLocation.class)
+                .setParameter("location", location).setParameter("departmentId", departmentId)
+                .getResultList().stream().findFirst().orElse(null);
 
-        List<DepartmentLocation> l = query.getResultList();
-
-        if(l.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(l.get(0));
+        return Optional.ofNullable(departmentLocation);
     }
 }

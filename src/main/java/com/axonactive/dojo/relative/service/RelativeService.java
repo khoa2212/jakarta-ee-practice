@@ -29,14 +29,14 @@ public class RelativeService {
     private RelativeMapper relativeMapper;
 
     public RelativeListResponseDTO findRelativesByEmployeeId(Long employeeId, Integer pageNumber, Integer pageSize) throws EntityNotFoundException {
-        Optional<Employee> optionalEmployee = this.employeeDAO.findById(employeeId);
+        Employee employee = this.employeeDAO
+                .findActiveEmployeeById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-        if(optionalEmployee.isEmpty() || optionalEmployee.get().getStatus() == Status.DELETED) {
-            throw new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE);
-        }
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
-        List<Relative> relatives = this.relativeDAO.findRelativesByEmployeeId(employeeId, pageNumber, pageSize);
-        Long totalCount = this.relativeDAO.findTotalCount(employeeId);
+        List<Relative> relatives = this.relativeDAO.findRelativesByEmployeeId(employee.getId(), offset, pageSize);
+        Long totalCount = this.relativeDAO.findTotalCount(employee.getId());
 
         return RelativeListResponseDTO
                 .builder()

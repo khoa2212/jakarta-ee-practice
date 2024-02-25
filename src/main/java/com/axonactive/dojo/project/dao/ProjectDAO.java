@@ -8,6 +8,7 @@ import com.axonactive.dojo.project.entity.Project;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class ProjectDAO extends BaseDAO<Project> {
@@ -15,9 +16,7 @@ public class ProjectDAO extends BaseDAO<Project> {
         super(Project.class);
     }
 
-    public List<Project> findProjectsByDepartmentId (Long departmentId, Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
-
+    public List<Project> findProjectsByDepartmentId (Long departmentId, Integer offset, Integer pageSize) {
         return entityManager.createQuery("select p " +
                         "from Project p " +
                         "where p.department.id = :departmentId and p.status = 'ACTIVE'", Project.class)
@@ -27,9 +26,7 @@ public class ProjectDAO extends BaseDAO<Project> {
                 .getResultList();
     }
 
-    public List<Project> findProjects (Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
-
+    public List<Project> findProjects (Integer offset, Integer pageSize) {
         return entityManager.createQuery("select p from Project p where p.status = 'ACTIVE'", Project.class)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
@@ -49,6 +46,16 @@ public class ProjectDAO extends BaseDAO<Project> {
 
         Long count = (Long)query.getSingleResult();
         return count;
+    }
+
+    public Optional<Project> findActiveProjectById(Long id) {
+        Project project = entityManager.createQuery("select p from Project p " +
+                        "where p.id = :id " +
+                        "and p.status = 'ACTIVE'", Project.class)
+                .setParameter("id", id)
+                .getResultList().stream().findFirst().orElse(null);
+
+        return Optional.ofNullable(project);
     }
 
     @Override

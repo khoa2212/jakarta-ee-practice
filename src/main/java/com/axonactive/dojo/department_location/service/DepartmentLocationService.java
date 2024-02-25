@@ -37,16 +37,16 @@ public class DepartmentLocationService {
     private DepartmentMapper departmentMapper;
 
     public DepartmentLocationListResponseDTO findDepartmentsLocationByDepartmentId(Long departmentId, Integer pageNumber, Integer pageSize) throws EntityNotFoundException {
-        Optional<Department> department = this.departmentDAO.findById(departmentId);
+        Department department = this.departmentDAO
+                .findActiveDepartmentById(departmentId)
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-        if(department.isEmpty()) {
-            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-        }
+        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
         List<DepartmentLocation> departmentLocations =
-                this.departmentLocationDAO.findDepartmentsLocationByDepartmentId(departmentId, pageNumber, pageSize);
+                this.departmentLocationDAO.findDepartmentsLocationByDepartmentId(department.getId(), offset, pageSize);
 
-        Long totalCount = this.departmentLocationDAO.findTotalCount(departmentId);
+        Long totalCount = this.departmentLocationDAO.findTotalCount(department.getId());
 
         DepartmentLocationListResponseDTO departmentLocationListResponseDTO = DepartmentLocationListResponseDTO
                 .builder()
@@ -59,11 +59,9 @@ public class DepartmentLocationService {
     }
 
     public DepartmentLocationDTO add(CreateDepartmentLocationRequestDTO createDepartmentLocationRequestDTO) throws EntityNotFoundException, BadRequestException {
-        Optional<Department> department = this.departmentDAO.findById(createDepartmentLocationRequestDTO.getDepartmentId());
-
-        if(department.isEmpty()) {
-            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-        }
+        Department department = this.departmentDAO
+                .findActiveDepartmentById(createDepartmentLocationRequestDTO.getDepartmentId())
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
         Optional<DepartmentLocation> optionalDepartmentLocation = this.departmentLocationDAO
                 .findDepartmentLocationByDepartmentId(
@@ -77,7 +75,7 @@ public class DepartmentLocationService {
         DepartmentLocation newDepartmentLocation = DepartmentLocation
                 .builder()
                 .location(createDepartmentLocationRequestDTO.getLocation())
-                .department(department.get())
+                .department(department)
                 .build();
 
         DepartmentLocation departmentLocation = this.departmentLocationDAO.add(newDepartmentLocation);
@@ -86,44 +84,36 @@ public class DepartmentLocationService {
     }
 
     public DepartmentLocationDTO update(UpdateDepartmentLocationRequestDTO updateDepartmentLocationRequestDTO) throws EntityNotFoundException, BadRequestException {
-        Optional<Department> department = this.departmentDAO.findById(updateDepartmentLocationRequestDTO.getDepartmentId());
+        Department department = this.departmentDAO
+                .findActiveDepartmentById(updateDepartmentLocationRequestDTO.getDepartmentId())
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-        if(department.isEmpty()) {
-            throw new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT);
-        }
+        DepartmentLocation departmentLocation = this.departmentLocationDAO
+                .findById(updateDepartmentLocationRequestDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentLocationMessage.NOT_FOUND_LOCATION));
 
-        Optional<DepartmentLocation> optionalDepartmentLocation = this.departmentLocationDAO.findById(updateDepartmentLocationRequestDTO.getId());
-
-        if(optionalDepartmentLocation.isEmpty()) {
-            throw new EntityNotFoundException(DepartmentLocationMessage.NOT_FOUND_LOCATION);
-        }
-
-        Optional<DepartmentLocation> optionalDepartmentLocation1 = this.departmentLocationDAO
+        Optional<DepartmentLocation> optionalDepartmentLocation = this.departmentLocationDAO
                 .findDepartmentLocationByDepartmentId(
                         updateDepartmentLocationRequestDTO.getLocation().trim().toLowerCase(),
                         updateDepartmentLocationRequestDTO.getDepartmentId());
 
-        if(optionalDepartmentLocation1.isPresent()) {
+        if(optionalDepartmentLocation.isPresent() && optionalDepartmentLocation.get().getId() != departmentLocation.getId()) {
             throw new BadRequestException(DepartmentLocationMessage.EXISTED_LOCATION);
         }
 
-        DepartmentLocation departmentLocation = optionalDepartmentLocation.get();
-
         departmentLocation.setLocation(updateDepartmentLocationRequestDTO.getLocation());
-        departmentLocation.setDepartment(department.get());
+        departmentLocation.setDepartment(department);
 
         DepartmentLocation updatedDepartmentLocation = this.departmentLocationDAO.update(departmentLocation);
         return this.departmentLocationMapper.toDTO(updatedDepartmentLocation);
     }
 
     public DeleteSuccessMessage delete(DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO) throws EntityNotFoundException {
-        Optional<DepartmentLocation> optionalDepartmentLocation = this.departmentLocationDAO.findById(deleteDepartmentLocationRequestDTO.getId());
+        DepartmentLocation departmentLocation = this.departmentLocationDAO
+                .findById(deleteDepartmentLocationRequestDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentLocationMessage.NOT_FOUND_LOCATION));
 
-        if(optionalDepartmentLocation.isEmpty()) {
-            throw new EntityNotFoundException(DepartmentLocationMessage.NOT_FOUND_LOCATION);
-        }
-
-        this.departmentLocationDAO.delete(deleteDepartmentLocationRequestDTO.getId());
+        this.departmentLocationDAO.delete(departmentLocation.getId());
 
         return DepartmentLocationMessage.deleteSuccessMessage();
     }

@@ -102,12 +102,4 @@ public class AssignmentResource {
         DeleteSuccessMessage result = this.assignmentService.delete(requestDTO);
         return Response.ok().entity(result).build();
     }
-
-//    @GET
-//    @Path("project/{projectId}")
-//    @Produces({MediaType.APPLICATION_JSON})
-//    public Response findAllAssignmentsByProjectId(@PathParam("projectId") Long projectId) throws EntityNotFoundException {
-//        List<AssignmentDTO> assignmentDTOS = this.assignmentService.findAllAssignmentsByProjectId(projectId);
-//        return Response.ok().entity(assignmentDTOS).build();
-//    }
 }
