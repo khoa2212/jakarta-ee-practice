@@ -11,9 +11,12 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.json.JsonObject;
+import javax.mail.Header;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 @Path("employees")
@@ -23,6 +26,9 @@ public class EmployeeResource {
     private static final Logger logger = LogManager.getLogger(EmployeeResource.class);
     @Inject
     private EmployeeService employeeService;
+
+    @Context
+    private UriInfo uriInfo;
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON })
@@ -62,15 +68,19 @@ public class EmployeeResource {
     @ApiOperation(value = "Create new employee")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Create employee successfully", response = EmployeeDTO.class),
+            @ApiResponse(code = 201, message = "Create employee successfully", response = EmployeeDTO.class),
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response add(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
+    public Response add(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException, URISyntaxException {
         logger.info(LoggerMessage.addMessage(reqDTO.toString()));
 
         EmployeeDTO employeeDTO = this.employeeService.add(reqDTO);
-        return Response.ok(employeeDTO).build();
+
+        String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), employeeDTO.getId());
+
+        return Response.created(new URI(path))
+                .entity(employeeDTO).build();
     }
 
     @PUT
