@@ -19,8 +19,11 @@ import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 @Path("assignments")
@@ -31,6 +34,9 @@ public class AssignmentResource {
 
     @Inject
     private AssignmentService assignmentService;
+
+    @Context
+    private UriInfo uriInfo;
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
@@ -56,7 +62,7 @@ public class AssignmentResource {
     @ApiOperation(value = "Create new assignment")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Create assignment successfully", response = AssignmentDTO.class),
+            @ApiResponse(code = 201, message = "Create assignment successfully", response = AssignmentDTO.class),
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
@@ -64,7 +70,10 @@ public class AssignmentResource {
         logger.info(LoggerMessage.addMessage(requestDTO.toString()));
 
         AssignmentDTO assignmentDTO = this.assignmentService.add(requestDTO);
-        return Response.ok().entity(assignmentDTO).build();
+
+        String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), assignmentDTO.getId());
+
+        return Response.created(URI.create(path)).entity(assignmentDTO).build();
     }
 
     @PUT
@@ -74,7 +83,7 @@ public class AssignmentResource {
     @ApiOperation(value = "Update assignment")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Update assignment successfully", response = AssignmentDTO.class),
+            @ApiResponse(code = 201, message = "Update assignment successfully", response = AssignmentDTO.class),
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
@@ -82,7 +91,9 @@ public class AssignmentResource {
         logger.info(LoggerMessage.updateMessage(requestDTO.toString()));
 
         AssignmentDTO assignmentDTO = this.assignmentService.update(requestDTO);
-        return Response.ok().entity(assignmentDTO).build();
+        String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), assignmentDTO.getId());
+
+        return Response.created(URI.create(path)).entity(assignmentDTO).build();
     }
 
     @DELETE

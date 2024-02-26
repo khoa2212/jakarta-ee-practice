@@ -18,8 +18,11 @@ import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 @Path("department-locations")
 @Api(tags = "Department locations API")
@@ -28,6 +31,9 @@ public class DepartmentLocationResource {
     private static final Logger logger = LogManager.getLogger(DepartmentLocationResource.class);
     @Inject
     private DepartmentLocationService departmentLocationService;
+
+    @Context
+    private UriInfo uriInfo;
 
     @GET
     @Path("department/{departmentId}")
@@ -53,7 +59,7 @@ public class DepartmentLocationResource {
     @ApiOperation(value = "Create new department location")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Create department location successfully", response = DepartmentLocationDTO.class),
+            @ApiResponse(code = 201, message = "Create department location successfully", response = DepartmentLocationDTO.class),
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
@@ -61,7 +67,10 @@ public class DepartmentLocationResource {
         logger.info(LoggerMessage.addMessage(createDepartmentLocationRequestDTO.toString()));
 
         DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.add(createDepartmentLocationRequestDTO);
-        return Response.ok().entity(departmentLocationDTO).build();
+
+        String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), departmentLocationDTO.getId());
+
+        return Response.created(URI.create(path)).entity(departmentLocationDTO).build();
     }
 
     @PUT
@@ -71,7 +80,7 @@ public class DepartmentLocationResource {
     @ApiOperation(value = "Update department location")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Update department location successfully", response = DepartmentLocationDTO.class),
+            @ApiResponse(code = 201, message = "Update department location successfully", response = DepartmentLocationDTO.class),
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
@@ -79,7 +88,10 @@ public class DepartmentLocationResource {
         logger.info(LoggerMessage.updateMessage(updateDepartmentLocationRequestDTO.toString()));
 
         DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.update(updateDepartmentLocationRequestDTO);
-        return Response.ok().entity(departmentLocationDTO).build();
+
+        String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), departmentLocationDTO.getId());
+
+        return Response.created(URI.create(path)).entity(departmentLocationDTO).build();
     }
 
     @DELETE

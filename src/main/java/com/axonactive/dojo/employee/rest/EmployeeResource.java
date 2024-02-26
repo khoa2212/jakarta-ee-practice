@@ -79,8 +79,7 @@ public class EmployeeResource {
 
         String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), employeeDTO.getId());
 
-        return Response.created(new URI(path))
-                .entity(employeeDTO).build();
+        return Response.created(URI.create(path)).entity(employeeDTO).build();
     }
 
     @PUT
@@ -90,14 +89,17 @@ public class EmployeeResource {
     @ApiOperation(value = "Update employee")
     @ApiModelProperty
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Update employee successfully", response = EmployeeDTO.class),
+            @ApiResponse(code = 201, message = "Update employee successfully", response = EmployeeDTO.class),
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response update(@Valid UpdateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.updateMessage(reqDTO.toString()));
+
         EmployeeDTO employeeDTO = this.employeeService.update(reqDTO);
-        return Response.ok().entity(employeeDTO).build();
+        String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), employeeDTO.getId());
+
+        return Response.created(URI.create(path)).entity(employeeDTO).build();
     }
 
     @DELETE
