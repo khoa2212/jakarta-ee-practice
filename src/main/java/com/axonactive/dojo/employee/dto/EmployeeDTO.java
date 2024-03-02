@@ -1,5 +1,6 @@
 package com.axonactive.dojo.employee.dto;
 
+import com.axonactive.dojo.department.dto.DepartmentDTO;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
@@ -23,9 +24,9 @@ public class EmployeeDTO {
     private String firstName;
     private String lastName;
     private String middleName;
-    private Double salary;
+    private double salary;
     private LocalDate dateOfBirth;
     private Gender gender;
     private Status status;
-    private Department department;
+    private DepartmentDTO department;
 }

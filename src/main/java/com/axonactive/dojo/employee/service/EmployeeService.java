@@ -34,19 +34,19 @@ public class EmployeeService {
     @Inject
     private EmployeeMapper employeeMapper;
 
-    public EmployeeListResponseDTO findEmployees(Long departmentId, Integer pageNumber, Integer pageSize, String name) throws EntityNotFoundException {
+    public EmployeeListResponseDTO findEmployees(long departmentId, int pageNumber, int pageSize, String name) throws EntityNotFoundException {
         List<Employee> employees;
         List<EmployeeDTO> employeeDTOS;
-        Long totalCount = 0L;
+        long totalCount = 0L;
 
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+        int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
         if(departmentId > 0) {
             Department department = this.departmentDAO
                     .findActiveDepartmentById(departmentId)
                     .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-            if(name != null && name.length() != 0) {
+            if(name != null && !name.isEmpty()) {
                 employees = this.employeeDAO.findEmployeesByNameAndDepartmentId(department.getId(), offset, pageSize, name);
                 totalCount = this.employeeDAO.findTotalCountWithNameAndDepartmentId(department.getId(), name);
             }
@@ -61,11 +61,11 @@ public class EmployeeService {
                     .builder()
                     .employees(employeeDTOS)
                     .totalCount(totalCount)
-                    .lastPage((totalCount.intValue() / pageSize) + 1)
+                    .lastPage(((int)totalCount / pageSize) + 1)
                     .build();
         }
 
-        if(name != null && name.length() != 0) {
+        if(name != null && !name.isEmpty()) {
             employees = this.employeeDAO.findEmployeesByName(offset, pageSize, name);
 
             employeeDTOS = this.employeeMapper.toListDTO(employees);
@@ -74,7 +74,7 @@ public class EmployeeService {
                     .builder()
                     .employees(employeeDTOS)
                     .totalCount(totalCount)
-                    .lastPage((totalCount.intValue() / pageSize) + 1)
+                    .lastPage(((int)totalCount / pageSize) + 1)
                     .build();
         }
 
@@ -86,11 +86,11 @@ public class EmployeeService {
                 .builder()
                 .employees(employeeDTOS)
                 .totalCount(totalCount)
-                .lastPage((totalCount.intValue() / pageSize) + 1)
+                .lastPage(((int)totalCount / pageSize) + 1)
                 .build();
     }
 
-    public EmployeeDTO findById(Long id) throws EntityNotFoundException {
+    public EmployeeDTO findById(long id) throws EntityNotFoundException {
         Employee employee = this.employeeDAO
                 .findActiveEmployeeById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));

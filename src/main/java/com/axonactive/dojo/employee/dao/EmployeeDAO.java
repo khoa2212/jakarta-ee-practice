@@ -19,91 +19,74 @@ public class EmployeeDAO extends BaseDAO<Employee> {
         super(Employee.class);
     }
 
-    public List<Employee> findEmployeesByDepartmentId (Long departmentId, Integer offset, Integer pageSize) {
+    public List<Employee> findEmployeesByDepartmentId (long departmentId, int offset, int pageSize) {
 
-        return entityManager.createQuery("select e " +
-                "from Employee e " +
-                "where e.department.id = :departmentId and e.status = 'ACTIVE'", Employee.class)
+        return entityManager.createNamedQuery(Employee.FIND_EMPLOYEES_BY_DEPARTMENT_ID, Employee.class)
                 .setParameter("departmentId", departmentId)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
                 .getResultList();
     }
 
-    public List<Employee> findEmployees (Integer offset, Integer pageSize) {
+    public List<Employee> findEmployees (int offset, int pageSize) {
 
-        return entityManager.createQuery("select e from Employee e where e.status = 'ACTIVE'", Employee.class)
+        return entityManager.createNamedQuery(Employee.FIND_EMPLOYEES, Employee.class)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
                 .getResultList();
     }
 
-    public Long findTotalCount() {
-        Query query = entityManager.createQuery("select count(e.id) from Employee e where e.status = 'ACTIVE'");
-        Long count = (Long)query.getSingleResult();
-        return count;
+    public List<Employee> findEmployeesByNameAndDepartmentId(long departmentId, int offset, int pageSize, String name) {
+
+        return entityManager.createNamedQuery(Employee.FIND_EMPLOYEES_BY_NAME_AND_DEPARTMENT_ID, Employee.class)
+                .setParameter("departmentId", departmentId)
+                .setParameter("name", "%" + name.toLowerCase() + "%")
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
-    public Long findTotalCountWithDepartmentId(Long departmentId) {
+    public List<Employee> findEmployeesByName(int offset, int pageSize, String name) {
+
+        return entityManager.createNamedQuery(Employee.FIND_EMPLOYEES_BY_NAME, Employee.class)
+                .setParameter("name", "%" + name.toLowerCase() + "%")
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    public long findTotalCount() {
+        Query query = entityManager.createNamedQuery(Employee.FIND_TOTAL_COUNT);
+        return (long)query.getSingleResult();
+    }
+
+    public long findTotalCountWithDepartmentId(long departmentId) {
         Query query = entityManager
-                .createQuery("select count(e.id) from Employee e where e.department.id = :departmentId and e.status = 'ACTIVE'")
+                .createNamedQuery(Employee.FIND_TOTAL_COUNT_WITH_DEPARTMENT_ID)
                 .setParameter("departmentId", departmentId);
 
-        Long count = (Long)query.getSingleResult();
-        return count;
+        return (long)query.getSingleResult();
     }
 
-    public Long findTotalCountWithNameAndDepartmentId(Long departmentId, String name) {
+    public long findTotalCountWithNameAndDepartmentId(long departmentId, String name) {
         Query query = entityManager
-                .createQuery("select count(e.id) from Employee e where e.department.id = :departmentId " +
-                        "and e.status = 'ACTIVE' " +
-                        "and (lower(concat(e.firstName, ' ', e.lastName)) like :name or lower(concat(e.middleName, ' ', e.firstName, ' ', e.lastName)) like :name)")
+                .createNamedQuery(Employee.FIND_TOTAL_COUNT_WITH_NAME_AND_DEPARTMENT_ID)
                 .setParameter("departmentId", departmentId)
                 .setParameter("name", "%" + name.toLowerCase() + "%");
 
-        Long count = (Long)query.getSingleResult();
-        return count;
+        return (long)query.getSingleResult();
     }
 
-    public Long findTotalCountWithName(String name) {
+    public long findTotalCountWithName(String name) {
         Query query = entityManager
-                .createQuery("select count(e.id) from Employee e where e.status = 'ACTIVE' " +
-                        "and (lower(concat(e.firstName, ' ', e.lastName)) like :name or lower(concat(e.middleName, ' ', e.firstName, ' ', e.lastName)) like :name)")
+                .createNamedQuery(Employee.FIND_TOTAL_COUNT_WITH_NAME)
                 .setParameter("name", "%" + name.toLowerCase() + "%");
 
-        Long count = (Long)query.getSingleResult();
-        return count;
+        return (long)query.getSingleResult();
     }
 
-    public List<Employee> findEmployeesByNameAndDepartmentId(Long departmentId, Integer offset, Integer pageSize, String name) {
-
-        return entityManager.createQuery("select e " +
-                        "from Employee e " +
-                        "where e.department.id = :departmentId and e.status = 'ACTIVE' " +
-                        "and (lower(concat(e.firstName, ' ', e.lastName)) like :name or lower(concat(e.middleName, ' ', e.firstName, ' ', e.lastName)) like :name)", Employee.class)
-                .setParameter("departmentId", departmentId)
-                .setParameter("name", "%" + name.toLowerCase() + "%")
-                .setFirstResult(offset)
-                .setMaxResults(pageSize)
-                .getResultList();
-    }
-
-    public List<Employee> findEmployeesByName(Integer offset, Integer pageSize, String name) {
-
-        return entityManager.createQuery("select e " +
-                        "from Employee e " +
-                        "where e.status = 'ACTIVE' " +
-                        "and (lower(concat(e.firstName, ' ', e.lastName)) like :name or lower(concat(e.middleName, ' ', e.firstName, ' ', e.lastName)) like :name)", Employee.class)
-                .setParameter("name", "%" + name.toLowerCase() + "%")
-                .setFirstResult(offset)
-                .setMaxResults(pageSize)
-                .getResultList();
-    }
-
-    public Optional<Employee> findActiveEmployeeById(Long id) {
-        Employee employee = entityManager.createQuery("select e from Employee e " +
-                "where e.id = :id " +
-                "and e.status = 'ACTIVE'", Employee.class)
+    public Optional<Employee> findActiveEmployeeById(long id) {
+        Employee employee = entityManager.createNamedQuery(Employee.FIND_ACTIVE_EMPLOYEE_BY_ID, Employee.class)
                 .setParameter("id", id)
                 .getResultList().stream().findFirst().orElse(null);
 

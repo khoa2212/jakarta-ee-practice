@@ -30,8 +30,7 @@ public class CreateEmployeeRequestDTO {
     @Nullable
     private String middleName;
 
-    @Nullable
-    private Double salary;
+    private double salary;
 
     @NotNull(message = "Date of birth is required")
     @JsonbDateFormat("yyyy-MM-dd")
