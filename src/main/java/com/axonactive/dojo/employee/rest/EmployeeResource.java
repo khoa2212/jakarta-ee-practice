@@ -54,10 +54,10 @@ public class EmployeeResource {
             @ApiResponse(code = 200, message = "Get employee successfully", response = EmployeeDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response findById(@PathParam("id") long id) throws EntityNotFoundException {
+    public Response findActiveEmployeeById(@PathParam("id") long id) throws EntityNotFoundException {
         logger.info(LoggerMessage.findByIdMessage("employee", id));
 
-        EmployeeDTO employeeDTO = this.employeeService.findById(id);
+        EmployeeDTO employeeDTO = this.employeeService.findActiveEmployeeById(id);
         return Response.ok().entity(employeeDTO).build();
     }
 

@@ -36,12 +36,12 @@ public class AssignmentService {
     @Inject
     private EmployeeDAO employeeDAO;
 
-    public AssignmentListResponseDTO findAssignments(Long projectId, Long employeeId, Integer pageNumber, Integer pageSize) throws EntityNotFoundException {
+    public AssignmentListResponseDTO findAssignments(long projectId, long employeeId, int pageNumber, int pageSize) throws EntityNotFoundException {
         List<Assignment> assignments;
         List<AssignmentDTO> assignmentDTOS;
-        Long totalCount = 0L;
+        long totalCount = 0L;
 
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+        int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
         if(employeeId > 0) {
 
@@ -57,7 +57,7 @@ public class AssignmentService {
                     .builder()
                     .assignments(assignmentDTOS)
                     .totalCount(totalCount)
-                    .lastPage((totalCount.intValue() / pageSize) + 1)
+                    .lastPage(((int)totalCount / pageSize) + 1)
                     .build();
         }
 
@@ -73,7 +73,7 @@ public class AssignmentService {
                 .builder()
                 .assignments(assignmentDTOS)
                 .totalCount(totalCount)
-                .lastPage((totalCount.intValue() / pageSize) + 1)
+                .lastPage(((int)totalCount / pageSize) + 1)
                 .build();
     }
 

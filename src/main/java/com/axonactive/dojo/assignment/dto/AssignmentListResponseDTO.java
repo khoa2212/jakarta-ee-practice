@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 public class AssignmentListResponseDTO {
     private List<AssignmentDTO> assignments;
-    private Long totalCount;
-    private Integer lastPage;
+    private long totalCount;
+    private int lastPage;
 }

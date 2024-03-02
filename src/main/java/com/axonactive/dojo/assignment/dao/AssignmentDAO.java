@@ -18,53 +18,39 @@ public class AssignmentDAO extends BaseDAO<Assignment> {
         super(Assignment.class);
     }
 
-    public List<Assignment> findAssignmentsByProjectId(Long projectId, Integer offset, Integer pageSize) {
-        Query query = entityManager.createQuery("select a from Assignment a where a.project.id = :projectId", Assignment.class);
-        query.setParameter("projectId", projectId);
-
-        query.setFirstResult(offset);
-        query.setMaxResults(pageSize);
-        return query.getResultList();
+    public List<Assignment> findAssignmentsByProjectId(long projectId, int offset, int pageSize) {
+        return entityManager.createNamedQuery(Assignment.FIND_ASSIGNMENTS_BY_PROJECT_ID, Assignment.class)
+                .setParameter("projectId", projectId)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
-    public List<Assignment> findAssignmentsByEmployeeId(Long employeeId, Integer offset, Integer pageSize) {
-
-        Query query = entityManager.createQuery("select a from Assignment a where a.employee.id = :employeeId", Assignment.class);
-        query.setParameter("employeeId", employeeId);
-
-        query.setFirstResult(offset);
-        query.setMaxResults(pageSize);
-        return query.getResultList();
+    public List<Assignment> findAssignmentsByEmployeeId(long employeeId, int offset, int pageSize) {
+        return entityManager.createNamedQuery(Assignment.FIND_ASSIGNMENTS_BY_EMPLOYEE_ID, Assignment.class)
+                .setParameter("employeeId", employeeId)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
-    public List<Assignment> findAllAssignmentsByProjectId(Long projectId){
-        Query query = entityManager.createQuery("select a from Assignment a where a.project.id = :projectId", Assignment.class);
-        query.setParameter("projectId", projectId);
-
-        return query.getResultList();
-    }
-
-    public Optional<Assignment> findAssignmentByEmployeeIdAndProjectId(Long employeeId, Long projectId) {
-        Assignment assignment = entityManager
-                .createQuery("select a from Assignment a where a.project.id = :projectId and a.employee.id = :employeeId", Assignment.class)
+    public Optional<Assignment> findAssignmentByEmployeeIdAndProjectId(long employeeId, long projectId) {
+        return entityManager
+                .createNamedQuery(Assignment.FIND_ASSIGNMENTS_BY_EMPLOYEE_ID_AND_PROJECT_ID, Assignment.class)
                 .setParameter("projectId", projectId)
                 .setParameter("employeeId", employeeId)
-                .getResultList().stream().findFirst().orElse(null);
-
-        return Optional.ofNullable(assignment);
+                .getResultList().stream().findFirst();
     }
 
-    public Long findTotalCountByProjectId(Long projectId) {
-        Query query = entityManager.createQuery("select count(a.id) from Assignment a where a.project.id = :projectId");
+    public long findTotalCountByProjectId(long projectId) {
+        Query query = entityManager.createNamedQuery(Assignment.FIND_TOTAL_COUNT_BY_PROJECT_ID);
         query.setParameter("projectId", projectId);
-        Long count = (Long)query.getSingleResult();
-        return count;
+        return (long)query.getSingleResult();
     }
 
-    public Long findTotalCountByEmployeeId(Long employeeId) {
-        Query query = entityManager.createQuery("select count(a.id) from Assignment a where a.employee.id = :employeeId");
+    public long findTotalCountByEmployeeId(long employeeId) {
+        Query query = entityManager.createNamedQuery(Assignment.FIND_TOTAL_COUNT_BY_EMPLOYEE_ID);
         query.setParameter("employeeId", employeeId);
-        Long count = (Long)query.getSingleResult();
-        return count;
+        return (long)query.getSingleResult();
     }
 }

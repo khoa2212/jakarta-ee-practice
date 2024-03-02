@@ -13,14 +13,14 @@ import javax.validation.constraints.NotNull;
 public class UpdateAssignmentRequestDTO {
 
     @NotNull(message = "Assignment's id is required")
-    private Long id;
+    private long id;
 
     @NotNull(message = "Project's id is required")
-    private Long projectId;
+    private long projectId;
 
     @NotNull(message = "Employee's id is required")
-    private Long employeeId;
+    private long employeeId;
 
     @NotNull(message = "Number of hour is required")
-    private Integer numberOfHour;
+    private int numberOfHour;
 }

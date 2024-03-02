@@ -12,5 +12,5 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class DeleteAssignmentRequestDTO {
     @NotNull(message = "Assignment's id is required")
-    private Long id;
+    private long id;
 }

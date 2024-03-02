@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @Builder
 public class AssignmentDTO {
-    private Long id;
+    private long id;
     private int numberOfHour;
     private EmployeeDTO employee;
     private ProjectDTO project;

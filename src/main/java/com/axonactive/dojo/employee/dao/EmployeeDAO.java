@@ -47,7 +47,6 @@ public class EmployeeDAO extends BaseDAO<Employee> {
     }
 
     public List<Employee> findEmployeesByName(int offset, int pageSize, String name) {
-
         return entityManager.createNamedQuery(Employee.FIND_EMPLOYEES_BY_NAME, Employee.class)
                 .setParameter("name", "%" + name.toLowerCase() + "%")
                 .setFirstResult(offset)
@@ -86,10 +85,8 @@ public class EmployeeDAO extends BaseDAO<Employee> {
     }
 
     public Optional<Employee> findActiveEmployeeById(long id) {
-        Employee employee = entityManager.createNamedQuery(Employee.FIND_ACTIVE_EMPLOYEE_BY_ID, Employee.class)
+        return entityManager.createNamedQuery(Employee.FIND_ACTIVE_EMPLOYEE_BY_ID, Employee.class)
                 .setParameter("id", id)
-                .getResultList().stream().findFirst().orElse(null);
-
-        return Optional.ofNullable(employee);
+                .getResultList().stream().findFirst();
     }
 }

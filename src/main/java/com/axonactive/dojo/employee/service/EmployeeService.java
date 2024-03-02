@@ -90,7 +90,7 @@ public class EmployeeService {
                 .build();
     }
 
-    public EmployeeDTO findById(long id) throws EntityNotFoundException {
+    public EmployeeDTO findActiveEmployeeById(long id) throws EntityNotFoundException {
         Employee employee = this.employeeDAO
                 .findActiveEmployeeById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
