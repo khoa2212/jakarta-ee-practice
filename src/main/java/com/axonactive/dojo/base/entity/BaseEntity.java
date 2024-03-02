@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    protected long id;
 
     @CreationTimestamp
     protected LocalDateTime createdAt;

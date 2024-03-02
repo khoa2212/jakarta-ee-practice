@@ -23,7 +23,6 @@ public abstract class BaseDAO<T extends BaseEntity> {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<T> q = cb.createQuery(entityClass);
-        Root<T> c = q.from(entityClass);
 
         return entityManager.createQuery(q).getResultList();
     }

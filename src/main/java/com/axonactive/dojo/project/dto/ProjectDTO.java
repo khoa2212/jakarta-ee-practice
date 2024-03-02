@@ -13,5 +13,5 @@ public class ProjectDTO {
     private Long id;
     private String projectName;
     private String area;
-    private Department department;
+    private DepartmentDTO department;
 }

@@ -1,6 +1,8 @@
 package com.axonactive.dojo.assignment.dto;
 
+import com.axonactive.dojo.employee.dto.EmployeeDTO;
 import com.axonactive.dojo.employee.entity.Employee;
+import com.axonactive.dojo.project.dto.ProjectDTO;
 import com.axonactive.dojo.project.entity.Project;
 import lombok.*;
 
@@ -15,6 +17,6 @@ import javax.persistence.ManyToOne;
 public class AssignmentDTO {
     private Long id;
     private int numberOfHour;
-    private Employee employee;
-    private Project project;
+    private EmployeeDTO employee;
+    private ProjectDTO project;
 }

@@ -33,15 +33,15 @@ public class DepartmentService {
         return this.departmentMapper.toListDTO(departments);
     }
 
-    public DepartmentListResponseDTO findDepartments(Integer pageNumber, Integer pageSize) {
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+    public DepartmentListResponseDTO findDepartments(int pageNumber, int pageSize) {
+        int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
         List<Department> departments = this.departmentDAO.findDepartments(offset, pageSize);
         List<DepartmentDTO> departmentDTOS = this.departmentMapper.toListDTO(departments);
 
-        Long count = this.departmentDAO.findTotalCount();
+        long count = this.departmentDAO.findTotalCount();
 
-        Integer lastPage = (count.intValue() / pageSize) + 1;
+        int lastPage = ((int)count/ pageSize) + 1;
         DepartmentListResponseDTO departmentListResponseDTO = DepartmentListResponseDTO
                                                                         .builder()
                                                                         .departments(departmentDTOS)
@@ -51,7 +51,7 @@ public class DepartmentService {
         return departmentListResponseDTO;
     }
 
-    public DepartmentDTO findById (Long id) throws EntityNotFoundException {
+    public DepartmentDTO findById (long id) throws EntityNotFoundException {
         Department department = this.departmentDAO
                 .findActiveDepartmentById(id)
                 .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));

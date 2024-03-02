@@ -2,13 +2,19 @@ package com.axonactive.dojo.department.dao;
 
 import com.axonactive.dojo.base.dao.BaseDAO;
 import com.axonactive.dojo.department.entity.Department;
+import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.entity.Project;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Root;
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -19,41 +25,61 @@ public class DepartmentDAO extends BaseDAO<Department> {
         super(Department.class);
     }
 
-    public List<Department> findDepartments(Integer offset, Integer pageSize) {
-        Query query = entityManager.createQuery("from Department d where d.status = 'ACTIVE' order by lower(d.departmentName)");
-        query.setFirstResult(offset);
-        query.setMaxResults(pageSize);
-        return query.getResultList();
+    public List<Department> findDepartments(int offset, int pageSize) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Department> query = cb.createQuery(Department.class);
+        Root<Department> root = query.from(Department.class);
+        query.select(root);
+        query.where(cb.equal(root.get("status"), Status.ACTIVE));
+        List<Order> orderList = new ArrayList<>(List.of(cb.asc(root.get("departmentName"))));
+        query.orderBy(orderList);
+
+        return entityManager.createQuery(query)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
-    public Long findTotalCount() {
-        Query query = entityManager.createQuery("select count(d.id) from Department d where d.status = 'ACTIVE'");
-        Long count = (Long)query.getSingleResult();
-        return count;
+    public long findTotalCount() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Department> root = query.from(Department.class);
+        query.select(cb.count(root));
+        query.where(cb.equal(root.get("status"), Status.ACTIVE));
+
+        return entityManager.createQuery(query).getSingleResult();
     }
 
     public Optional<Department> findByDepartmentName(String departmentName) {
-        Department department = entityManager
-                .createQuery("select d from Department d where lower(d.departmentName) = :departmentName and d.status = 'ACTIVE'", Department.class)
-                .setParameter("departmentName", departmentName)
-                .getResultList().stream().findFirst().orElse(null);
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Department> query = cb.createQuery(Department.class);
+        Root<Department> root = query.from(Department.class);
+        query.select(root);
+        query.where(cb.equal(root.get("status"), Status.ACTIVE), cb.equal(root.get("departmentName"), departmentName));
 
-        return Optional.ofNullable(department);
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
-    public Optional<Department> findActiveDepartmentById(Long id) {
-        Department department = entityManager
-                .createQuery("select d from Department d where d.id = :id and d.status = 'ACTIVE'", Department.class)
-                .setParameter("id", id)
-                .getResultList().stream().findFirst().orElse(null);
+    public Optional<Department> findActiveDepartmentById(long id) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Department> query = cb.createQuery(Department.class);
+        Root<Department> root = query.from(Department.class);
+        query.select(root);
+        query.where(cb.equal(root.get("status"), Status.ACTIVE), cb.equal(root.get("id"), id));
 
-        return Optional.ofNullable(department);
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
     @Override
     public List<Department> findAll() {
-        Query query = entityManager.createQuery("select d from Department d where d.status = 'ACTIVE'", Department.class);
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Department> query = cb.createQuery(Department.class);
+        Root<Department> root = query.from(Department.class);
+        query.select(root);
+        query.where(cb.equal(root.get("status"), Status.ACTIVE));
+        List<Order> orderList = new ArrayList<>(List.of(cb.asc(root.get("departmentName"))));
+        query.orderBy(orderList);
 
-        return query.getResultList();
+        return entityManager.createQuery(query).getResultList();
     }
 }

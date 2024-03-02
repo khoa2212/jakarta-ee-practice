@@ -37,9 +37,9 @@ public class EmployeeResource {
             @ApiResponse(code = 200, message = "Get all employee list successfully", response = EmployeeListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response findEmployees(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
-                                 @DefaultValue("10") @QueryParam("pageSize") Integer pageSize,
-                                 @DefaultValue("0") @QueryParam("departmentId") Long departmentId,
+    public Response findEmployees(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+                                 @DefaultValue("10") @QueryParam("pageSize") int pageSize,
+                                 @DefaultValue("0") @QueryParam("departmentId") long departmentId,
                                  @DefaultValue("") @QueryParam("name") String name) throws EntityNotFoundException {
         logger.info(LoggerMessage.findPaginatedListMessage("employee"));
 
@@ -54,7 +54,7 @@ public class EmployeeResource {
             @ApiResponse(code = 200, message = "Get employee successfully", response = EmployeeDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
+    public Response findById(@PathParam("id") long id) throws EntityNotFoundException {
         logger.info(LoggerMessage.findByIdMessage("employee", id));
 
         EmployeeDTO employeeDTO = this.employeeService.findById(id);

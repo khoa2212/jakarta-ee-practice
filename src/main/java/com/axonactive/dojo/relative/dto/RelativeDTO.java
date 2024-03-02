@@ -1,5 +1,6 @@
 package com.axonactive.dojo.relative.dto;
 
+import com.axonactive.dojo.employee.dto.EmployeeDTO;
 import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.enums.Gender;
 import lombok.*;
@@ -17,5 +18,5 @@ public class RelativeDTO {
     private Gender gender;
     private String phoneNumber;
     private String relationship;
-    private Employee employee;
+    private EmployeeDTO employee;
 }
