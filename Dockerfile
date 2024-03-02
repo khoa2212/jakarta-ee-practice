@@ -4,7 +4,7 @@
 FROM maven:3.9.6-eclipse-temurin-17-alpine AS buildserver
 
 # Maven env
-ENV PROJECT_DIR /usr/dojo/api
+ENV PROJECT_DIR /usr/agilecourse/api
 
 # Create and copy project into maven mount
 WORKDIR $PROJECT_DIR
@@ -20,14 +20,14 @@ FROM quay.io/wildfly/wildfly:26.1.3.Final-jdk17 as deployer
 
 # Appserver
 ENV WILDFLY_USER admin
-ENV WILDFLY_PASS andy9999
-ENV DATASOURCE_NAME $DATASOURCE_NAME
+ENV WILDFLY_PASS Aavn@123
+ENV DATASOURCE_NAME Postgres
 
 # Database
-ENV DB_NAME $DB_NAME
-ENV DB_USER $DB_USER
-ENV DB_PASS $DB_PASS
-ENV DB_URI $DB_URI
+ENV DB_NAME postgres
+ENV DB_USER vamos
+ENV DB_PASS Vamos123!@#
+ENV DB_URI db:5432
 
 ENV POSTGRES_DRIVER postgresql-42.7.1
 
@@ -43,7 +43,7 @@ COPY src/main/resources/$POSTGRES_DRIVER.jar $DEPLOYMENT_DIR
 RUN echo "=> Adding WildFly administrator"
 RUN /opt/jboss/wildfly/bin/add-user.sh $WILDFLY_USER $WILDFLY_PASS --silent
 
-COPY --from=buildserver /usr/dojo/api/target/*.war $DEPLOYMENT_DIR
+COPY --from=buildserver /usr/agilecourse/api/target/*.war $DEPLOYMENT_DIR
 # Exposing HTTP and Admin ports
 EXPOSE 8080 9990
 
