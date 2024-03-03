@@ -10,6 +10,7 @@ import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.mail.Header;
@@ -117,6 +118,7 @@ public class EmployeeResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
+    @RolesAllowed({"ADMIN"})
     public Response delete(@Valid DeleteEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.deleteMessage(reqDTO.toString()));
         DeleteSuccessMessage result = this.employeeService.deleteSoftly(reqDTO);

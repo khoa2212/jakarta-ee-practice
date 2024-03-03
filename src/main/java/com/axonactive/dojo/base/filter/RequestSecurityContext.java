@@ -17,6 +17,7 @@ public class RequestSecurityContext implements SecurityContext {
 
     @Override
     public boolean isUserInRole(String s) {
+        System.out.println("CHECK ROLE");
         return payload.getRole().toString().trim().equals(s);
     }
 

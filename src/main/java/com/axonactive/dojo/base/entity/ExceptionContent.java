@@ -3,15 +3,16 @@ package com.axonactive.dojo.base.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.json.JsonArrayBuilder;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ExceptionContent {
     private boolean success;
     private int statusCode;
