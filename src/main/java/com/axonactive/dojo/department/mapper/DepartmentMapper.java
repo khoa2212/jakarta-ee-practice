@@ -10,5 +10,4 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "cdi")
 public interface DepartmentMapper extends BaseMapper<DepartmentDTO, Department> {
 
-//    Department convertCreateRequestToEntity(CreateDepartmentRequestDTO createDepartmentRequestDTO);
 }

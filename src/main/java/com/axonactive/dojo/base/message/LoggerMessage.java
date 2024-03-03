@@ -1,8 +1,9 @@
 package com.axonactive.dojo.base.message;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoggerMessage {
     public static String findPaginatedListMessage(String info) {
         return String.format("Attempting to find all %s list with pagination", info);
