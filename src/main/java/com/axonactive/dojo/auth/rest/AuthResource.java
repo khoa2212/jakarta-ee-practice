@@ -1,8 +1,6 @@
 package com.axonactive.dojo.auth.rest;
 
-import com.axonactive.dojo.auth.dto.SignupRequestDTO;
-import com.axonactive.dojo.auth.dto.SignupResponseDTO;
-import com.axonactive.dojo.auth.dto.VerifyTokeRequestDTO;
+import com.axonactive.dojo.auth.dto.*;
 import com.axonactive.dojo.auth.service.AuthService;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
@@ -30,6 +28,22 @@ public class AuthResource {
 
     @Inject
     private AuthService authService;
+
+    @POST
+    @Path("login")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Signup")
+    @ApiModelProperty
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Signup successfully", response = SignupResponseDTO.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+    })
+    public Response login(@Valid LoginRequestDTO requestDTO) throws BadRequestException {
+        LoginResponseDTO responseDTO = authService.login(requestDTO);
+        return Response.ok().entity(responseDTO).build();
+    }
 
     @POST
     @Path("signup")

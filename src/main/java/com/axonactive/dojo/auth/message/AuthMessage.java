@@ -10,4 +10,6 @@ public class AuthMessage {
     public static final String EXISTED_EMAIL = "This user's email is already existed";
 
     public static final String PASSWORDS_MUST_MATCH = "Passwords must be matched";
+
+    public static final String PASSWORD_OR_EMAIL_IS_NOT_CORRECT = "Password or email is not correct";
 }

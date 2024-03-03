@@ -29,9 +29,46 @@ public class AuthService {
     @Inject
     private JwtService jwtService;
 
-    public LoginResponseDTO login(LoginRequestDTO requestDTO) {
+    public LoginResponseDTO login(LoginRequestDTO requestDTO) throws BadRequestException {
+        User user = authDAO
+                .findActiveUserByEmail(requestDTO.getEmail())
+                .orElseThrow(() -> new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT));
 
-        return LoginResponseDTO.builder().build();
+        boolean isValidPassword = BCrypt.checkpw(requestDTO.getPassword(), user.getPassword());
+
+        if(!isValidPassword) {
+            throw new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT);
+        }
+
+
+
+        String accessToken = jwtService.generateToken(TokenPayload
+                .builder()
+                .tokenType(TokenType.ACCESS_TOKEN)
+                .displayName(user.getDisplayName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build());
+
+        String refreshToken = jwtService.generateToken(TokenPayload
+                .builder()
+                .tokenType(TokenType.REFRESH_TOKEN)
+                .displayName(user.getDisplayName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build());
+
+        user.setRefreshToken(refreshToken);
+
+        authDAO.update(user);
+
+        return LoginResponseDTO
+                .builder()
+                .displayName(user.getDisplayName())
+                .email(user.getEmail())
+                .accessToken(accessToken)
+                .refreshToken(user.getRefreshToken())
+                .build();
     }
 
     public SignupResponseDTO signup(SignupRequestDTO requestDTO) throws BadRequestException {
