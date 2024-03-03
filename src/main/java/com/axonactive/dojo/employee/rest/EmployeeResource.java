@@ -1,6 +1,7 @@
 package com.axonactive.dojo.employee.rest;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.filter.Secure;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.employee.dto.*;
@@ -72,6 +73,7 @@ public class EmployeeResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
     public Response add(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException, URISyntaxException {
         logger.info(LoggerMessage.addMessage(reqDTO.toString()));
 
@@ -93,6 +95,7 @@ public class EmployeeResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
     public Response update(@Valid UpdateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.updateMessage(reqDTO.toString()));
 
@@ -113,6 +116,7 @@ public class EmployeeResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
     public Response delete(@Valid DeleteEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.deleteMessage(reqDTO.toString()));
         DeleteSuccessMessage result = this.employeeService.deleteSoftly(reqDTO);
