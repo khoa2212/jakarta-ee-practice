@@ -5,6 +5,8 @@ import com.axonactive.dojo.auth.dto.*;
 import com.axonactive.dojo.auth.message.AuthMessage;
 import com.axonactive.dojo.base.dao.BaseDAO;
 import com.axonactive.dojo.base.exception.BadRequestException;
+import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.exception.UnauthorizedException;
 import com.axonactive.dojo.base.jwt.payload.TokenPayload;
 import com.axonactive.dojo.base.jwt.service.JwtService;
 import com.axonactive.dojo.enums.Role;
@@ -72,8 +74,15 @@ public class AuthService {
                 .build();
     }
 
-    public void verify(VerifyRequestDTO requestDTO) {
+    public void verify(VerifyTokeRequestDTO requestDTO) throws UnauthorizedException, EntityNotFoundException {
+        TokenPayload payload = jwtService.verifyToken(requestDTO.getVerifiedToken(), TokenType.VERIFY_TOKEN);
 
+        User user = authDAO.findUserByEmail(payload.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException(AuthMessage.NOT_FOUND_USER));
+
+        user.setStatus(Status.ACTIVE);
+
+        authDAO.update(user);
     }
 
     public RenewAccessTokenResponseDTO renew(RenewAccessTokenRequestDTO requestDTO) {
