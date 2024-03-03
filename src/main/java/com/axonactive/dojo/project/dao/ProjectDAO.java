@@ -3,10 +3,15 @@ package com.axonactive.dojo.project.dao;
 import com.axonactive.dojo.base.dao.BaseDAO;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.employee.entity.Employee;
+import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.entity.Project;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,52 +21,80 @@ public class ProjectDAO extends BaseDAO<Project> {
         super(Project.class);
     }
 
-    public List<Project> findProjectsByDepartmentId (Long departmentId, Integer offset, Integer pageSize) {
-        return entityManager.createQuery("select p " +
-                        "from Project p " +
-                        "where p.department.id = :departmentId and p.status = 'ACTIVE'", Project.class)
-                .setParameter("departmentId", departmentId)
+    public List<Project> findProjectsByDepartmentId (long departmentId, int offset, int pageSize) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Project> query = cb.createQuery(Project.class);
+        Root<Project> root = query.from(Project.class);
+        root.fetch("department", JoinType.LEFT);
+
+        query.select(root);
+        query.where(cb.equal(root.get("department").get("id"), departmentId), cb.equal(root.get("status"), Status.ACTIVE));
+
+        return entityManager.createQuery(query)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
                 .getResultList();
     }
 
-    public List<Project> findProjects (Integer offset, Integer pageSize) {
-        return entityManager.createQuery("select p from Project p where p.status = 'ACTIVE'", Project.class)
+    public List<Project> findProjects (int offset, int pageSize) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Project> query = cb.createQuery(Project.class);
+        Root<Project> root = query.from(Project.class);
+        root.fetch("department", JoinType.LEFT);
+
+        query.select(root);
+        query.where(cb.equal(root.get("status"), Status.ACTIVE));
+
+        return entityManager.createQuery(query)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
                 .getResultList();
     }
 
-    public Long findTotalCount() {
-        Query query = entityManager.createQuery("select count(p.id) from Project p where p.status = 'ACTIVE'");
-        Long count = (Long)query.getSingleResult();
-        return count;
+    public long findTotalCount() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Project> root = query.from(Project.class);
+
+        query.select(cb.count(root));
+        query.where(cb.equal(root.get("status"), Status.ACTIVE));
+
+        return entityManager.createQuery(query).getSingleResult();
     }
 
-    public Long findTotalCountWithDepartmentId(Long departmentId) {
-        Query query = entityManager
-                .createQuery("select count(p.id) from Project p where p.department.id = :departmentId and p.status = 'ACTIVE'")
-                .setParameter("departmentId", departmentId);
+    public long findTotalCountWithDepartmentId(long departmentId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Project> root = query.from(Project.class);
 
-        Long count = (Long)query.getSingleResult();
-        return count;
+        query.select(cb.count(root));
+        query.where(cb.equal(root.get("department").get("id"), departmentId), cb.equal(root.get("status"), Status.ACTIVE));
+
+        return entityManager.createQuery(query).getSingleResult();
     }
 
-    public Optional<Project> findActiveProjectById(Long id) {
-        Project project = entityManager.createQuery("select p from Project p " +
-                        "where p.id = :id " +
-                        "and p.status = 'ACTIVE'", Project.class)
-                .setParameter("id", id)
-                .getResultList().stream().findFirst().orElse(null);
+    public Optional<Project> findActiveProjectById(long id) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Project> query = cb.createQuery(Project.class);
+        Root<Project> root = query.from(Project.class);
+        root.fetch("department", JoinType.LEFT);
 
-        return Optional.ofNullable(project);
+        query.select(root);
+        query.where(cb.equal(root.get("id"), id), cb.equal(root.get("status"), Status.ACTIVE));
+
+        return entityManager.createQuery(query).getResultList().stream().findFirst();
     }
 
     @Override
     public List<Project> findAll() {
-        Query query = entityManager.createQuery("select p from Project p where p.status = 'ACTIVE'", Project.class);
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Project> query = cb.createQuery(Project.class);
+        Root<Project> root = query.from(Project.class);
+        root.fetch("department", JoinType.LEFT);
 
-        return query.getResultList();
+        query.select(root);
+        query.where(cb.equal(root.get("status"), Status.ACTIVE));
+
+        return entityManager.createQuery(query).getResultList();
     }
 }

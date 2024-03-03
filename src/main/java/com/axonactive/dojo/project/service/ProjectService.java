@@ -34,12 +34,12 @@ public class ProjectService {
         return this.projectMapper.toListDTO(projects);
     }
 
-    public ProjectListResponseDTO findProjects(Long departmentId, Integer pageNumber, Integer pageSize) throws EntityNotFoundException {
+    public ProjectListResponseDTO findProjects(long departmentId, int pageNumber, int pageSize) throws EntityNotFoundException {
         List<Project> projects;
         List<ProjectDTO> projectDTOS;
-        Long totalCount = 0L;
+        long totalCount = 0L;
 
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+        int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
         if(departmentId > 0) {
             Department department = this.departmentDAO
@@ -53,7 +53,7 @@ public class ProjectService {
                     .builder()
                     .projects(projectDTOS)
                     .totalCount(totalCount)
-                    .lastPage((totalCount.intValue() / pageSize) + 1)
+                    .lastPage(((int)totalCount / pageSize) + 1)
                     .build();
         }
 
@@ -65,11 +65,11 @@ public class ProjectService {
                 .builder()
                 .projects(projectDTOS)
                 .totalCount(totalCount)
-                .lastPage((totalCount.intValue() / pageSize) + 1)
+                .lastPage(((int)totalCount / pageSize) + 1)
                 .build();
     }
 
-    public ProjectDTO findById(Long id) throws EntityNotFoundException {
+    public ProjectDTO findById(long id) throws EntityNotFoundException {
         Project project = this.projectDAO.findActiveProjectById(id).orElseThrow(() -> new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT));
 
         return this.projectMapper.toDTO(project);

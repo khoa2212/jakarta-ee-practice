@@ -53,9 +53,9 @@ public class ProjectResource {
             @ApiResponse(code = 200, message = "Get all project list successfully", response = ProjectListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response findProjects(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
-                                 @DefaultValue("10") @QueryParam("pageSize") Integer pageSize,
-                                 @DefaultValue("0") @QueryParam("departmentId") Long departmentId) throws EntityNotFoundException {
+    public Response findProjects(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+                                 @DefaultValue("10") @QueryParam("pageSize") int pageSize,
+                                 @DefaultValue("0") @QueryParam("departmentId") long departmentId) throws EntityNotFoundException {
         logger.info(LoggerMessage.findPaginatedListMessage("project"));
 
         ProjectListResponseDTO projectListResponseDTO = this.projectService.findProjects(departmentId, pageNumber, pageSize);
@@ -70,7 +70,7 @@ public class ProjectResource {
             @ApiResponse(code = 200, message = "Get project successfully", response = ProjectDTO.class),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response findById(@PathParam("id") Long id) throws EntityNotFoundException {
+    public Response findById(@PathParam("id") long id) throws EntityNotFoundException {
         logger.info(LoggerMessage.findByIdMessage("project", id));
 
         ProjectDTO projectDTO = this.projectService.findById(id);
