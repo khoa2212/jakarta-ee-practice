@@ -4,6 +4,7 @@ import com.axonactive.dojo.assignment.dto.*;
 import com.axonactive.dojo.assignment.service.AssignmentService;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.filter.Secure;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.dto.DepartmentDTO;
@@ -15,6 +16,7 @@ import lombok.Value;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.validation.Valid;
@@ -66,6 +68,8 @@ public class AssignmentResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response add(@Valid CreateAssignmentRequestDTO requestDTO) throws BadRequestException, EntityNotFoundException {
         logger.info(LoggerMessage.addMessage(requestDTO.toString()));
 
@@ -87,6 +91,8 @@ public class AssignmentResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response update(@Valid UpdateAssignmentRequestDTO requestDTO) throws BadRequestException, EntityNotFoundException {
         logger.info(LoggerMessage.updateMessage(requestDTO.toString()));
 
@@ -107,6 +113,8 @@ public class AssignmentResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN"})
     public Response delete(@Valid DeleteAssignmentRequestDTO requestDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.deleteMessage(requestDTO.toString()));
 

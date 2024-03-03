@@ -75,6 +75,7 @@ public class EmployeeResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response add(@Valid CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException, URISyntaxException {
         logger.info(LoggerMessage.addMessage(reqDTO.toString()));
 
@@ -97,6 +98,7 @@ public class EmployeeResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response update(@Valid UpdateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.updateMessage(reqDTO.toString()));
 

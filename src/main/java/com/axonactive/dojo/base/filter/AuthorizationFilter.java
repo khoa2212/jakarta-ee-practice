@@ -54,7 +54,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
             return;
         }
 
-        if(!isAllowedRole(methodRoles)) {
+        if(isNotAllowed(methodRoles)) {
             reqCtx.abortWith(Response
                     .status(Response.Status.FORBIDDEN)
                     .entity(ExceptionContent
@@ -80,19 +80,19 @@ public class AuthorizationFilter implements ContainerRequestFilter {
     }
 
     @SneakyThrows
-    public boolean isAllowedRole(RolesAllowed anno) {
+    public boolean isNotAllowed(RolesAllowed anno) {
         if (anno == null) {
-            return true;
+            return false;
         }
 
         String[] roles = anno.value();
 
         for (String role : roles) {
-            if(!securityContext.isUserInRole(role)) {
-                throw new ForbiddenException("Not Allowed");
+            if(securityContext.isUserInRole(role)) {
+                return false;
             }
         }
 
-        return true;
+        throw new ForbiddenException("Not Allowed");
     }
 }

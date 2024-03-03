@@ -4,6 +4,7 @@ import com.axonactive.dojo.assignment.dto.AssignmentDTO;
 import com.axonactive.dojo.assignment.dto.AssignmentListResponseDTO;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.filter.Secure;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.rest.DepartmentResource;
@@ -14,6 +15,7 @@ import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.validation.Valid;
@@ -63,6 +65,8 @@ public class DepartmentLocationResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response add(@Valid CreateDepartmentLocationRequestDTO createDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
         logger.info(LoggerMessage.addMessage(createDepartmentLocationRequestDTO.toString()));
 
@@ -84,6 +88,8 @@ public class DepartmentLocationResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response update(@Valid UpdateDepartmentLocationRequestDTO updateDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
         logger.info(LoggerMessage.updateMessage(updateDepartmentLocationRequestDTO.toString()));
 
@@ -105,6 +111,8 @@ public class DepartmentLocationResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN"})
     public Response delete(@Valid DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO) throws EntityNotFoundException {
         logger.info(LoggerMessage.deleteMessage(deleteDepartmentLocationRequestDTO.toString()));
 

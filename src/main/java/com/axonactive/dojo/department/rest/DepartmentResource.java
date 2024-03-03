@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.validation.Valid;
@@ -92,6 +93,7 @@ public class DepartmentResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response add(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
         logger.info(LoggerMessage.addMessage(createDepartmentRequestDTO.toString()));
 
@@ -114,6 +116,7 @@ public class DepartmentResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
         logger.info(LoggerMessage.updateMessage(updateDepartmentRequestDTO.toString()));
 
@@ -136,6 +139,7 @@ public class DepartmentResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
+    @RolesAllowed({"ADMIN"})
     public Response delete(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
         logger.info(LoggerMessage.deleteMessage(deleteDepartmentRequestDTO.toString()));
 
