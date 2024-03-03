@@ -14,7 +14,15 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "relatives")
+@NamedQueries({
+        @NamedQuery(name = Relative.FIND_RELATIVES_BY_EMPLOYEE_ID, query = "select r from Relative r left join fetch r.employee where r.employee.id = :employeeId"),
+        @NamedQuery(name = Relative.FIND_TOTAL_COUNT, query = "select count(r.id) from Relative r where r.employee.id = :employeeId")
+})
 public class Relative extends BaseEntity {
+
+    public static final String FIND_RELATIVES_BY_EMPLOYEE_ID = "findRelativesByEmployeeId";
+
+    public static final String FIND_TOTAL_COUNT = "Relative.findTotalCount";
 
     private String fullName;
 

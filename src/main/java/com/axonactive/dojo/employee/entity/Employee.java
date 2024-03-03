@@ -71,7 +71,7 @@ public class Employee extends BaseEntity {
 
     public static final String FIND_EMPLOYEES_BY_NAME = "findEmployeesByName";
 
-    public static final String FIND_TOTAL_COUNT = "findTotalCount";
+    public static final String FIND_TOTAL_COUNT = "Employee.findTotalCount";
 
     public static final String FIND_TOTAL_COUNT_WITH_DEPARTMENT_ID = "findTotalCountWithDepartmentId";
 

@@ -14,19 +14,17 @@ public class RelativeDAO extends BaseDAO<Relative> {
         super(Relative.class);
     }
 
-    public List<Relative> findRelativesByEmployeeId(Long employeeId, Integer offset, Integer pageSize) {
-        Query query = entityManager.createQuery("select r from Relative r where r.employee.id = :employeeId", Relative.class);
-        query.setParameter("employeeId", employeeId);
-
-        query.setFirstResult(offset);
-        query.setMaxResults(pageSize);
-        return query.getResultList();
+    public List<Relative> findRelativesByEmployeeId(long employeeId, int offset, int pageSize) {
+        return entityManager.createNamedQuery(Relative.FIND_RELATIVES_BY_EMPLOYEE_ID, Relative.class)
+                .setParameter("employeeId", employeeId)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
-    public Long findTotalCount(Long employeeId) {
-        Query query = entityManager.createQuery("select count(r.id) from Relative r where r.employee.id = :employeeId");
+    public long findTotalCount(long employeeId) {
+        Query query = entityManager.createNamedQuery(Relative.FIND_TOTAL_COUNT);
         query.setParameter("employeeId", employeeId);
-        Long count = (Long)query.getSingleResult();
-        return count;
+        return (long)query.getSingleResult();
     }
 }

@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 public class RelativeListResponseDTO {
     private List<RelativeDTO> relatives;
-    private Long totalCount;
-    private Integer lastPage;
+    private long totalCount;
+    private int lastPage;
 }
