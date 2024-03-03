@@ -2,6 +2,7 @@ package com.axonactive.dojo.department.rest;
 
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.filter.Secure;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.dto.*;
@@ -90,6 +91,7 @@ public class DepartmentResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
     public Response add(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
         logger.info(LoggerMessage.addMessage(createDepartmentRequestDTO.toString()));
 
@@ -111,6 +113,7 @@ public class DepartmentResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
     public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
         logger.info(LoggerMessage.updateMessage(updateDepartmentRequestDTO.toString()));
 
@@ -123,6 +126,8 @@ public class DepartmentResource {
 
     @DELETE
     @Path("delete")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Delete softly department")
     @ApiModelProperty
     @ApiResponses({
@@ -130,8 +135,7 @@ public class DepartmentResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Secure
     public Response delete(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
         logger.info(LoggerMessage.deleteMessage(deleteDepartmentRequestDTO.toString()));
 
