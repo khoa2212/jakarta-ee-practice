@@ -55,7 +55,7 @@ public class DepartmentDAO extends BaseDAO<Department> {
         CriteriaQuery<Department> query = cb.createQuery(Department.class);
         Root<Department> root = query.from(Department.class);
         query.select(root);
-        query.where(cb.equal(root.get("status"), Status.ACTIVE), cb.equal(root.get("departmentName"), departmentName));
+        query.where(cb.equal(root.get("status"), Status.ACTIVE), cb.equal(cb.lower(root.get("departmentName")), departmentName.toLowerCase()));
 
         return entityManager.createQuery(query).getResultList().stream().findFirst();
     }

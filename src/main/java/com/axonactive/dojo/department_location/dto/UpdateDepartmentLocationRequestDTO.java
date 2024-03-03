@@ -14,11 +14,11 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class UpdateDepartmentLocationRequestDTO {
     @NotNull(message = "Department location's id is required")
-    private Long id;
+    private long id;
 
     @NotBlank(message = "Location must not be blank")
     private String location;
 
     @NotNull(message = "Department's is required")
-    private Long departmentId;
+    private long departmentId;
 }

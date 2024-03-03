@@ -13,6 +13,6 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class DeleteDepartmentLocationRequestDTO {
     @NotNull(message = "Department location's id is required")
-    private Long id;
+    private long id;
 }
 

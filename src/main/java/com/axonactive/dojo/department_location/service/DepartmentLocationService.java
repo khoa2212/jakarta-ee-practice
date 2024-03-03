@@ -36,26 +36,24 @@ public class DepartmentLocationService {
     @Inject
     private DepartmentMapper departmentMapper;
 
-    public DepartmentLocationListResponseDTO findDepartmentsLocationByDepartmentId(Long departmentId, Integer pageNumber, Integer pageSize) throws EntityNotFoundException {
+    public DepartmentLocationListResponseDTO findDepartmentsLocationByDepartmentId(long departmentId, int pageNumber, int pageSize) throws EntityNotFoundException {
         Department department = this.departmentDAO
                 .findActiveDepartmentById(departmentId)
                 .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-        Integer offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+        int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
         List<DepartmentLocation> departmentLocations =
                 this.departmentLocationDAO.findDepartmentsLocationByDepartmentId(department.getId(), offset, pageSize);
 
-        Long totalCount = this.departmentLocationDAO.findTotalCount(department.getId());
+        long totalCount = this.departmentLocationDAO.findTotalCount(department.getId());
 
-        DepartmentLocationListResponseDTO departmentLocationListResponseDTO = DepartmentLocationListResponseDTO
+        return DepartmentLocationListResponseDTO
                 .builder()
                 .departmentLocations(this.departmentLocationMapper.toListDTO(departmentLocations))
                 .totalCount(totalCount)
-                .lastPage((totalCount.intValue() / pageSize) + 1)
+                .lastPage(((int)totalCount / pageSize) + 1)
                 .build();
-
-        return departmentLocationListResponseDTO;
     }
 
     public DepartmentLocationDTO add(CreateDepartmentLocationRequestDTO createDepartmentLocationRequestDTO) throws EntityNotFoundException, BadRequestException {

@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class DepartmentLocationDTO {
-    private Long id;
+    private long id;
     private String location;
     private DepartmentDTO department;
 }

@@ -43,9 +43,9 @@ public class DepartmentLocationResource {
             @ApiResponse(code = 200, message = "Get all department location list successfully", response = DepartmentLocationListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response findDepartmentLocationByDepartmentId(@PathParam("departmentId") Long departmentId,
-                                                         @DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
-                                                         @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) throws EntityNotFoundException {
+    public Response findDepartmentLocationByDepartmentId(@PathParam("departmentId") long departmentId,
+                                                         @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+                                                         @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
         logger.info(LoggerMessage.findPaginatedListMessage("department location"));
 
         DepartmentLocationListResponseDTO departmentLocationListResponseDTO = this.departmentLocationService.findDepartmentsLocationByDepartmentId(departmentId, pageNumber, pageSize);

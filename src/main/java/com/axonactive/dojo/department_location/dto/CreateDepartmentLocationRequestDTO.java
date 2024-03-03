@@ -18,5 +18,5 @@ public class CreateDepartmentLocationRequestDTO {
     private String location;
 
     @NotNull(message = "Department's is required")
-    private Long departmentId;
+    private long departmentId;
 }
