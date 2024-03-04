@@ -66,6 +66,7 @@ public class AuthService {
                 .builder()
                 .displayName(user.getDisplayName())
                 .email(user.getEmail())
+                .avatar(user.getAvatar())
                 .role(user.getRole())
                 .accessToken(accessToken)
                 .refreshToken(user.getRefreshToken())
