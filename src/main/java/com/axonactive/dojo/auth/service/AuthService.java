@@ -123,7 +123,20 @@ public class AuthService {
         authDAO.update(user);
     }
 
-    public RenewAccessTokenResponseDTO renew(RenewAccessTokenRequestDTO requestDTO) {
-        return RenewAccessTokenResponseDTO.builder().build();
+    public RenewAccessTokenResponseDTO renew(RenewAccessTokenRequestDTO requestDTO) throws UnauthorizedException {
+        TokenPayload payload = jwtService.verifyToken(requestDTO.getRefreshToken(), TokenType.REFRESH_TOKEN);
+
+        User user = authDAO.findActiveUserByEmail(payload.getEmail())
+                .orElseThrow(() -> new UnauthorizedException("Invalid token"));
+
+        if(!Objects.equals(user.getRefreshToken(), requestDTO.getRefreshToken())) {
+            throw new UnauthorizedException("Invalid token");
+        }
+
+        payload.setTokenType(TokenType.ACCESS_TOKEN);
+
+        String accessToken = jwtService.generateToken(payload);
+
+        return RenewAccessTokenResponseDTO.builder().accessToken(accessToken).build();
     }
  }

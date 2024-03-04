@@ -76,4 +76,21 @@ public class AuthResource {
         authService.verify(requestDTO);
         return Response.noContent().build();
     }
+
+    @POST
+    @Path("renew-token")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Verify")
+    @ApiModelProperty
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Signup successfully", response = SignupResponseDTO.class),
+            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+    })
+    public Response renew(@Valid RenewAccessTokenRequestDTO requestDTO) throws UnauthorizedException {
+        RenewAccessTokenResponseDTO responseDTO = authService.renew(requestDTO);
+
+        return Response.ok().entity(responseDTO).build();
+    }
 }

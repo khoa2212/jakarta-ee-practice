@@ -32,6 +32,14 @@ public class JwtService {
         try {
             Map<String, String> map = new HashMap<>();
 
+
+
+            int timeToLive = switch (payload.getTokenType()) {
+                case ACCESS_TOKEN -> JwtConfig.getAccessTokenTimeToLive();
+                case REFRESH_TOKEN -> JwtConfig.getRefreshTokenTimeToLive();
+                case VERIFY_TOKEN -> JwtConfig.getVerifyTokenTimeToLive();
+            };
+
             map.put("tokenType", payload.getTokenType().toString());
             map.put("email", payload.getEmail());
             map.put("displayName", payload.getDisplayName());
@@ -40,7 +48,7 @@ public class JwtService {
             JWTCreator.Builder jwtBuilder = JWT.create();
             jwtBuilder.withPayload(map);
             jwtBuilder.withIssuer(JwtConfig.getIssuer());
-            jwtBuilder.withExpiresAt(new Date(System.currentTimeMillis() + JwtConfig.getAccessTokenTimeToLive()));
+            jwtBuilder.withExpiresAt(new Date(System.currentTimeMillis() + timeToLive));
 
             token = jwtBuilder.sign(algorithm);
         } catch (JWTCreationException exception){
