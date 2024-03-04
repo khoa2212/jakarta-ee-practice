@@ -1,6 +1,6 @@
 package com.axonactive.dojo.base.filter;
 
-import com.axonactive.dojo.base.entity.ExceptionContent;
+import com.axonactive.dojo.base.exception.content.ExceptionContent;
 import com.axonactive.dojo.base.exception.ForbiddenException;
 import com.axonactive.dojo.base.exception.UnauthorizedException;
 import lombok.SneakyThrows;
@@ -29,7 +29,6 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext reqCtx) throws IOException {
-        System.out.println("--------- GO HERE ---------");
 
         RolesAllowed methodRoles = info.getResourceMethod().getAnnotation(RolesAllowed.class);
         RolesAllowed classRoles = info.getResourceClass().getAnnotation(RolesAllowed.class);

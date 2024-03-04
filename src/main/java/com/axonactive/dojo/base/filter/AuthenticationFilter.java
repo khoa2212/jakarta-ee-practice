@@ -1,6 +1,6 @@
 package com.axonactive.dojo.base.filter;
 
-import com.axonactive.dojo.base.entity.ExceptionContent;
+import com.axonactive.dojo.base.exception.content.ExceptionContent;
 import com.axonactive.dojo.base.exception.ForbiddenException;
 import com.axonactive.dojo.base.jwt.payload.TokenPayload;
 import com.axonactive.dojo.base.jwt.service.JwtService;

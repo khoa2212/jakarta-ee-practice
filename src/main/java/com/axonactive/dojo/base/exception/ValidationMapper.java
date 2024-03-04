@@ -1,19 +1,12 @@
 package com.axonactive.dojo.base.exception;
 
-import com.axonactive.dojo.base.entity.ExceptionContent;
+import com.axonactive.dojo.base.exception.content.ExceptionContent;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import java.util.Set;
 
 @Provider
 public class ValidationMapper implements ExceptionMapper<ValidationException> {

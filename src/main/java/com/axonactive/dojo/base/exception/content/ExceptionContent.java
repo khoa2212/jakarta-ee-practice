@@ -1,4 +1,4 @@
-package com.axonactive.dojo.base.entity;
+package com.axonactive.dojo.base.exception.content;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
