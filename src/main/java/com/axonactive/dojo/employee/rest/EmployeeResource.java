@@ -40,6 +40,7 @@ public class EmployeeResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response findEmployees(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
                                  @DefaultValue("10") @QueryParam("pageSize") int pageSize,
                                  @DefaultValue("0") @QueryParam("departmentId") long departmentId,
@@ -58,6 +59,7 @@ public class EmployeeResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response findActiveEmployeeById(@PathParam("id") long id) throws EntityNotFoundException {
         logger.info(LoggerMessage.findByIdMessage("employee", id));
 
