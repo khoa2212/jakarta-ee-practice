@@ -1,5 +1,6 @@
 package com.axonactive.dojo.base.filter;
 
+import com.axonactive.dojo.base.exception.UnauthorizedException;
 import com.axonactive.dojo.base.exception.content.ExceptionContent;
 import com.axonactive.dojo.base.exception.ForbiddenException;
 import com.axonactive.dojo.base.jwt.payload.TokenPayload;
@@ -46,20 +47,20 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         ) {
 
             reqCtx.abortWith(
-                    Response.status(Response.Status.FORBIDDEN)
+                    Response.status(Response.Status.UNAUTHORIZED)
                             .type(MediaType.APPLICATION_JSON)
                             .entity(ExceptionContent
                                             .builder()
-                                            .errorKey(Response.Status.FORBIDDEN.getReasonPhrase())
+                                            .errorKey(Response.Status.UNAUTHORIZED.getReasonPhrase())
                                             .success(false)
-                                            .statusCode(Response.Status.FORBIDDEN.getStatusCode())
-                                            .message("Not Allowed")
+                                            .statusCode(Response.Status.UNAUTHORIZED.getStatusCode())
+                                            .message("Invalid token")
                                             .build()
                                     )
                             .build()
             );
 
-            throw new ForbiddenException("Not Allowed");
+            throw new UnauthorizedException("Invalid token");
         }
 
         return authHeader.split(" ")[1].trim();
