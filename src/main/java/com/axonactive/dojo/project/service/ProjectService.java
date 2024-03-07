@@ -8,12 +8,14 @@ import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dao.ProjectDAO;
 import com.axonactive.dojo.project.dto.ProjectDTO;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
+import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
 import com.axonactive.dojo.project.entity.Project;
 import com.axonactive.dojo.project.mapper.ProjectMapper;
 import com.axonactive.dojo.project.message.ProjectMessage;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,5 +75,12 @@ public class ProjectService {
         Project project = this.projectDAO.findActiveProjectById(id).orElseThrow(() -> new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT));
 
         return this.projectMapper.toDTO(project);
+    }
+
+
+    public List<ProjectsWithEmployeesDTO> findProjectsWithEmployeesSalariesHours(int pageNumber, int pageSize, long numberOfEmployees,
+                                                                           long totalHours, BigDecimal totalSalaries) {
+        int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+        return projectDAO.findProjectsWithEmployeesSalariesHours(offset, pageSize, numberOfEmployees, totalHours, totalSalaries);
     }
 }

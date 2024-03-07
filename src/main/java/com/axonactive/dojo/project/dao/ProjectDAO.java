@@ -1,17 +1,16 @@
 package com.axonactive.dojo.project.dao;
 
 import com.axonactive.dojo.base.dao.BaseDAO;
-import com.axonactive.dojo.department.entity.Department;
-import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.enums.Status;
+import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
 import com.axonactive.dojo.project.entity.Project;
 
 import javax.ejb.Stateless;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,5 +95,21 @@ public class ProjectDAO extends BaseDAO<Project> {
         query.where(cb.equal(root.get("status"), Status.ACTIVE));
 
         return entityManager.createQuery(query).getResultList();
+    }
+
+    public List<ProjectsWithEmployeesDTO> findProjectsWithEmployeesSalariesHours(int offset, int pageSize, long numberOfEmployees,
+                                                       long totalHours, BigDecimal totalSalaries) {
+
+        return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
+                .setParameter("numberOfEmployees", numberOfEmployees)
+                .setParameter("totalHours", totalHours)
+                .setParameter("totalSalaries", totalSalaries)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    public long findTotalCountProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours, BigDecimal totalSalaries) {
+        return 1L;
     }
 }

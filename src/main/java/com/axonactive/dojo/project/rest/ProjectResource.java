@@ -7,6 +7,7 @@ import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
 import com.axonactive.dojo.employee.rest.EmployeeResource;
 import com.axonactive.dojo.project.dto.ProjectDTO;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
+import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
 import com.axonactive.dojo.project.service.ProjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import java.security.interfaces.RSAKey;
 import java.util.List;
 
@@ -74,6 +76,26 @@ public class ProjectResource {
         logger.info(LoggerMessage.findByIdMessage("project", id));
 
         ProjectDTO projectDTO = this.projectService.findById(id);
+        return Response.ok().entity(projectDTO).build();
+    }
+
+
+    @GET
+    @Path("reports/salaries")
+    @Produces({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Get projects with employees, total salaries, total hours")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectDTO.class),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+    })
+    public Response findProjectsWithEmployeesSalariesHours(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+                                                           @DefaultValue("10") @QueryParam("pageSize") int pageSize,
+                                                           @DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
+                                                           @DefaultValue("0") @QueryParam("totalHours") long totalHours,
+                                                           @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries) throws EntityNotFoundException {
+        logger.info("Attempting get projects with employees, total salaries, total hours");
+
+        List<ProjectsWithEmployeesDTO> projectDTO = this.projectService.findProjectsWithEmployeesSalariesHours(pageNumber, pageSize, numberOfEmployees, totalHours, totalSalaries);
         return Response.ok().entity(projectDTO).build();
     }
 }
