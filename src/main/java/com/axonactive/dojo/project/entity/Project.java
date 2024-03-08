@@ -3,6 +3,7 @@ package com.axonactive.dojo.project.entity;
 import com.axonactive.dojo.base.entity.BaseEntity;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.enums.Status;
+import com.axonactive.dojo.project.dto.ProjectCountDTO;
 import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
 import lombok.*;
 
@@ -27,6 +28,12 @@ import java.math.BigDecimal;
             }
         )
 )
+@SqlResultSetMapping(
+        name = "Project.mapping.findTotalCountProjectsWithEmployeesSalariesHours",
+        classes = @ConstructorResult(targetClass = ProjectCountDTO.class, columns = {
+                @ColumnResult(name = "total_count", type = Long.class)
+        })
+)
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES,
@@ -41,11 +48,23 @@ import java.math.BigDecimal;
                         "and coalesce(sum(a.number_of_hour), 0) >= :totalHours " +
                         "and coalesce(sum(e.salary), 0) >= :totalSalaries",
                 resultSetMapping = "Project.mapping.findProjectsWithEmployeesSalariesHours"
+        ),
+        @NamedNativeQuery(
+                name = Project.FIND_TOTAL_COUNT_PROJECTS_WITH_EMPLOYEES_SALARIES,
+                query = "select count(p.id) as total_count from project p where p.id " +
+                        "in (select p1.id from project p1 left join assignment a on a.project_id = p1.id " +
+                        "left join employee e on a.employee_id = e.id " +
+                        "group by p1.id " +
+                        "having count(e.id) >= :numberOfEmployees " +
+                        "and coalesce(sum(a.number_of_hour), 0) >= :totalHours " +
+                        "and coalesce(sum(e.salary), 0) >= :totalSalaries)",
+                resultSetMapping = "Project.mapping.findTotalCountProjectsWithEmployeesSalariesHours"
         )
 })
 public class Project extends BaseEntity {
 
     public static final String FIND_PROJECTS_WITH_EMPLOYEES_SALARIES = "Project.findProjectsWithEmployeesSalariesHours";
+    public static final String FIND_TOTAL_COUNT_PROJECTS_WITH_EMPLOYEES_SALARIES = "Project.findTotalCountProjectsWithEmployeesSalariesHours";
 
     private String area;
     private String projectName;

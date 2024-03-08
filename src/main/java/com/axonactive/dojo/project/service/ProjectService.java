@@ -6,9 +6,7 @@ import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dao.ProjectDAO;
-import com.axonactive.dojo.project.dto.ProjectDTO;
-import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
-import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
+import com.axonactive.dojo.project.dto.*;
 import com.axonactive.dojo.project.entity.Project;
 import com.axonactive.dojo.project.mapper.ProjectMapper;
 import com.axonactive.dojo.project.message.ProjectMessage;
@@ -78,9 +76,17 @@ public class ProjectService {
     }
 
 
-    public List<ProjectsWithEmployeesDTO> findProjectsWithEmployeesSalariesHours(int pageNumber, int pageSize, long numberOfEmployees,
-                                                                           long totalHours, BigDecimal totalSalaries) {
+    public ProjectsWithEmployeesListDTO findProjectsWithEmployeesSalariesHours(int pageNumber, int pageSize, long numberOfEmployees,
+                                                                               long totalHours, BigDecimal totalSalaries) {
         int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
-        return projectDAO.findProjectsWithEmployeesSalariesHours(offset, pageSize, numberOfEmployees, totalHours, totalSalaries);
+        List<ProjectsWithEmployeesDTO> list = projectDAO.findProjectsWithEmployeesSalariesHours(offset, pageSize, numberOfEmployees, totalHours, totalSalaries);
+        ProjectCountDTO projectCountDTO = projectDAO.findTotalCountProjectsWithEmployeesSalariesHours(numberOfEmployees, totalHours, totalSalaries);
+
+        return ProjectsWithEmployeesListDTO
+                .builder()
+                .employees(list)
+                .totalCount(projectCountDTO.getTotalCount())
+                .lastPage(((int)projectCountDTO.getTotalCount() / pageSize) + 1)
+                .build();
     }
 }

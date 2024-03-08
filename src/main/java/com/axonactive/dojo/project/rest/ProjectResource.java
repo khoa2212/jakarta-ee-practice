@@ -8,6 +8,7 @@ import com.axonactive.dojo.employee.rest.EmployeeResource;
 import com.axonactive.dojo.project.dto.ProjectDTO;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
 import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
+import com.axonactive.dojo.project.dto.ProjectsWithEmployeesListDTO;
 import com.axonactive.dojo.project.service.ProjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -95,7 +96,7 @@ public class ProjectResource {
                                                            @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries) throws EntityNotFoundException {
         logger.info("Attempting get projects with employees, total salaries, total hours");
 
-        List<ProjectsWithEmployeesDTO> projectDTO = this.projectService.findProjectsWithEmployeesSalariesHours(pageNumber, pageSize, numberOfEmployees, totalHours, totalSalaries);
+        ProjectsWithEmployeesListDTO projectDTO = this.projectService.findProjectsWithEmployeesSalariesHours(pageNumber, pageSize, numberOfEmployees, totalHours, totalSalaries);
         return Response.ok().entity(projectDTO).build();
     }
 }

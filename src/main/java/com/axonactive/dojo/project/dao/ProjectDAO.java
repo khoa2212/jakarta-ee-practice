@@ -2,6 +2,7 @@ package com.axonactive.dojo.project.dao;
 
 import com.axonactive.dojo.base.dao.BaseDAO;
 import com.axonactive.dojo.enums.Status;
+import com.axonactive.dojo.project.dto.ProjectCountDTO;
 import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
 import com.axonactive.dojo.project.entity.Project;
 
@@ -109,7 +110,12 @@ public class ProjectDAO extends BaseDAO<Project> {
                 .getResultList();
     }
 
-    public long findTotalCountProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours, BigDecimal totalSalaries) {
-        return 1L;
+    public ProjectCountDTO findTotalCountProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours, BigDecimal totalSalaries) {
+        return entityManager
+                .createNamedQuery(Project.FIND_TOTAL_COUNT_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectCountDTO.class)
+                .setParameter("numberOfEmployees", numberOfEmployees)
+                .setParameter("totalHours", totalHours)
+                .setParameter("totalSalaries", totalSalaries)
+                .getSingleResult();
     }
 }
