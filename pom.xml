@@ -37,6 +37,7 @@
 		<download-maven-plugin-version>1.8.0</download-maven-plugin-version>
 		<maven-resources-plugin-version>3.3.0</maven-resources-plugin-version>
 		<replacer-version>1.5.3</replacer-version>
+		<poi-version>5.2.3</poi-version>
 	</properties>
 
 	<distributionManagement>
@@ -181,6 +182,12 @@
 			<version>${log4j2.version}</version>
 		</dependency>
 
+		<!-- poi for excel -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${poi-version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

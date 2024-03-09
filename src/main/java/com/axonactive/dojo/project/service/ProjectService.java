@@ -10,9 +10,15 @@ import com.axonactive.dojo.project.dto.*;
 import com.axonactive.dojo.project.entity.Project;
 import com.axonactive.dojo.project.mapper.ProjectMapper;
 import com.axonactive.dojo.project.message.ProjectMessage;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -88,5 +94,52 @@ public class ProjectService {
                 .totalCount(projectCountDTO.getTotalCount())
                 .lastPage(((int)projectCountDTO.getTotalCount() / pageSize) + 1)
                 .build();
+    }
+
+    public ByteArrayOutputStream exportExcelProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours, BigDecimal totalSalaries) throws Exception {
+        try {
+            List<ProjectsWithEmployeesDTO> list = projectDAO.findProjectsWithEmployeesSalariesHours(0, 1000, numberOfEmployees, totalHours, totalSalaries);
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("Books");
+            Row row = sheet.createRow(0);
+            row.createCell(0).setCellValue("ID");
+            row.createCell(1).setCellValue("Name");
+            row.createCell(2).setCellValue("Price");
+
+            for(int i = 1; i <= 10; i++ ) {
+                Row row1 = sheet.createRow(i);
+                row1.createCell(0).setCellValue("ID " + i);
+                row1.createCell(1).setCellValue("Name " + i);
+                row1.createCell(2).setCellValue("Price " + i);
+            }
+
+            // Write the Excel data to a ByteArrayOutputStream
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+
+            return outputStream;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+
+
+    }
+
+    private static CellStyle createStyleForHeader(Sheet sheet) {
+        // Create font
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontName("Times New Roman");
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 14); // font size
+        font.setColor(IndexedColors.WHITE.getIndex()); // text color
+
+        // Create CellStyle
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setFont(font);
+        cellStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        return cellStyle;
     }
 }
