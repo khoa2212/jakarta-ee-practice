@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProjectsWithEmployeesListDTO {
-    private List<ProjectsWithEmployeesDTO> employees;
+    private List<ProjectsWithEmployeesDTO> projects;
     private Long totalCount;
     private Integer lastPage;
 }

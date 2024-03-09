@@ -84,7 +84,7 @@ public class ProjectService {
 
         return ProjectsWithEmployeesListDTO
                 .builder()
-                .employees(list)
+                .projects(list)
                 .totalCount(projectCountDTO.getTotalCount())
                 .lastPage(((int)projectCountDTO.getTotalCount() / pageSize) + 1)
                 .build();
