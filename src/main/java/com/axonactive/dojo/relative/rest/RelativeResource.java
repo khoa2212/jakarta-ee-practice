@@ -43,4 +43,19 @@ public class RelativeResource {
         RelativeListResponseDTO relativeListResponseDTO = this.relativeService.findRelativesByEmployeeId(employeeId, pageNumber, pageSize);
         return Response.ok().entity(relativeListResponseDTO).build();
     }
+
+    @GET
+    @Path("reports/employees")
+    @Produces({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Get all relative list by employees not assigned")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Get all relative list successfully", response = RelativeListResponseDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+    })
+    public Response findRelivesByEmployeesNotAssigned(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber, @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
+        logger.info("Attempting to get all relative list by employees not assigned");
+
+        RelativeListResponseDTO relativeListResponseDTO = this.relativeService.findRelivesByEmployeesNotAssigned(pageNumber, pageSize);
+        return Response.ok().entity(relativeListResponseDTO).build();
+    }
 }

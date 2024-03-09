@@ -6,6 +6,7 @@ import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.relative.dao.RelativeDAO;
+import com.axonactive.dojo.relative.dto.RelativeDTO;
 import com.axonactive.dojo.relative.dto.RelativeListResponseDTO;
 import com.axonactive.dojo.relative.entity.Relative;
 import com.axonactive.dojo.relative.mapper.RelativeMapper;
@@ -41,6 +42,20 @@ public class RelativeService {
         return RelativeListResponseDTO
                 .builder()
                 .relatives(this.relativeMapper.toListDTO(relatives))
+                .totalCount(totalCount)
+                .lastPage(((int)totalCount / pageSize) + 1)
+                .build();
+    }
+
+    public RelativeListResponseDTO findRelivesByEmployeesNotAssigned(int pageNumber, int pageSize) {
+        int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
+        List<RelativeDTO> relativeDTOS = relativeMapper.toListDTO(relativeDAO.findRelivesByEmployeesNotAssigned(offset, pageSize));
+        long totalCount = relativeDAO.findTotalCountRelivesByEmployeesNotAssigned();
+
+        return RelativeListResponseDTO
+                .builder()
+                .relatives(relativeDTOS)
                 .totalCount(totalCount)
                 .lastPage(((int)totalCount / pageSize) + 1)
                 .build();

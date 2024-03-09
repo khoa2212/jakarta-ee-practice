@@ -89,10 +89,6 @@ public class EmployeeDAO extends BaseDAO<Employee> {
     }
 
     public List<Object[]> findEmployeesByHoursInProjectMangedByDepartment(long departmentId, int offset, int pageSize, int numberOfHour) {
-//        EntityGraph<Employee> employeeEntityGraph = entityManager.createEntityGraph(Employee.class);
-//        employeeEntityGraph.addAttributeNodes("department");
-//        query.setHint("javax.persistence.loadgraph", employeeEntityGraph);
-
         Query query = entityManager.createQuery("select e, a from Employee e " +
                 "join fetch Assignment a on a.employee.id = e.id " +
                 "join fetch Project p on a.project.id = p.id " +

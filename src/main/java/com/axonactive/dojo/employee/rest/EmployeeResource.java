@@ -69,7 +69,7 @@ public class EmployeeResource {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Get employees by hours in project managed by a department")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Get all employee list successfully", response = EmployeeDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Get all employee list successfully", response = EmployeeListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findEmployeesByHoursInProjectMangedByDepartment(@DefaultValue("1") @QueryParam("departmentId") long departmentId,

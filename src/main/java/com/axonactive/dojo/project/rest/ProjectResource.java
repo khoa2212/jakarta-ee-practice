@@ -86,7 +86,7 @@ public class ProjectResource {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Get projects with employees, total salaries, total hours")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectDTO.class),
+            @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectsWithEmployeesListDTO.class),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findProjectsWithEmployeesSalariesHours(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
