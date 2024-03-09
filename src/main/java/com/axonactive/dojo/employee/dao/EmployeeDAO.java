@@ -5,9 +5,7 @@ import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.employee.entity.Employee;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.*;
 import javax.validation.constraints.Null;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -88,5 +86,34 @@ public class EmployeeDAO extends BaseDAO<Employee> {
         return entityManager.createNamedQuery(Employee.FIND_ACTIVE_EMPLOYEE_BY_ID, Employee.class)
                 .setParameter("id", id)
                 .getResultList().stream().findFirst();
+    }
+
+    public List<Object[]> findEmployeesByHoursInProjectMangedByDepartment(long departmentId, int offset, int pageSize, int numberOfHour) {
+//        EntityGraph<Employee> employeeEntityGraph = entityManager.createEntityGraph(Employee.class);
+//        employeeEntityGraph.addAttributeNodes("department");
+//        query.setHint("javax.persistence.loadgraph", employeeEntityGraph);
+
+        Query query = entityManager.createQuery("select e, a from Employee e " +
+                "join fetch Assignment a on a.employee.id = e.id " +
+                "join fetch Project p on a.project.id = p.id " +
+                "join fetch Department d on p.department.id = d.id " +
+                "where d.id = :departmentId and a.numberOfHour >= :numberOfHour")
+                .setParameter("departmentId", departmentId)
+                .setParameter("numberOfHour", numberOfHour)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize);
+
+        return query.getResultList();
+    }
+
+    public long findTotalCountEmployeesByHoursInProjectMangedByDepartment(long departmentId, int numberOfHour) {
+        return entityManager.createQuery("select count(distinct e.id) from Employee e " +
+                        "join Assignment a on a.employee.id = e.id " +
+                        "join Project p on a.project.id = p.id " +
+                        "join Department d on p.department.id = d.id " +
+                        "where d.id = :departmentId and a.numberOfHour >= :numberOfHour", Long.class)
+                .setParameter("departmentId", departmentId)
+                .setParameter("numberOfHour", numberOfHour)
+                .getSingleResult();
     }
 }

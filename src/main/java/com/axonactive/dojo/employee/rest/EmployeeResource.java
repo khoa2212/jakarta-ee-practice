@@ -19,6 +19,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 
 @Path("employees")
@@ -39,8 +40,6 @@ public class EmployeeResource {
             @ApiResponse(code = 200, message = "Get all employee list successfully", response = EmployeeListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    @Secure
-    @RolesAllowed({"ADMIN", "USER"})
     public Response findEmployees(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
                                  @DefaultValue("10") @QueryParam("pageSize") int pageSize,
                                  @DefaultValue("0") @QueryParam("departmentId") long departmentId,
@@ -58,13 +57,29 @@ public class EmployeeResource {
             @ApiResponse(code = 200, message = "Get employee successfully", response = EmployeeDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    @Secure
-    @RolesAllowed({"ADMIN", "USER"})
     public Response findActiveEmployeeById(@PathParam("id") long id) throws EntityNotFoundException {
         logger.info(LoggerMessage.findByIdMessage("employee", id));
 
         EmployeeDTO employeeDTO = this.employeeService.findActiveEmployeeById(id);
         return Response.ok().entity(employeeDTO).build();
+    }
+
+    @GET
+    @Path("reports/total-hours/department")
+    @Produces({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Get employees by hours in project managed by a department")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Get all employee list successfully", response = EmployeeDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+    })
+    public Response findEmployeesByHoursInProjectMangedByDepartment(@DefaultValue("1") @QueryParam("departmentId") long departmentId,
+                                                                    @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+                                                                    @DefaultValue("10") @QueryParam("pageSize") int pageSize,
+                                                                    @DefaultValue("0") @QueryParam("numberOfHour") int numberOfHour) throws EntityNotFoundException {
+        logger.info("Attempting get employees by hours in project managed by a department");
+
+        EmployeeListResponseDTO employeeListResponseDTO = this.employeeService.findEmployeesByHoursInProjectMangedByDepartment(departmentId, pageNumber, pageSize, numberOfHour);
+        return Response.ok().entity(employeeListResponseDTO).build();
     }
 
     @POST

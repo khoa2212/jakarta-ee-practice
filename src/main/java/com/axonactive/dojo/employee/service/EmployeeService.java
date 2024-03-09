@@ -1,7 +1,11 @@
 package com.axonactive.dojo.employee.service;
 
+import com.axonactive.dojo.assignment.dto.AssignmentDTO;
+import com.axonactive.dojo.assignment.entity.Assignment;
+import com.axonactive.dojo.assignment.mapper.AssignmentMapper;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
+import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.employee.dto.*;
@@ -12,14 +16,13 @@ import com.axonactive.dojo.employee.mapper.EmployeeMapper;
 import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
+import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
 import netscape.javascript.JSObject;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonObject;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 @Stateless
@@ -33,6 +36,9 @@ public class EmployeeService {
 
     @Inject
     private EmployeeMapper employeeMapper;
+
+    @Inject
+    private AssignmentMapper assignmentMapper;
 
     public EmployeeListResponseDTO findEmployees(long departmentId, int pageNumber, int pageSize, String name) throws EntityNotFoundException {
         List<Employee> employees;
@@ -153,5 +159,34 @@ public class EmployeeService {
         this.employeeDAO.update(employee);
 
         return EmployeeMessage.deleteSuccessMessage();
+    }
+
+    public EmployeeListResponseDTO findEmployeesByHoursInProjectMangedByDepartment(long departmentId, int pageNumber, int pageSize, int numberOfHour) throws EntityNotFoundException {
+        Department department = departmentDAO.findActiveDepartmentById(departmentId)
+                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
+
+        int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+
+        long totalCount = employeeDAO.findTotalCountEmployeesByHoursInProjectMangedByDepartment(departmentId, numberOfHour);
+
+        List<Object[]> objects = employeeDAO.findEmployeesByHoursInProjectMangedByDepartment(department.getId(), offset, pageSize, numberOfHour);
+
+        Map<Long, EmployeeDTO> map = new HashMap<>();
+        List<AssignmentDTO> assignmentDTOS = new ArrayList<>();
+        objects.forEach(object -> {
+            EmployeeDTO employeeDTO = employeeMapper.toDTO((Employee) object[0]);
+            AssignmentDTO assignmentDTO = assignmentMapper.toDTO((Assignment) object[1]);
+            map.put(employeeDTO.getId(),employeeDTO);
+            assignmentDTOS.add(assignmentDTO);
+        });
+
+        return EmployeeListResponseDTO
+                .builder()
+                .employees(map.values().stream().peek(employeeDTO -> {
+                    employeeDTO.setAssignments(assignmentDTOS.stream().filter((assignmentDTO -> Objects.equals(assignmentDTO.getEmployee().getId(), employeeDTO.getId()))).toList());
+                }).toList())
+                .totalCount(totalCount)
+                .lastPage(((int)totalCount / pageSize) + 1)
+                .build();
     }
 }

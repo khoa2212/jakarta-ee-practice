@@ -1,9 +1,12 @@
 package com.axonactive.dojo.employee.dto;
 
+import com.axonactive.dojo.assignment.dto.AssignmentDTO;
+import com.axonactive.dojo.assignment.entity.Assignment;
 import com.axonactive.dojo.department.dto.DepartmentDTO;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 import lombok.*;
 
@@ -13,6 +16,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -29,4 +34,7 @@ public class EmployeeDTO {
     private Gender gender;
     private Status status;
     private DepartmentDTO department;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<AssignmentDTO> assignments;
 }
