@@ -72,6 +72,8 @@ public class EmployeeResource {
             @ApiResponse(code = 200, message = "Get all employee list successfully", response = EmployeeListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response findEmployeesByHoursInProjectMangedByDepartment(@DefaultValue("1") @QueryParam("departmentId") long departmentId,
                                                                     @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
                                                                     @DefaultValue("10") @QueryParam("pageSize") int pageSize,

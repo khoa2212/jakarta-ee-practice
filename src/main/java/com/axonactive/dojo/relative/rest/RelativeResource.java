@@ -1,6 +1,7 @@
 package com.axonactive.dojo.relative.rest;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.filter.Secure;
 import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
 import com.axonactive.dojo.employee.rest.EmployeeResource;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -52,6 +54,8 @@ public class RelativeResource {
             @ApiResponse(code = 200, message = "Get all relative list successfully", response = RelativeListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response findRelivesByEmployeesNotAssigned(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber, @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
         logger.info("Attempting to get all relative list by employees not assigned");
 

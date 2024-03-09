@@ -1,6 +1,7 @@
 package com.axonactive.dojo.project.rest;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.filter.Secure;
 import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.dto.DepartmentDTO;
 import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
@@ -17,6 +18,7 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -89,6 +91,8 @@ public class ProjectResource {
             @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectsWithEmployeesListDTO.class),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
+    @Secure
+    @RolesAllowed({"ADMIN", "USER"})
     public Response findProjectsWithEmployeesSalariesHours(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
                                                            @DefaultValue("10") @QueryParam("pageSize") int pageSize,
                                                            @DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
