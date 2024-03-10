@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,54 +101,12 @@ public class ProjectService {
         List<ProjectsWithEmployeesDTO> list = projectDAO.findProjectsWithEmployeesSalariesHours(0, 1000, numberOfEmployees, totalHours, totalSalaries);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Project with salaries");
-        sheet.setColumnWidth(0, 10 * 256);
-        sheet.setColumnWidth(1, 30 * 256);
-        sheet.setColumnWidth(2, 30 * 256);
-        sheet.setColumnWidth(3, 30 * 256);
-        sheet.setColumnWidth(4, 30 * 256);
-        sheet.setColumnWidth(5, 30 * 256);
+        setWidthColumn(sheet);
 
-        Row row = sheet.createRow(0);
-        row.createCell(0).setCellValue("No.");
-        row.createCell(1).setCellValue("Project's name");
-        row.createCell(2).setCellValue("Area");
-        row.createCell(3).setCellValue("Number of employees");
-        row.createCell(4).setCellValue("Total hours");
-        row.createCell(5).setCellValue("Total salaries");
+        List<String> titles = new ArrayList<>(List.of("No.", "Project's name", "Area", "Number of employees", "Total hours", "Total salaries"));
 
-        row.getCell(0).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
-        row.getCell(1).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
-        row.getCell(2).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
-        row.getCell(3).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
-        row.getCell(4).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
-        row.getCell(5).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
-
-        for(int i = 0; i < list.size(); i++) {
-            Row row1 = sheet.createRow(i + 1);
-            row1.createCell(0).setCellValue(i + 1);
-            row1.createCell(1).setCellValue(list.get(i).getProjectName());
-            row1.createCell(2).setCellValue(list.get(i).getArea());
-            row1.createCell(3).setCellValue(list.get(i).getNumberOfEmployees());
-            row1.createCell(4).setCellValue(list.get(i).getTotalHours());
-            row1.createCell(5).setCellValue(list.get(i).getTotalSalaries().doubleValue());
-
-            if(i % 2 == 0) {
-                row1.getCell(0).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(1).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(2).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(3).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(4).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(5).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
-            }
-            else {
-                row1.getCell(0).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(1).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(2).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(3).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(4).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
-                row1.getCell(5).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
-            }
-        }
+        createHeader(sheet, titles);
+        createReport(sheet, list, titles);
 
         sheet.createFreezePane(0, 1);
 
@@ -160,7 +119,7 @@ public class ProjectService {
 
     }
 
-    private static CellStyle createStyleForHeader(Sheet sheet, HorizontalAlignment alignment, int cellColor, int fontColor, boolean bold) {
+    private CellStyle createCellStyle(Sheet sheet, HorizontalAlignment alignment, int cellColor, int fontColor, boolean bold) {
         // Create font
         Font font = sheet.getWorkbook().createFont();
         font.setFontName("Calibri");
@@ -176,5 +135,56 @@ public class ProjectService {
         cellStyle.setAlignment(alignment);
 
         return cellStyle;
+    }
+
+    private void setWidthColumn(Sheet sheet) {
+        sheet.setColumnWidth(0, 10 * 256);
+        sheet.setColumnWidth(1, 30 * 256);
+        sheet.setColumnWidth(2, 30 * 256);
+        sheet.setColumnWidth(3, 30 * 256);
+        sheet.setColumnWidth(4, 30 * 256);
+        sheet.setColumnWidth(5, 30 * 256);
+    }
+
+    private void createHeader(Sheet sheet, List<String> titles) {
+        Row row = sheet.createRow(0);
+
+        for(int i = 0; i < titles.size(); i++) {
+            row.createCell(i).setCellValue(titles.get(i));
+            row.getCell(i).setCellStyle(createCellStyle(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
+        }
+    }
+
+    private void createReport(Sheet sheet, List<ProjectsWithEmployeesDTO> list, List<String> titles) {
+        for(int i = 0; i < list.size(); i++) {
+            Row row1 = sheet.createRow(i + 1);
+            row1.createCell(0).setCellValue(i + 1);
+            row1.createCell(1).setCellValue(list.get(i).getProjectName());
+            row1.createCell(2).setCellValue(list.get(i).getArea());
+            row1.createCell(3).setCellValue(list.get(i).getNumberOfEmployees());
+            row1.createCell(4).setCellValue(list.get(i).getTotalHours());
+            row1.createCell(5).setCellValue(list.get(i).getTotalSalaries().doubleValue());
+
+            if(i % 2 == 0) {
+                for(int j = 0; j < titles.size(); j++) {
+                    HorizontalAlignment alignment = HorizontalAlignment.LEFT;
+                    if(j >= 3) {
+                        alignment = HorizontalAlignment.RIGHT;
+                    }
+
+                    row1.getCell(j).setCellStyle(createCellStyle(sheet, alignment, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                }
+            }
+            else {
+                for(int j = 0; j < titles.size(); j++) {
+                    HorizontalAlignment alignment = HorizontalAlignment.LEFT;
+                    if(j >= 3) {
+                        alignment = HorizontalAlignment.RIGHT;
+                    }
+
+                    row1.getCell(j).setCellStyle(createCellStyle(sheet, alignment, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                }
+            }
+        }
     }
 }
