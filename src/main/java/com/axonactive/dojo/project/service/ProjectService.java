@@ -97,49 +97,84 @@ public class ProjectService {
     }
 
     public ByteArrayOutputStream exportExcelProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours, BigDecimal totalSalaries) throws Exception {
-        try {
-            List<ProjectsWithEmployeesDTO> list = projectDAO.findProjectsWithEmployeesSalariesHours(0, 1000, numberOfEmployees, totalHours, totalSalaries);
-            Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("Books");
-            Row row = sheet.createRow(0);
-            row.createCell(0).setCellValue("ID");
-            row.createCell(1).setCellValue("Name");
-            row.createCell(2).setCellValue("Price");
+        List<ProjectsWithEmployeesDTO> list = projectDAO.findProjectsWithEmployeesSalariesHours(0, 1000, numberOfEmployees, totalHours, totalSalaries);
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Project with salaries");
+        sheet.setColumnWidth(0, 10 * 256);
+        sheet.setColumnWidth(1, 30 * 256);
+        sheet.setColumnWidth(2, 30 * 256);
+        sheet.setColumnWidth(3, 30 * 256);
+        sheet.setColumnWidth(4, 30 * 256);
+        sheet.setColumnWidth(5, 30 * 256);
 
-            for(int i = 1; i <= 10; i++ ) {
-                Row row1 = sheet.createRow(i);
-                row1.createCell(0).setCellValue("ID " + i);
-                row1.createCell(1).setCellValue("Name " + i);
-                row1.createCell(2).setCellValue("Price " + i);
+        Row row = sheet.createRow(0);
+        row.createCell(0).setCellValue("No.");
+        row.createCell(1).setCellValue("Project's name");
+        row.createCell(2).setCellValue("Area");
+        row.createCell(3).setCellValue("Number of employees");
+        row.createCell(4).setCellValue("Total hours");
+        row.createCell(5).setCellValue("Total salaries");
+
+        row.getCell(0).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
+        row.getCell(1).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
+        row.getCell(2).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
+        row.getCell(3).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
+        row.getCell(4).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
+        row.getCell(5).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.CENTER, IndexedColors.LIGHT_BLUE.getIndex(), IndexedColors.WHITE.getIndex(), true));
+
+        for(int i = 0; i < list.size(); i++) {
+            Row row1 = sheet.createRow(i + 1);
+            row1.createCell(0).setCellValue(i + 1);
+            row1.createCell(1).setCellValue(list.get(i).getProjectName());
+            row1.createCell(2).setCellValue(list.get(i).getArea());
+            row1.createCell(3).setCellValue(list.get(i).getNumberOfEmployees());
+            row1.createCell(4).setCellValue(list.get(i).getTotalHours());
+            row1.createCell(5).setCellValue(list.get(i).getTotalSalaries().doubleValue());
+
+            if(i % 2 == 0) {
+                row1.getCell(0).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(1).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(2).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(3).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(4).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(5).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.LIGHT_TURQUOISE1.getIndex(), IndexedColors.BLACK.getIndex(), false));
             }
-
-            // Write the Excel data to a ByteArrayOutputStream
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            workbook.write(outputStream);
-
-            return outputStream;
+            else {
+                row1.getCell(0).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(1).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(2).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.LEFT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(3).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(4).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
+                row1.getCell(5).setCellStyle(createStyleForHeader(sheet, HorizontalAlignment.RIGHT, IndexedColors.WHITE.getIndex(), IndexedColors.BLACK.getIndex(), false));
+            }
         }
-        catch (Exception e) {
-            throw e;
-        }
+
+        sheet.createFreezePane(0, 1);
+
+        // Write the Excel data to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+
+        return outputStream;
 
 
     }
 
-    private static CellStyle createStyleForHeader(Sheet sheet) {
+    private static CellStyle createStyleForHeader(Sheet sheet, HorizontalAlignment alignment, int cellColor, int fontColor, boolean bold) {
         // Create font
         Font font = sheet.getWorkbook().createFont();
-        font.setFontName("Times New Roman");
-        font.setBold(true);
-        font.setFontHeightInPoints((short) 14); // font size
-        font.setColor(IndexedColors.WHITE.getIndex()); // text color
+        font.setFontName("Calibri");
+        font.setBold(bold);
+        font.setFontHeightInPoints((short) 11);
+        font.setColor((short) fontColor);
 
-        // Create CellStyle
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setFont(font);
-        cellStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        cellStyle.setFillForegroundColor((short) cellColor);
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.MEDIUM);
+        cellStyle.setAlignment(alignment);
+
         return cellStyle;
     }
 }
