@@ -115,9 +115,7 @@ public class ProjectResource {
             @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectsWithEmployeesListDTO.class),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response exportExcelProjectsWithEmployeesSalariesHours(@DefaultValue("1")@QueryParam("pageNumber") int pageNumber,
-                                                                  @DefaultValue("10") @QueryParam("pageSize") int pageSize,
-                                                                  @DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
+    public Response exportExcelProjectsWithEmployeesSalariesHours(@DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
                                                                   @DefaultValue("0") @QueryParam("totalHours") long totalHours,
                                                                   @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries) throws EntityNotFoundException, Exception {
         logger.info("Attempting export excel projects with employees, total salaries, total hours");
