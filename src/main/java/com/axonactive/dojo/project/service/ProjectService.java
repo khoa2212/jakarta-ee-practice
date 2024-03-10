@@ -106,7 +106,6 @@ public class ProjectService {
             projectIds.add(Long.valueOf(arr[i]));
         }
 
-        System.out.println(projectIds.get(0));
         List<ProjectsWithEmployeesDTO> list = projectDAO.findProjectsWithEmployeesSalariesHours(numberOfEmployees, totalHours, totalSalaries, projectIds, arr[0]);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Project with salaries");
