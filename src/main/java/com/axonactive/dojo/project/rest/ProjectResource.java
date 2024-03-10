@@ -28,7 +28,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.interfaces.RSAKey;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Path("projects")
 @Api(tags = "Projects API")
@@ -117,13 +119,14 @@ public class ProjectResource {
     })
     public Response exportExcelProjectsWithEmployeesSalariesHours(@DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
                                                                   @DefaultValue("0") @QueryParam("totalHours") long totalHours,
-                                                                  @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries) throws EntityNotFoundException, Exception {
+                                                                  @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries,
+                                                                  @QueryParam("projectIdsParam") String projectIdsParam) throws EntityNotFoundException, Exception {
         logger.info("Attempting export excel projects with employees, total salaries, total hours");
 
         String headerKey = "Content-Disposition";
         String headerValue = "attachment;filename=projects-with-salaries-report.xlsx";
 
-        ByteArrayOutputStream outputStream = this.projectService.exportExcelProjectsWithEmployeesSalariesHours(numberOfEmployees, totalHours, totalSalaries);
+        ByteArrayOutputStream outputStream = this.projectService.exportExcelProjectsWithEmployeesSalariesHours(numberOfEmployees, totalHours, totalSalaries, projectIdsParam);
 
         return Response.ok(outputStream.toByteArray(), "application/octet-stream").header(headerKey, headerValue).build();
     }

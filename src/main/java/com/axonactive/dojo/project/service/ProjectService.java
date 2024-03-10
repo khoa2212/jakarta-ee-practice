@@ -97,8 +97,17 @@ public class ProjectService {
                 .build();
     }
 
-    public ByteArrayOutputStream exportExcelProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours, BigDecimal totalSalaries) throws Exception {
-        List<ProjectsWithEmployeesDTO> list = projectDAO.findProjectsWithEmployeesSalariesHours(0, 1000, numberOfEmployees, totalHours, totalSalaries);
+    public ByteArrayOutputStream exportExcelProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours, BigDecimal totalSalaries, String projectIdsParam) throws Exception {
+        List<Long> projectIds = new ArrayList<>();
+
+        String[] arr = projectIdsParam.split(",");
+
+        for(int i = 1; i< arr.length; i++) {
+            projectIds.add(Long.valueOf(arr[i]));
+        }
+
+        System.out.println(projectIds.get(0));
+        List<ProjectsWithEmployeesDTO> list = projectDAO.findProjectsWithEmployeesSalariesHours(numberOfEmployees, totalHours, totalSalaries, projectIds, arr[0]);
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Project with salaries");
         setWidthColumn(sheet);

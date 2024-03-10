@@ -118,4 +118,42 @@ public class ProjectDAO extends BaseDAO<Project> {
                 .setParameter("totalSalaries", totalSalaries)
                 .getSingleResult();
     }
+
+
+    public List<ProjectsWithEmployeesDTO> findProjectsWithEmployeesSalariesHours(long numberOfEmployees,
+                                                                                 long totalHours, BigDecimal totalSalaries, List<Long> projectIds, String option) {
+
+        switch (option) {
+            case "all": {
+                return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
+                        .setParameter("numberOfEmployees", numberOfEmployees)
+                        .setParameter("totalHours", totalHours)
+                        .setParameter("totalSalaries", totalSalaries)
+                        .getResultList();
+            }
+            case "in": {
+                return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_IN_IDS, ProjectsWithEmployeesDTO.class)
+                        .setParameter("numberOfEmployees", numberOfEmployees)
+                        .setParameter("totalHours", totalHours)
+                        .setParameter("totalSalaries", totalSalaries)
+                        .setParameter("projectIds", projectIds)
+                        .getResultList();
+            }
+            case "notIn": {
+                return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_NOT_IN_IDS, ProjectsWithEmployeesDTO.class)
+                        .setParameter("numberOfEmployees", numberOfEmployees)
+                        .setParameter("totalHours", totalHours)
+                        .setParameter("totalSalaries", totalSalaries)
+                        .setParameter("projectIds", projectIds)
+                        .getResultList();
+            }
+            default: {
+                return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
+                        .setParameter("numberOfEmployees", numberOfEmployees)
+                        .setParameter("totalHours", totalHours)
+                        .setParameter("totalSalaries", totalSalaries)
+                        .getResultList();
+            }
+        }
+    }
 }

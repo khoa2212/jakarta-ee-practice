@@ -59,11 +59,41 @@ import java.math.BigDecimal;
                         "and coalesce(sum(a.number_of_hour), 0) >= :totalHours " +
                         "and coalesce(sum(e.salary), 0) >= :totalSalaries)",
                 resultSetMapping = "Project.mapping.findTotalCountProjectsWithEmployeesSalariesHours"
-        )
+        ),
+        @NamedNativeQuery(
+                name = Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_IN_IDS,
+                query = "select p.id , p.project_name , p.area, " +
+                        "count(e.id) as number_of_employees, " +
+                        "coalesce(sum(a.number_of_hour), 0) as total_hours, " +
+                        "coalesce(sum(e.salary), 0) as total_salaries " +
+                        "from project p left join assignment a on a.project_id = p.id " +
+                        "left join employee e on a.employee_id = e.id " +
+                        "group by p.id " +
+                        "having count(e.id) >= :numberOfEmployees " +
+                        "and coalesce(sum(a.number_of_hour), 0) >= :totalHours " +
+                        "and coalesce(sum(e.salary), 0) >= :totalSalaries and p.id in :projectIds",
+                resultSetMapping = "Project.mapping.findProjectsWithEmployeesSalariesHours"
+        ),
+        @NamedNativeQuery(
+                name = Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_NOT_IN_IDS,
+                query = "select p.id , p.project_name , p.area, " +
+                        "count(e.id) as number_of_employees, " +
+                        "coalesce(sum(a.number_of_hour), 0) as total_hours, " +
+                        "coalesce(sum(e.salary), 0) as total_salaries " +
+                        "from project p left join assignment a on a.project_id = p.id " +
+                        "left join employee e on a.employee_id = e.id " +
+                        "group by p.id " +
+                        "having count(e.id) >= :numberOfEmployees " +
+                        "and coalesce(sum(a.number_of_hour), 0) >= :totalHours " +
+                        "and coalesce(sum(e.salary), 0) >= :totalSalaries and p.id not in :projectIds",
+                resultSetMapping = "Project.mapping.findProjectsWithEmployeesSalariesHours"
+        ),
 })
 public class Project extends BaseEntity {
 
     public static final String FIND_PROJECTS_WITH_EMPLOYEES_SALARIES = "Project.findProjectsWithEmployeesSalariesHours";
+    public static final String FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_IN_IDS = "Project.findProjectsWithEmployeesSalariesHoursInIds";
+    public static final String FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_NOT_IN_IDS = "Project.findProjectsWithEmployeesSalariesHoursNotInIds";
     public static final String FIND_TOTAL_COUNT_PROJECTS_WITH_EMPLOYEES_SALARIES = "Project.findTotalCountProjectsWithEmployeesSalariesHours";
 
     private String area;
