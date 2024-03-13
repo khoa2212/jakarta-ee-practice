@@ -73,8 +73,8 @@ public class AuthResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response verify(@Valid VerifyTokeRequestDTO requestDTO) throws UnauthorizedException, EntityNotFoundException {
-        authService.verify(requestDTO);
-        return Response.noContent().build();
+        LoginResponseDTO loginResponseDTO = authService.verify(requestDTO);
+        return Response.ok(loginResponseDTO).build();
     }
 
     @POST

@@ -119,7 +119,7 @@ public class AuthService {
                 .build();
     }
 
-    public void verify(VerifyTokeRequestDTO requestDTO) throws UnauthorizedException, EntityNotFoundException {
+    public LoginResponseDTO verify(VerifyTokeRequestDTO requestDTO) throws UnauthorizedException, EntityNotFoundException {
         TokenPayload payload = jwtService.verifyToken(requestDTO.getVerifiedToken(), TokenType.VERIFY_TOKEN);
 
         User user = authDAO.findUserByEmail(payload.getEmail())
@@ -127,7 +127,35 @@ public class AuthService {
 
         user.setStatus(Status.ACTIVE);
 
+        String accessToken = jwtService.generateToken(TokenPayload
+                .builder()
+                .tokenType(TokenType.ACCESS_TOKEN)
+                .displayName(user.getDisplayName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build());
+
+        String refreshToken = jwtService.generateToken(TokenPayload
+                .builder()
+                .tokenType(TokenType.REFRESH_TOKEN)
+                .displayName(user.getDisplayName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build());
+
+        user.setRefreshToken(refreshToken);
+
         authDAO.update(user);
+
+        return LoginResponseDTO
+                .builder()
+                .displayName(user.getDisplayName())
+                .email(user.getEmail())
+                .avatar(user.getAvatar())
+                .role(user.getRole())
+                .accessToken(accessToken)
+                .refreshToken(user.getRefreshToken())
+                .build();
     }
 
     public RenewAccessTokenResponseDTO renew(RenewAccessTokenRequestDTO requestDTO) throws UnauthorizedException {
