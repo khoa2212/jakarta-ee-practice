@@ -32,8 +32,6 @@ public class JwtService {
         try {
             Map<String, String> map = new HashMap<>();
 
-
-
             int timeToLive = switch (payload.getTokenType()) {
                 case ACCESS_TOKEN -> JwtConfig.getAccessTokenTimeToLive();
                 case REFRESH_TOKEN -> JwtConfig.getRefreshTokenTimeToLive();

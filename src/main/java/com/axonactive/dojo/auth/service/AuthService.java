@@ -4,6 +4,7 @@ import com.axonactive.dojo.auth.dao.AuthDAO;
 import com.axonactive.dojo.auth.dto.*;
 import com.axonactive.dojo.auth.message.AuthMessage;
 import com.axonactive.dojo.base.dao.BaseDAO;
+import com.axonactive.dojo.base.email.EmailService;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.exception.UnauthorizedException;
@@ -28,6 +29,9 @@ public class AuthService {
 
     @Inject
     private JwtService jwtService;
+
+    @Inject
+    private EmailService emailService;
 
     public LoginResponseDTO login(LoginRequestDTO requestDTO) throws BadRequestException {
         User user = authDAO
@@ -106,6 +110,8 @@ public class AuthService {
                 .role(newUser.getRole())
                 .build()
         );
+
+        emailService.sendEmail(newUser.getEmail(), newUser.getDisplayName(), verifiedToken);
 
         return SignupResponseDTO
                 .builder()
