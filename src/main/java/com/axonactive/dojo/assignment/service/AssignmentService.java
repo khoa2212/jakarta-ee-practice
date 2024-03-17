@@ -65,13 +65,13 @@ public class AssignmentService {
                 .findActiveProjectById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException(ProjectMessage.NOT_FOUND_PROJECT));
 
-        assignments = this.assignmentDAO.findAssignmentsByProjectId(project.getId(), offset, pageSize);
+        // assignments = this.assignmentDAO.findAssignmentsByProjectId(project.getId(), offset, pageSize);
         totalCount = this.assignmentDAO.findTotalCountByProjectId(project.getId());
-        assignmentDTOS = this.assignmentMapper.toListDTO(assignments);
+        // assignmentDTOS = this.assignmentMapper.toListDTO(assignments);
 
         return AssignmentListResponseDTO
                 .builder()
-                .assignments(assignmentDTOS)
+                .assignments(this.assignmentDAO.findAssignmentsByProjectId(project.getId(), offset, pageSize))
                 .totalCount(totalCount)
                 .lastPage(((int)totalCount / pageSize) + 1)
                 .build();

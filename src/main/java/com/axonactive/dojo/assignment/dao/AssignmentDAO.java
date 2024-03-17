@@ -1,5 +1,6 @@
 package com.axonactive.dojo.assignment.dao;
 
+import com.axonactive.dojo.assignment.dto.AssignmentDTO;
 import com.axonactive.dojo.assignment.entity.Assignment;
 import com.axonactive.dojo.base.dao.BaseDAO;
 import com.axonactive.dojo.department_location.entity.DepartmentLocation;
@@ -18,8 +19,8 @@ public class AssignmentDAO extends BaseDAO<Assignment> {
         super(Assignment.class);
     }
 
-    public List<Assignment> findAssignmentsByProjectId(long projectId, int offset, int pageSize) {
-        return entityManager.createNamedQuery(Assignment.FIND_ASSIGNMENTS_BY_PROJECT_ID, Assignment.class)
+    public List<AssignmentDTO> findAssignmentsByProjectId(long projectId, int offset, int pageSize) {
+        return entityManager.createNamedQuery(Assignment.FIND_ASSIGNMENTS_BY_PROJECT_ID, AssignmentDTO.class)
                 .setParameter("projectId", projectId)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
