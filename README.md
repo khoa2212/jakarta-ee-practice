@@ -35,3 +35,8 @@ standalone.bat
 ``` shell
 docker compose up
 ```
+
+# <img width="25" src="./favicon.ico"/> Run sonar locally
+``` shell
+mvn clean install sonar:sonar -D sonar.host.url=http://localhost:9000 -D sonar.login=sqa_1ab9bcbbe155e0fc4c49aba67906e4b492ef04d1
+```
