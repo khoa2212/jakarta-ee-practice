@@ -5,6 +5,7 @@ import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.enums.Status;
+import com.axonactive.dojo.project.cache.ProjectCache;
 import com.axonactive.dojo.project.dao.ProjectDAO;
 import com.axonactive.dojo.project.dto.*;
 import com.axonactive.dojo.project.entity.Project;
@@ -36,8 +37,17 @@ public class ProjectService {
     @Inject
     private ProjectMapper projectMapper;
 
+    @Inject
+    private ProjectCache projectCache;
+
     public List<ProjectDTO> findAll() {
-        List<Project> projects = this.projectDAO.findAll();
+        List<Project> projects = projectCache.getCacheValue("all-projects");
+
+        if(projects == null) {
+            projects = this.projectDAO.findAll();
+            projectCache.setCacheValue("all-projects", projects);
+        }
+
         return this.projectMapper.toListDTO(projects);
     }
 
