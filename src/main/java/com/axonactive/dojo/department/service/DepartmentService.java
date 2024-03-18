@@ -3,6 +3,7 @@ package com.axonactive.dojo.department.service;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
+import com.axonactive.dojo.department.cache.DepartmentCache;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.department.dto.*;
 import com.axonactive.dojo.department.entity.Department;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,8 +30,17 @@ public class DepartmentService {
     @Inject
     private DepartmentMapper departmentMapper;
 
+    @Inject
+    private DepartmentCache departmentCache;
+
     public List<DepartmentDTO> findAll() {
-        List<Department> departments = this.departmentDAO.findAll();
+        List<Department> departments = departmentCache.getCacheValue("all-departments");
+
+        if(departments == null) {
+            departments = this.departmentDAO.findAll();
+            departmentCache.setCacheValue("all-departments", departments);
+        }
+
         return this.departmentMapper.toListDTO(departments);
     }
 

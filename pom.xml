@@ -52,6 +52,7 @@
 			**/main/**/rest/**/*.*,
 			**/main/**/mapper/**/*.*
 		</sonar.coverage.exclusions>
+		<caffeine-version>3.1.8</caffeine-version>
 	</properties>
 
 	<distributionManagement>
@@ -202,6 +203,14 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>${poi-version}</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+			<version>${caffeine-version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
