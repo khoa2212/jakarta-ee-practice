@@ -5,7 +5,7 @@ import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.enums.Gender;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter

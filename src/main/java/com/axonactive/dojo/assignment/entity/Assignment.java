@@ -5,7 +5,7 @@ import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.project.entity.Project;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter
@@ -13,7 +13,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(name = "UQ_employee_id_project_id", columnNames = { "employee_id", "project_id" }) })
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "UQ_employee_id_project_id", columnNames = { "employee_id", "project_id" }) })
 @NamedQueries({
         @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_PROJECT_ID, query = "select a from Assignment a left join fetch a.employee e left join fetch e.department left join fetch a.project p left join fetch p.department where a.project.id = :projectId"),
         @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_EMPLOYEE_ID, query = "select a from Assignment a left join fetch a.employee e left join fetch e.department left join fetch a.project p left join fetch p.department where a.employee.id = :employeeId"),

@@ -3,7 +3,7 @@ package com.axonactive.dojo.base.exception;
 import com.axonactive.dojo.base.exception.content.ExceptionContent;
 import lombok.Getter;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 @Getter
 @ApplicationException

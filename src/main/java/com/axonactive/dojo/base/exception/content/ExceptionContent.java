@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
-import javax.json.JsonArrayBuilder;
-import javax.validation.constraints.NotBlank;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.validation.constraints.NotBlank;
 
 @Getter
 @Setter

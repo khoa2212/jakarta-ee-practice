@@ -16,9 +16,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.report.sourceEncoding>UTF-8</project.report.sourceEncoding>
 		<maven.compiler.release>17</maven.compiler.release>
-		<jakartaee-api.version>8.0.0</jakartaee-api.version>
+		<jakartaee-api.version>10.0.0</jakartaee-api.version>
 		<compiler-plugin.version>3.11.0</compiler-plugin.version>
-		<war-plugin.version>3.3.2</war-plugin.version>
+		<war-plugin.version>3.4.0</war-plugin.version>
 		<lombok.version>1.18.30</lombok.version>
 		<org.hibernate.version>6.4.1.Final</org.hibernate.version>
 		<java-jwt.version>4.4.0</java-jwt.version>

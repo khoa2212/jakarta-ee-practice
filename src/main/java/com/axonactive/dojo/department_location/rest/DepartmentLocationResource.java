@@ -15,15 +15,15 @@ import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.json.JsonObject;
-import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 
 @Path("department-locations")
@@ -39,25 +39,26 @@ public class DepartmentLocationResource {
 
     @GET
     @Path("department/{departmentId}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Get all department location list with pagination")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Get all department location list successfully", response = DepartmentLocationListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findDepartmentLocationByDepartmentId(@PathParam("departmentId") long departmentId,
-                                                         @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
-                                                         @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
+            @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+            @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
         logger.info(LoggerMessage.findPaginatedListMessage("department location"));
 
-        DepartmentLocationListResponseDTO departmentLocationListResponseDTO = this.departmentLocationService.findDepartmentsLocationByDepartmentId(departmentId, pageNumber, pageSize);
+        DepartmentLocationListResponseDTO departmentLocationListResponseDTO = this.departmentLocationService
+                .findDepartmentsLocationByDepartmentId(departmentId, pageNumber, pageSize);
         return Response.ok().entity(departmentLocationListResponseDTO).build();
     }
 
     @POST
     @Path("add")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Create new department location")
     @ApiModelProperty
     @ApiResponses({
@@ -66,11 +67,13 @@ public class DepartmentLocationResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
-    @RolesAllowed({"ADMIN", "USER"})
-    public Response add(@Valid CreateDepartmentLocationRequestDTO createDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
+    @RolesAllowed({ "ADMIN", "USER" })
+    public Response add(@Valid CreateDepartmentLocationRequestDTO createDepartmentLocationRequestDTO)
+            throws BadRequestException, EntityNotFoundException {
         logger.info(LoggerMessage.addMessage(createDepartmentLocationRequestDTO.toString()));
 
-        DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.add(createDepartmentLocationRequestDTO);
+        DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService
+                .add(createDepartmentLocationRequestDTO);
 
         String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), departmentLocationDTO.getId());
 
@@ -79,8 +82,8 @@ public class DepartmentLocationResource {
 
     @PUT
     @Path("update")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Update department location")
     @ApiModelProperty
     @ApiResponses({
@@ -89,11 +92,13 @@ public class DepartmentLocationResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
-    @RolesAllowed({"ADMIN", "USER"})
-    public Response update(@Valid UpdateDepartmentLocationRequestDTO updateDepartmentLocationRequestDTO) throws BadRequestException, EntityNotFoundException {
+    @RolesAllowed({ "ADMIN", "USER" })
+    public Response update(@Valid UpdateDepartmentLocationRequestDTO updateDepartmentLocationRequestDTO)
+            throws BadRequestException, EntityNotFoundException {
         logger.info(LoggerMessage.updateMessage(updateDepartmentLocationRequestDTO.toString()));
 
-        DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService.update(updateDepartmentLocationRequestDTO);
+        DepartmentLocationDTO departmentLocationDTO = this.departmentLocationService
+                .update(updateDepartmentLocationRequestDTO);
 
         String path = String.format("%s/%d", uriInfo.getAbsolutePath().getPath(), departmentLocationDTO.getId());
 
@@ -102,8 +107,8 @@ public class DepartmentLocationResource {
 
     @DELETE
     @Path("delete")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Delete department location")
     @ApiModelProperty
     @ApiResponses({
@@ -112,8 +117,9 @@ public class DepartmentLocationResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
-    @RolesAllowed({"ADMIN"})
-    public Response delete(@Valid DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO) throws EntityNotFoundException {
+    @RolesAllowed({ "ADMIN" })
+    public Response delete(@Valid DeleteDepartmentLocationRequestDTO deleteDepartmentLocationRequestDTO)
+            throws EntityNotFoundException {
         logger.info(LoggerMessage.deleteMessage(deleteDepartmentLocationRequestDTO.toString()));
 
         DeleteSuccessMessage result = this.departmentLocationService.delete(deleteDepartmentLocationRequestDTO);

@@ -1,7 +1,7 @@
 package com.axonactive.dojo.base.config;
 
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.ws.rs.Produces;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.ws.rs.Produces;
 import java.util.logging.Logger;
 
 public class LoggerProducer {

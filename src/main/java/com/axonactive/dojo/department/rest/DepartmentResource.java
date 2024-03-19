@@ -11,16 +11,16 @@ import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.json.JsonObject;
-import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class DepartmentResource {
 
     @GET
     @Path("all")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Get all department list")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Get all department list successfully", response = DepartmentDTO.class, responseContainer = "List"),
@@ -59,10 +59,11 @@ public class DepartmentResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findDepartments(@DefaultValue("1") @QueryParam("pageNumber") Integer pageNumber,
-                                           @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) {
+            @DefaultValue("10") @QueryParam("pageSize") Integer pageSize) {
         logger.info(LoggerMessage.findPaginatedListMessage("department"));
 
-        DepartmentListResponseDTO departmentListResponseDTO = this.departmentService.findDepartments(pageNumber, pageSize);
+        DepartmentListResponseDTO departmentListResponseDTO = this.departmentService.findDepartments(pageNumber,
+                pageSize);
         return Response.ok().entity(departmentListResponseDTO).build();
     }
 
@@ -83,8 +84,8 @@ public class DepartmentResource {
 
     @POST
     @Path("add")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Create new department")
     @ApiModelProperty
     @ApiResponses({
@@ -93,7 +94,7 @@ public class DepartmentResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
-    @RolesAllowed({"ADMIN", "USER"})
+    @RolesAllowed({ "ADMIN", "USER" })
     public Response add(@Valid CreateDepartmentRequestDTO createDepartmentRequestDTO) throws BadRequestException {
         logger.info(LoggerMessage.addMessage(createDepartmentRequestDTO.toString()));
 
@@ -106,8 +107,8 @@ public class DepartmentResource {
 
     @PUT
     @Path("update")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Update department ")
     @ApiModelProperty
     @ApiResponses({
@@ -116,8 +117,9 @@ public class DepartmentResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
-    @RolesAllowed({"ADMIN", "USER"})
-    public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
+    @RolesAllowed({ "ADMIN", "USER" })
+    public Response update(@Valid UpdateDepartmentRequestDTO updateDepartmentRequestDTO)
+            throws EntityNotFoundException, BadRequestException {
         logger.info(LoggerMessage.updateMessage(updateDepartmentRequestDTO.toString()));
 
         DepartmentDTO departmentDTO = this.departmentService.update(updateDepartmentRequestDTO);
@@ -129,8 +131,8 @@ public class DepartmentResource {
 
     @DELETE
     @Path("delete")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Delete softly department")
     @ApiModelProperty
     @ApiResponses({
@@ -139,8 +141,9 @@ public class DepartmentResource {
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
-    @RolesAllowed({"ADMIN"})
-    public Response delete(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
+    @RolesAllowed({ "ADMIN" })
+    public Response delete(@Valid DeleteDepartmentRequestDTO deleteDepartmentRequestDTO)
+            throws EntityNotFoundException, BadRequestException {
         logger.info(LoggerMessage.deleteMessage(deleteDepartmentRequestDTO.toString()));
 
         DeleteSuccessMessage result = this.departmentService.deleteSoftly(deleteDepartmentRequestDTO);

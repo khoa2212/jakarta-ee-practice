@@ -13,9 +13,9 @@ import com.axonactive.dojo.base.jwt.payload.TokenPayload;
 import com.axonactive.dojo.enums.Role;
 import com.axonactive.dojo.enums.TokenType;
 
-import javax.ejb.Stateless;
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
+import jakarta.ejb.Stateless;
+import jakarta.ws.rs.ServerErrorException;
+import jakarta.ws.rs.core.Response;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +26,12 @@ public class JwtService {
     private static final String CREATE_JWT_FAILED = "JWT creation failed";
     private static final String INVALID_TOKEN = "Invalid token";
     private final Algorithm algorithm = Algorithm.HMAC256(JwtConfig.getSecretKey());
+
     public String generateToken(TokenPayload payload) {
         String token;
 
         try {
             Map<String, String> map = new HashMap<>();
-
-
 
             int timeToLive = switch (payload.getTokenType()) {
                 case ACCESS_TOKEN -> JwtConfig.getAccessTokenTimeToLive();
@@ -51,7 +50,7 @@ public class JwtService {
             jwtBuilder.withExpiresAt(new Date(System.currentTimeMillis() + timeToLive));
 
             token = jwtBuilder.sign(algorithm);
-        } catch (JWTCreationException exception){
+        } catch (JWTCreationException exception) {
             throw new ServerErrorException(CREATE_JWT_FAILED, Response.Status.INTERNAL_SERVER_ERROR, exception);
         }
 
@@ -73,7 +72,7 @@ public class JwtService {
             map.put(key, decodedJWT.getClaim(key).asString());
         }
 
-        if(!Objects.equals(map.get("tokenType"), type.toString())) {
+        if (!Objects.equals(map.get("tokenType"), type.toString())) {
             throw new UnauthorizedException(INVALID_TOKEN);
         }
 

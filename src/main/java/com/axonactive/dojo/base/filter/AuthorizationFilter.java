@@ -5,17 +5,17 @@ import com.axonactive.dojo.base.exception.ForbiddenException;
 import com.axonactive.dojo.base.exception.UnauthorizedException;
 import lombok.SneakyThrows;
 
-import javax.annotation.Priority;
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.ext.Provider;
+import jakarta.annotation.Priority;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.Context;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.Context;
 
 @Provider
 @Priority(Priorities.AUTHORIZATION)
@@ -37,7 +37,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
             return;
         }
 
-        if(!isLogin()) {
+        if (!isLogin()) {
             reqCtx.abortWith(Response
                     .status(Response.Status.UNAUTHORIZED)
                     .entity(ExceptionContent
@@ -46,14 +46,12 @@ public class AuthorizationFilter implements ContainerRequestFilter {
                             .success(false)
                             .statusCode(Response.Status.UNAUTHORIZED.getStatusCode())
                             .message("Invalid token")
-                            .build()
-                    )
-                    .build()
-            );
+                            .build())
+                    .build());
             return;
         }
 
-        if(isNotAllowed(methodRoles)) {
+        if (isNotAllowed(methodRoles)) {
             reqCtx.abortWith(Response
                     .status(Response.Status.FORBIDDEN)
                     .entity(ExceptionContent
@@ -62,10 +60,8 @@ public class AuthorizationFilter implements ContainerRequestFilter {
                             .success(false)
                             .statusCode(Response.Status.FORBIDDEN.getStatusCode())
                             .message("Not Allowed")
-                            .build()
-                    )
-                    .build()
-            );
+                            .build())
+                    .build());
         }
     }
 
@@ -73,7 +69,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
     public boolean isLogin() {
         String user = securityContext.getUserPrincipal().getName();
         if (user == null) {
-           throw new UnauthorizedException("Invalid token");
+            throw new UnauthorizedException("Invalid token");
         }
         return true;
     }
@@ -87,7 +83,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
         String[] roles = anno.value();
 
         for (String role : roles) {
-            if(securityContext.isUserInRole(role)) {
+            if (securityContext.isUserInRole(role)) {
                 return false;
             }
         }

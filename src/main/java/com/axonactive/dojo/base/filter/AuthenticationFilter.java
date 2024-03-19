@@ -8,16 +8,17 @@ import com.axonactive.dojo.base.jwt.service.JwtService;
 import com.axonactive.dojo.enums.TokenType;
 import lombok.SneakyThrows;
 
-import javax.annotation.Priority;
-import javax.inject.Inject;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
+import jakarta.annotation.Priority;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
+
 @Provider
 @Secure
 @Priority(Priorities.AUTHENTICATION)
@@ -43,22 +44,19 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String authHeader = reqCtx.getHeaderString(HttpHeaders.AUTHORIZATION);
         if (authHeader == null ||
                 !authHeader.startsWith("Bearer ") ||
-                authHeader.split(" ")[1].trim().isEmpty()
-        ) {
+                authHeader.split(" ")[1].trim().isEmpty()) {
 
             reqCtx.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED)
                             .type(MediaType.APPLICATION_JSON)
                             .entity(ExceptionContent
-                                            .builder()
-                                            .errorKey(Response.Status.UNAUTHORIZED.getReasonPhrase())
-                                            .success(false)
-                                            .statusCode(Response.Status.UNAUTHORIZED.getStatusCode())
-                                            .message("Invalid token")
-                                            .build()
-                                    )
-                            .build()
-            );
+                                    .builder()
+                                    .errorKey(Response.Status.UNAUTHORIZED.getReasonPhrase())
+                                    .success(false)
+                                    .statusCode(Response.Status.UNAUTHORIZED.getStatusCode())
+                                    .message("Invalid token")
+                                    .build())
+                            .build());
 
             throw new UnauthorizedException("Invalid token");
         }

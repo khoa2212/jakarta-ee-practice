@@ -5,12 +5,12 @@ import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department_location.entity.DepartmentLocation;
 import com.axonactive.dojo.enums.Status;
 
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Root;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ public class DepartmentLocationDAO extends BaseDAO<DepartmentLocation> {
 
         query.select(root);
         query.where(cb.equal(root.get("department").get("id"), departmentId));
-        
+
         return entityManager.createQuery(query)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize)
@@ -53,7 +53,8 @@ public class DepartmentLocationDAO extends BaseDAO<DepartmentLocation> {
         root.fetch("department", JoinType.LEFT);
 
         query.select(root);
-        query.where(cb.equal(root.get("department").get("id"), departmentId), cb.equal(cb.lower(root.get("location")), location.toLowerCase()));
+        query.where(cb.equal(root.get("department").get("id"), departmentId),
+                cb.equal(cb.lower(root.get("location")), location.toLowerCase()));
 
         return entityManager.createQuery(query).getResultList().stream().findFirst();
     }

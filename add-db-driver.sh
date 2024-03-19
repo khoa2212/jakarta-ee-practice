@@ -10,7 +10,7 @@ until `$JBOSS_CLI -c ":read-attribute(name=server-state)" 2> /dev/null | grep -q
 done
 
 echo "=> Adding PostgreSQL module"
-$JBOSS_CLI --connect --command="module add --name=org.postgres --resources=/opt/jboss/wildfly/standalone/deployments/${POSTGRES_DRIVER}.jar --dependencies=javax.api,javax.transaction.api"
+$JBOSS_CLI --connect --command="module add --name=org.postgres --resources=/opt/jboss/wildfly/standalone/deployments/${POSTGRES_DRIVER}.jar --dependencies=jakarta.api,jakarta.transaction.api"
 
 echo "=> Adding PostgreSQL driver"
 $JBOSS_CLI --connect --command="/subsystem=datasources/jdbc-driver=postgres:add(driver-name=postgres,driver-module-name=org.postgres,driver-class-name=org.postgresql.Driver)"

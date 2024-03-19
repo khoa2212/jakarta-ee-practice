@@ -4,7 +4,7 @@ import com.axonactive.dojo.base.entity.BaseEntity;
 import com.axonactive.dojo.department.entity.Department;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter

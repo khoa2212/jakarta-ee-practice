@@ -6,8 +6,8 @@ import com.axonactive.dojo.project.dto.ProjectDTO;
 import com.axonactive.dojo.project.entity.Project;
 import lombok.*;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Getter
 @Setter

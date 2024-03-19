@@ -15,129 +15,127 @@ import com.axonactive.dojo.enums.TokenType;
 import com.axonactive.dojo.user.entity.User;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.Objects;
 import java.util.Optional;
 
 @Stateless
 public class AuthService {
 
-    @Inject
-    private AuthDAO authDAO;
+        @Inject
+        private AuthDAO authDAO;
 
-    @Inject
-    private JwtService jwtService;
+        @Inject
+        private JwtService jwtService;
 
-    public LoginResponseDTO login(LoginRequestDTO requestDTO) throws BadRequestException {
-        User user = authDAO
-                .findActiveUserByEmail(requestDTO.getEmail())
-                .orElseThrow(() -> new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT));
+        public LoginResponseDTO login(LoginRequestDTO requestDTO) throws BadRequestException {
+                User user = authDAO
+                                .findActiveUserByEmail(requestDTO.getEmail())
+                                .orElseThrow(() -> new BadRequestException(
+                                                AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT));
 
-        boolean isValidPassword = BCrypt.checkpw(requestDTO.getPassword(), user.getPassword());
+                boolean isValidPassword = BCrypt.checkpw(requestDTO.getPassword(), user.getPassword());
 
-        if(!isValidPassword) {
-            throw new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT);
+                if (!isValidPassword) {
+                        throw new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT);
+                }
+
+                String accessToken = jwtService.generateToken(TokenPayload
+                                .builder()
+                                .tokenType(TokenType.ACCESS_TOKEN)
+                                .displayName(user.getDisplayName())
+                                .email(user.getEmail())
+                                .role(user.getRole())
+                                .build());
+
+                String refreshToken = jwtService.generateToken(TokenPayload
+                                .builder()
+                                .tokenType(TokenType.REFRESH_TOKEN)
+                                .displayName(user.getDisplayName())
+                                .email(user.getEmail())
+                                .role(user.getRole())
+                                .build());
+
+                user.setRefreshToken(refreshToken);
+
+                authDAO.update(user);
+
+                return LoginResponseDTO
+                                .builder()
+                                .displayName(user.getDisplayName())
+                                .email(user.getEmail())
+                                .avatar(user.getAvatar())
+                                .role(user.getRole())
+                                .accessToken(accessToken)
+                                .refreshToken(user.getRefreshToken())
+                                .build();
         }
 
+        public SignupResponseDTO signup(SignupRequestDTO requestDTO) throws BadRequestException {
+                Optional<User> user = authDAO.findUserByEmail(requestDTO.getEmail());
 
+                if (user.isPresent()) {
+                        throw new BadRequestException(AuthMessage.EXISTED_EMAIL);
+                }
 
-        String accessToken = jwtService.generateToken(TokenPayload
-                .builder()
-                .tokenType(TokenType.ACCESS_TOKEN)
-                .displayName(user.getDisplayName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build());
+                if (!Objects.equals(requestDTO.getPassword(), requestDTO.getConfirmedPassword())) {
+                        throw new BadRequestException(AuthMessage.PASSWORDS_MUST_MATCH);
+                }
 
-        String refreshToken = jwtService.generateToken(TokenPayload
-                .builder()
-                .tokenType(TokenType.REFRESH_TOKEN)
-                .displayName(user.getDisplayName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build());
+                String salt = BCrypt.gensalt();
 
-        user.setRefreshToken(refreshToken);
+                String hashPass = BCrypt.hashpw(requestDTO.getPassword(), salt);
 
-        authDAO.update(user);
+                User newUser = User.builder()
+                                .displayName(requestDTO.getDisplayName())
+                                .password(hashPass)
+                                .role(Role.USER)
+                                .status(Status.INACTIVE)
+                                .email(requestDTO.getEmail()).build();
 
-        return LoginResponseDTO
-                .builder()
-                .displayName(user.getDisplayName())
-                .email(user.getEmail())
-                .avatar(user.getAvatar())
-                .role(user.getRole())
-                .accessToken(accessToken)
-                .refreshToken(user.getRefreshToken())
-                .build();
-    }
+                authDAO.add(newUser);
 
-    public SignupResponseDTO signup(SignupRequestDTO requestDTO) throws BadRequestException {
-        Optional<User> user = authDAO.findUserByEmail(requestDTO.getEmail());
+                String verifiedToken = jwtService.generateToken(
+                                TokenPayload
+                                                .builder()
+                                                .tokenType(TokenType.VERIFY_TOKEN)
+                                                .displayName(newUser.getDisplayName())
+                                                .email(newUser.getEmail())
+                                                .role(newUser.getRole())
+                                                .build());
 
-        if (user.isPresent()) {
-            throw new BadRequestException(AuthMessage.EXISTED_EMAIL);
+                return SignupResponseDTO
+                                .builder()
+                                .verifiedToken(verifiedToken)
+                                .build();
         }
 
-        if (!Objects.equals(requestDTO.getPassword(), requestDTO.getConfirmedPassword())) {
-            throw new BadRequestException(AuthMessage.PASSWORDS_MUST_MATCH);
+        public void verify(VerifyTokeRequestDTO requestDTO) throws UnauthorizedException, EntityNotFoundException {
+                TokenPayload payload = jwtService.verifyToken(requestDTO.getVerifiedToken(), TokenType.VERIFY_TOKEN);
+
+                User user = authDAO.findUserByEmail(payload.getEmail())
+                                .orElseThrow(() -> new EntityNotFoundException(AuthMessage.NOT_FOUND_USER));
+
+                user.setStatus(Status.ACTIVE);
+
+                authDAO.update(user);
         }
 
-        String salt = BCrypt.gensalt();
+        public RenewAccessTokenResponseDTO renew(RenewAccessTokenRequestDTO requestDTO) throws UnauthorizedException {
+                TokenPayload payload = jwtService.verifyToken(requestDTO.getRefreshToken(), TokenType.REFRESH_TOKEN);
 
-        String hashPass = BCrypt.hashpw(requestDTO.getPassword(), salt);
+                User user = authDAO.findActiveUserByEmail(payload.getEmail())
+                                .orElseThrow(() -> new UnauthorizedException("Invalid token"));
 
-        User newUser = User.builder()
-                .displayName(requestDTO.getDisplayName())
-                .password(hashPass)
-                .role(Role.USER)
-                .status(Status.INACTIVE)
-                .email(requestDTO.getEmail()).build();
+                if (!Objects.equals(user.getRefreshToken(), requestDTO.getRefreshToken())) {
+                        throw new UnauthorizedException("Invalid token");
+                }
 
-        authDAO.add(newUser);
+                payload.setTokenType(TokenType.ACCESS_TOKEN);
 
-        String verifiedToken = jwtService.generateToken(
-                TokenPayload
-                .builder()
-                .tokenType(TokenType.VERIFY_TOKEN)
-                .displayName(newUser.getDisplayName())
-                .email(newUser.getEmail())
-                .role(newUser.getRole())
-                .build()
-        );
+                String accessToken = jwtService.generateToken(payload);
 
-        return SignupResponseDTO
-                .builder()
-                .verifiedToken(verifiedToken)
-                .build();
-    }
-
-    public void verify(VerifyTokeRequestDTO requestDTO) throws UnauthorizedException, EntityNotFoundException {
-        TokenPayload payload = jwtService.verifyToken(requestDTO.getVerifiedToken(), TokenType.VERIFY_TOKEN);
-
-        User user = authDAO.findUserByEmail(payload.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException(AuthMessage.NOT_FOUND_USER));
-
-        user.setStatus(Status.ACTIVE);
-
-        authDAO.update(user);
-    }
-
-    public RenewAccessTokenResponseDTO renew(RenewAccessTokenRequestDTO requestDTO) throws UnauthorizedException {
-        TokenPayload payload = jwtService.verifyToken(requestDTO.getRefreshToken(), TokenType.REFRESH_TOKEN);
-
-        User user = authDAO.findActiveUserByEmail(payload.getEmail())
-                .orElseThrow(() -> new UnauthorizedException("Invalid token"));
-
-        if(!Objects.equals(user.getRefreshToken(), requestDTO.getRefreshToken())) {
-            throw new UnauthorizedException("Invalid token");
+                return RenewAccessTokenResponseDTO.builder().accessToken(accessToken).build();
         }
-
-        payload.setTokenType(TokenType.ACCESS_TOKEN);
-
-        String accessToken = jwtService.generateToken(payload);
-
-        return RenewAccessTokenResponseDTO.builder().accessToken(accessToken).build();
-    }
- }
+}

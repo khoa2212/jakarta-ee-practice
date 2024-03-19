@@ -5,14 +5,14 @@ import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.entity.Project;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Root;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Root;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,8 @@ public class DepartmentDAO extends BaseDAO<Department> {
         CriteriaQuery<Department> query = cb.createQuery(Department.class);
         Root<Department> root = query.from(Department.class);
         query.select(root);
-        query.where(cb.equal(root.get("status"), Status.ACTIVE), cb.equal(cb.lower(root.get("departmentName")), departmentName.toLowerCase()));
+        query.where(cb.equal(root.get("status"), Status.ACTIVE),
+                cb.equal(cb.lower(root.get("departmentName")), departmentName.toLowerCase()));
 
         return entityManager.createQuery(query).getResultList().stream().findFirst();
     }

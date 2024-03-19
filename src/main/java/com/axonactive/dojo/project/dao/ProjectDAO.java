@@ -6,11 +6,11 @@ import com.axonactive.dojo.project.dto.ProjectCountDTO;
 import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
 import com.axonactive.dojo.project.entity.Project;
 
-import javax.ejb.Stateless;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Root;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -21,14 +21,15 @@ public class ProjectDAO extends BaseDAO<Project> {
         super(Project.class);
     }
 
-    public List<Project> findProjectsByDepartmentId (long departmentId, int offset, int pageSize) {
+    public List<Project> findProjectsByDepartmentId(long departmentId, int offset, int pageSize) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Project> query = cb.createQuery(Project.class);
         Root<Project> root = query.from(Project.class);
         root.fetch("department", JoinType.LEFT);
 
         query.select(root);
-        query.where(cb.equal(root.get("department").get("id"), departmentId), cb.equal(root.get("status"), Status.ACTIVE));
+        query.where(cb.equal(root.get("department").get("id"), departmentId),
+                cb.equal(root.get("status"), Status.ACTIVE));
 
         return entityManager.createQuery(query)
                 .setFirstResult(offset)
@@ -36,7 +37,7 @@ public class ProjectDAO extends BaseDAO<Project> {
                 .getResultList();
     }
 
-    public List<Project> findProjects (int offset, int pageSize) {
+    public List<Project> findProjects(int offset, int pageSize) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Project> query = cb.createQuery(Project.class);
         Root<Project> root = query.from(Project.class);
@@ -68,7 +69,8 @@ public class ProjectDAO extends BaseDAO<Project> {
         Root<Project> root = query.from(Project.class);
 
         query.select(cb.count(root));
-        query.where(cb.equal(root.get("department").get("id"), departmentId), cb.equal(root.get("status"), Status.ACTIVE));
+        query.where(cb.equal(root.get("department").get("id"), departmentId),
+                cb.equal(root.get("status"), Status.ACTIVE));
 
         return entityManager.createQuery(query).getSingleResult();
     }
@@ -98,10 +100,12 @@ public class ProjectDAO extends BaseDAO<Project> {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public List<ProjectsWithEmployeesDTO> findProjectsWithEmployeesSalariesHours(int offset, int pageSize, long numberOfEmployees,
-                                                       long totalHours, BigDecimal totalSalaries) {
+    public List<ProjectsWithEmployeesDTO> findProjectsWithEmployeesSalariesHours(int offset, int pageSize,
+            long numberOfEmployees,
+            long totalHours, BigDecimal totalSalaries) {
 
-        return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
+        return entityManager
+                .createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
                 .setParameter("numberOfEmployees", numberOfEmployees)
                 .setParameter("totalHours", totalHours)
                 .setParameter("totalSalaries", totalSalaries)
@@ -110,7 +114,8 @@ public class ProjectDAO extends BaseDAO<Project> {
                 .getResultList();
     }
 
-    public ProjectCountDTO findTotalCountProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours, BigDecimal totalSalaries) {
+    public ProjectCountDTO findTotalCountProjectsWithEmployeesSalariesHours(long numberOfEmployees, long totalHours,
+            BigDecimal totalSalaries) {
         return entityManager
                 .createNamedQuery(Project.FIND_TOTAL_COUNT_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectCountDTO.class)
                 .setParameter("numberOfEmployees", numberOfEmployees)
@@ -119,20 +124,22 @@ public class ProjectDAO extends BaseDAO<Project> {
                 .getSingleResult();
     }
 
-
     public List<ProjectsWithEmployeesDTO> findProjectsWithEmployeesSalariesHours(long numberOfEmployees,
-                                                                                 long totalHours, BigDecimal totalSalaries, List<Long> projectIds, String option) {
+            long totalHours, BigDecimal totalSalaries, List<Long> projectIds, String option) {
 
         switch (option) {
             case "all": {
-                return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
+                return entityManager
+                        .createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
                         .setParameter("numberOfEmployees", numberOfEmployees)
                         .setParameter("totalHours", totalHours)
                         .setParameter("totalSalaries", totalSalaries)
                         .getResultList();
             }
             case "in": {
-                return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_IN_IDS, ProjectsWithEmployeesDTO.class)
+                return entityManager
+                        .createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_IN_IDS,
+                                ProjectsWithEmployeesDTO.class)
                         .setParameter("numberOfEmployees", numberOfEmployees)
                         .setParameter("totalHours", totalHours)
                         .setParameter("totalSalaries", totalSalaries)
@@ -140,7 +147,9 @@ public class ProjectDAO extends BaseDAO<Project> {
                         .getResultList();
             }
             case "notIn": {
-                return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_NOT_IN_IDS, ProjectsWithEmployeesDTO.class)
+                return entityManager
+                        .createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES_NOT_IN_IDS,
+                                ProjectsWithEmployeesDTO.class)
                         .setParameter("numberOfEmployees", numberOfEmployees)
                         .setParameter("totalHours", totalHours)
                         .setParameter("totalSalaries", totalSalaries)
@@ -148,7 +157,8 @@ public class ProjectDAO extends BaseDAO<Project> {
                         .getResultList();
             }
             default: {
-                return entityManager.createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
+                return entityManager
+                        .createNamedQuery(Project.FIND_PROJECTS_WITH_EMPLOYEES_SALARIES, ProjectsWithEmployeesDTO.class)
                         .setParameter("numberOfEmployees", numberOfEmployees)
                         .setParameter("totalHours", totalHours)
                         .setParameter("totalSalaries", totalSalaries)

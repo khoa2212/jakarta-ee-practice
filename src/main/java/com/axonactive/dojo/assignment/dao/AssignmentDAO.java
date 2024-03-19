@@ -5,8 +5,8 @@ import com.axonactive.dojo.base.dao.BaseDAO;
 import com.axonactive.dojo.department_location.entity.DepartmentLocation;
 import com.axonactive.dojo.project.entity.Project;
 
-import javax.ejb.Stateless;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -45,12 +45,12 @@ public class AssignmentDAO extends BaseDAO<Assignment> {
     public long findTotalCountByProjectId(long projectId) {
         Query query = entityManager.createNamedQuery(Assignment.FIND_TOTAL_COUNT_BY_PROJECT_ID);
         query.setParameter("projectId", projectId);
-        return (long)query.getSingleResult();
+        return (long) query.getSingleResult();
     }
 
     public long findTotalCountByEmployeeId(long employeeId) {
         Query query = entityManager.createNamedQuery(Assignment.FIND_TOTAL_COUNT_BY_EMPLOYEE_ID);
         query.setParameter("employeeId", employeeId);
-        return (long)query.getSingleResult();
+        return (long) query.getSingleResult();
     }
 }

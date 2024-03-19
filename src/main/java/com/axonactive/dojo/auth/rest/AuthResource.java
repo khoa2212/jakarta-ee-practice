@@ -13,14 +13,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.net.URI;
 
 @Path("auth")
@@ -31,8 +31,8 @@ public class AuthResource {
 
     @POST
     @Path("login")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Signup")
     @ApiModelProperty
     @ApiResponses({
@@ -47,8 +47,8 @@ public class AuthResource {
 
     @POST
     @Path("signup")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Signup")
     @ApiModelProperty
     @ApiResponses({
@@ -63,8 +63,8 @@ public class AuthResource {
 
     @POST
     @Path("verify")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Verify")
     @ApiModelProperty
     @ApiResponses({
@@ -72,15 +72,16 @@ public class AuthResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response verify(@Valid VerifyTokeRequestDTO requestDTO) throws UnauthorizedException, EntityNotFoundException {
+    public Response verify(@Valid VerifyTokeRequestDTO requestDTO)
+            throws UnauthorizedException, EntityNotFoundException {
         authService.verify(requestDTO);
         return Response.noContent().build();
     }
 
     @POST
     @Path("renew-token")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Verify")
     @ApiModelProperty
     @ApiResponses({

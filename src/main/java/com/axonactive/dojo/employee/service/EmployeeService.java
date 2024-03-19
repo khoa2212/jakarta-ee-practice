@@ -19,9 +19,9 @@ import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
 import netscape.javascript.JSObject;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.json.JsonObject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -40,23 +40,24 @@ public class EmployeeService {
     @Inject
     private AssignmentMapper assignmentMapper;
 
-    public EmployeeListResponseDTO findEmployees(long departmentId, int pageNumber, int pageSize, String name) throws EntityNotFoundException {
+    public EmployeeListResponseDTO findEmployees(long departmentId, int pageNumber, int pageSize, String name)
+            throws EntityNotFoundException {
         List<Employee> employees;
         List<EmployeeDTO> employeeDTOS;
         long totalCount = 0L;
 
         int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
-        if(departmentId > 0) {
+        if (departmentId > 0) {
             Department department = this.departmentDAO
                     .findActiveDepartmentById(departmentId)
                     .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-            if(name != null && !name.isEmpty()) {
-                employees = this.employeeDAO.findEmployeesByNameAndDepartmentId(department.getId(), offset, pageSize, name);
+            if (name != null && !name.isEmpty()) {
+                employees = this.employeeDAO.findEmployeesByNameAndDepartmentId(department.getId(), offset, pageSize,
+                        name);
                 totalCount = this.employeeDAO.findTotalCountWithNameAndDepartmentId(department.getId(), name);
-            }
-            else {
+            } else {
                 employees = this.employeeDAO.findEmployeesByDepartmentId(department.getId(), offset, pageSize);
                 totalCount = this.employeeDAO.findTotalCountWithDepartmentId(department.getId());
             }
@@ -67,11 +68,11 @@ public class EmployeeService {
                     .builder()
                     .employees(employeeDTOS)
                     .totalCount(totalCount)
-                    .lastPage(((int)totalCount / pageSize) + 1)
+                    .lastPage(((int) totalCount / pageSize) + 1)
                     .build();
         }
 
-        if(name != null && !name.isEmpty()) {
+        if (name != null && !name.isEmpty()) {
             employees = this.employeeDAO.findEmployeesByName(offset, pageSize, name);
 
             employeeDTOS = this.employeeMapper.toListDTO(employees);
@@ -80,7 +81,7 @@ public class EmployeeService {
                     .builder()
                     .employees(employeeDTOS)
                     .totalCount(totalCount)
-                    .lastPage(((int)totalCount / pageSize) + 1)
+                    .lastPage(((int) totalCount / pageSize) + 1)
                     .build();
         }
 
@@ -92,7 +93,7 @@ public class EmployeeService {
                 .builder()
                 .employees(employeeDTOS)
                 .totalCount(totalCount)
-                .lastPage(((int)totalCount / pageSize) + 1)
+                .lastPage(((int) totalCount / pageSize) + 1)
                 .build();
     }
 
@@ -161,32 +162,37 @@ public class EmployeeService {
         return EmployeeMessage.deleteSuccessMessage();
     }
 
-    public EmployeeListResponseDTO findEmployeesByHoursInProjectMangedByDepartment(long departmentId, int pageNumber, int pageSize, int numberOfHour) throws EntityNotFoundException {
+    public EmployeeListResponseDTO findEmployeesByHoursInProjectMangedByDepartment(long departmentId, int pageNumber,
+            int pageSize, int numberOfHour) throws EntityNotFoundException {
         Department department = departmentDAO.findActiveDepartmentById(departmentId)
                 .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
         int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
-        long totalCount = employeeDAO.findTotalCountEmployeesByHoursInProjectMangedByDepartment(departmentId, numberOfHour);
+        long totalCount = employeeDAO.findTotalCountEmployeesByHoursInProjectMangedByDepartment(departmentId,
+                numberOfHour);
 
-        List<Object[]> objects = employeeDAO.findEmployeesByHoursInProjectMangedByDepartment(department.getId(), offset, pageSize, numberOfHour);
+        List<Object[]> objects = employeeDAO.findEmployeesByHoursInProjectMangedByDepartment(department.getId(), offset,
+                pageSize, numberOfHour);
 
         Map<Long, EmployeeDTO> map = new HashMap<>();
         List<AssignmentDTO> assignmentDTOS = new ArrayList<>();
         objects.forEach(object -> {
             EmployeeDTO employeeDTO = employeeMapper.toDTO((Employee) object[0]);
             AssignmentDTO assignmentDTO = assignmentMapper.toDTO((Assignment) object[1]);
-            map.put(employeeDTO.getId(),employeeDTO);
+            map.put(employeeDTO.getId(), employeeDTO);
             assignmentDTOS.add(assignmentDTO);
         });
 
         return EmployeeListResponseDTO
                 .builder()
                 .employees(map.values().stream().peek(employeeDTO -> {
-                    employeeDTO.setAssignments(assignmentDTOS.stream().filter((assignmentDTO -> Objects.equals(assignmentDTO.getEmployee().getId(), employeeDTO.getId()))).toList());
+                    employeeDTO.setAssignments(assignmentDTOS.stream().filter(
+                            (assignmentDTO -> Objects.equals(assignmentDTO.getEmployee().getId(), employeeDTO.getId())))
+                            .toList());
                 }).toList())
                 .totalCount(totalCount)
-                .lastPage(((int)totalCount / pageSize) + 1)
+                .lastPage(((int) totalCount / pageSize) + 1)
                 .build();
     }
 }

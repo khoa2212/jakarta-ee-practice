@@ -5,7 +5,7 @@ import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.enums.Status;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 

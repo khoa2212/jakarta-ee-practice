@@ -2,11 +2,11 @@ package com.axonactive.dojo.base.exception;
 
 import com.axonactive.dojo.base.exception.content.ExceptionContent;
 
-import javax.validation.ValidationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import jakarta.validation.ValidationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class ValidationMapper implements ExceptionMapper<ValidationException> {
@@ -22,8 +22,7 @@ public class ValidationMapper implements ExceptionMapper<ValidationException> {
                 Response.Status.BAD_REQUEST.getStatusCode(),
                 Response.Status.BAD_REQUEST.getReasonPhrase(),
                 null,
-                messages
-        );
+                messages);
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .entity(body)

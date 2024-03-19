@@ -18,12 +18,12 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -36,98 +36,106 @@ import java.util.Set;
 @Api(tags = "Projects API")
 public class ProjectResource {
 
-    private static final Logger logger = LogManager.getLogger(ProjectResource.class);
+        private static final Logger logger = LogManager.getLogger(ProjectResource.class);
 
-    @Inject
-    private ProjectService projectService;
+        @Inject
+        private ProjectService projectService;
 
-    @GET
-    @Path("all")
-    @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "Get all projects list")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Get all projects list successfully", response = ProjectDTO.class, responseContainer = "List"),
-            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
-    })
-    public Response findAll() {
-        logger.info(LoggerMessage.findAllMessage("project"));
+        @GET
+        @Path("all")
+        @Produces({ MediaType.APPLICATION_JSON })
+        @ApiOperation(value = "Get all projects list")
+        @ApiResponses({
+                        @ApiResponse(code = 200, message = "Get all projects list successfully", response = ProjectDTO.class, responseContainer = "List"),
+                        @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+        })
+        public Response findAll() {
+                logger.info(LoggerMessage.findAllMessage("project"));
 
-        List<ProjectDTO> projectDTOS = this.projectService.findAll();
-        return Response.ok().entity(projectDTOS).build();
-    }
+                List<ProjectDTO> projectDTOS = this.projectService.findAll();
+                return Response.ok().entity(projectDTOS).build();
+        }
 
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "Get all project list with pagination")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Get all project list successfully", response = ProjectListResponseDTO.class, responseContainer = "List"),
-            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
-    })
-    public Response findProjects(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
-                                 @DefaultValue("10") @QueryParam("pageSize") int pageSize,
-                                 @DefaultValue("0") @QueryParam("departmentId") long departmentId) throws EntityNotFoundException {
-        logger.info(LoggerMessage.findPaginatedListMessage("project"));
+        @GET
+        @Produces({ MediaType.APPLICATION_JSON })
+        @ApiOperation(value = "Get all project list with pagination")
+        @ApiResponses({
+                        @ApiResponse(code = 200, message = "Get all project list successfully", response = ProjectListResponseDTO.class, responseContainer = "List"),
+                        @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+        })
+        public Response findProjects(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+                        @DefaultValue("10") @QueryParam("pageSize") int pageSize,
+                        @DefaultValue("0") @QueryParam("departmentId") long departmentId)
+                        throws EntityNotFoundException {
+                logger.info(LoggerMessage.findPaginatedListMessage("project"));
 
-        ProjectListResponseDTO projectListResponseDTO = this.projectService.findProjects(departmentId, pageNumber, pageSize);
-        return Response.ok().entity(projectListResponseDTO).build();
-    }
+                ProjectListResponseDTO projectListResponseDTO = this.projectService.findProjects(departmentId,
+                                pageNumber, pageSize);
+                return Response.ok().entity(projectListResponseDTO).build();
+        }
 
-    @GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "Get project by id")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Get project successfully", response = ProjectDTO.class),
-            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
-    })
-    public Response findById(@PathParam("id") long id) throws EntityNotFoundException {
-        logger.info(LoggerMessage.findByIdMessage("project", id));
+        @GET
+        @Path("{id}")
+        @Produces({ MediaType.APPLICATION_JSON })
+        @ApiOperation(value = "Get project by id")
+        @ApiResponses({
+                        @ApiResponse(code = 200, message = "Get project successfully", response = ProjectDTO.class),
+                        @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+        })
+        public Response findById(@PathParam("id") long id) throws EntityNotFoundException {
+                logger.info(LoggerMessage.findByIdMessage("project", id));
 
-        ProjectDTO projectDTO = this.projectService.findById(id);
-        return Response.ok().entity(projectDTO).build();
-    }
+                ProjectDTO projectDTO = this.projectService.findById(id);
+                return Response.ok().entity(projectDTO).build();
+        }
 
+        @GET
+        @Path("reports/salaries")
+        @Produces({ MediaType.APPLICATION_JSON })
+        @ApiOperation(value = "Get projects with employees, total salaries, total hours")
+        @ApiResponses({
+                        @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectsWithEmployeesListDTO.class),
+                        @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+        })
+        @Secure
+        @RolesAllowed({ "ADMIN", "USER" })
+        public Response findProjectsWithEmployeesSalariesHours(
+                        @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+                        @DefaultValue("10") @QueryParam("pageSize") int pageSize,
+                        @DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
+                        @DefaultValue("0") @QueryParam("totalHours") long totalHours,
+                        @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries)
+                        throws EntityNotFoundException {
+                logger.info("Attempting get projects with employees, total salaries, total hours");
 
-    @GET
-    @Path("reports/salaries")
-    @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "Get projects with employees, total salaries, total hours")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectsWithEmployeesListDTO.class),
-            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
-    })
-    @Secure
-    @RolesAllowed({"ADMIN", "USER"})
-    public Response findProjectsWithEmployeesSalariesHours(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
-                                                           @DefaultValue("10") @QueryParam("pageSize") int pageSize,
-                                                           @DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
-                                                           @DefaultValue("0") @QueryParam("totalHours") long totalHours,
-                                                           @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries) throws EntityNotFoundException {
-        logger.info("Attempting get projects with employees, total salaries, total hours");
+                ProjectsWithEmployeesListDTO projectDTO = this.projectService.findProjectsWithEmployeesSalariesHours(
+                                pageNumber, pageSize, numberOfEmployees, totalHours, totalSalaries);
+                return Response.ok().entity(projectDTO).build();
+        }
 
-        ProjectsWithEmployeesListDTO projectDTO = this.projectService.findProjectsWithEmployeesSalariesHours(pageNumber, pageSize, numberOfEmployees, totalHours, totalSalaries);
-        return Response.ok().entity(projectDTO).build();
-    }
+        @GET
+        @Path("reports/salaries/export-excel")
+        @Produces({ MediaType.APPLICATION_OCTET_STREAM })
+        @ApiOperation(value = "Export excel projects with employees, total salaries, total hours")
+        @ApiResponses({
+                        @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectsWithEmployeesListDTO.class),
+                        @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+        })
+        public Response exportExcelProjectsWithEmployeesSalariesHours(
+                        @DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
+                        @DefaultValue("0") @QueryParam("totalHours") long totalHours,
+                        @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries,
+                        @QueryParam("projectIdsParam") String projectIdsParam)
+                        throws EntityNotFoundException, Exception {
+                logger.info("Attempting export excel projects with employees, total salaries, total hours");
 
-    @GET
-    @Path("reports/salaries/export-excel")
-    @Produces({MediaType.APPLICATION_OCTET_STREAM})
-    @ApiOperation(value = "Export excel projects with employees, total salaries, total hours")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectsWithEmployeesListDTO.class),
-            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
-    })
-    public Response exportExcelProjectsWithEmployeesSalariesHours(@DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,
-                                                                  @DefaultValue("0") @QueryParam("totalHours") long totalHours,
-                                                                  @DefaultValue("0") @QueryParam("totalSalaries") BigDecimal totalSalaries,
-                                                                  @QueryParam("projectIdsParam") String projectIdsParam) throws EntityNotFoundException, Exception {
-        logger.info("Attempting export excel projects with employees, total salaries, total hours");
+                String headerKey = "Content-Disposition";
+                String headerValue = "attachment;filename=projects-with-salaries-report.xlsx";
 
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment;filename=projects-with-salaries-report.xlsx";
+                ByteArrayOutputStream outputStream = this.projectService.exportExcelProjectsWithEmployeesSalariesHours(
+                                numberOfEmployees, totalHours, totalSalaries, projectIdsParam);
 
-        ByteArrayOutputStream outputStream = this.projectService.exportExcelProjectsWithEmployeesSalariesHours(numberOfEmployees, totalHours, totalSalaries, projectIdsParam);
-
-        return Response.ok(outputStream.toByteArray(), "application/octet-stream").header(headerKey, headerValue).build();
-    }
+                return Response.ok(outputStream.toByteArray(), "application/octet-stream")
+                                .header(headerKey, headerValue).build();
+        }
 }

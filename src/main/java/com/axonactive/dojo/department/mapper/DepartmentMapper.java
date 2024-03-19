@@ -7,7 +7,7 @@ import com.axonactive.dojo.department.entity.Department;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "jakarta")
 public interface DepartmentMapper extends BaseMapper<DepartmentDTO, Department> {
 
 }

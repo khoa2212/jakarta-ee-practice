@@ -4,9 +4,9 @@ import com.axonactive.dojo.base.validations.ValueOfEnum;
 import com.axonactive.dojo.enums.Status;
 import lombok.*;
 
-import javax.json.bind.annotation.JsonbDateFormat;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.json.bind.annotation.JsonbDateFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter

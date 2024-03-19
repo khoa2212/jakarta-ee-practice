@@ -11,11 +11,11 @@ import com.axonactive.dojo.department.mapper.DepartmentMapper;
 import com.axonactive.dojo.employee.dto.EmployeeDTO;
 import com.axonactive.dojo.enums.Status;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,17 +41,17 @@ public class DepartmentService {
 
         long count = this.departmentDAO.findTotalCount();
 
-        int lastPage = ((int)count/ pageSize) + 1;
+        int lastPage = ((int) count / pageSize) + 1;
         DepartmentListResponseDTO departmentListResponseDTO = DepartmentListResponseDTO
-                                                                        .builder()
-                                                                        .departments(departmentDTOS)
-                                                                        .totalCount(count)
-                                                                        .lastPage(lastPage)
-                                                                        .build();
+                .builder()
+                .departments(departmentDTOS)
+                .totalCount(count)
+                .lastPage(lastPage)
+                .build();
         return departmentListResponseDTO;
     }
 
-    public DepartmentDTO findById (long id) throws EntityNotFoundException {
+    public DepartmentDTO findById(long id) throws EntityNotFoundException {
         Department department = this.departmentDAO
                 .findActiveDepartmentById(id)
                 .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
@@ -63,7 +63,7 @@ public class DepartmentService {
         Optional<Department> optionalDepartment = this.departmentDAO.findByDepartmentName(
                 createDepartmentRequestDTO.getDepartmentName().toLowerCase().trim());
 
-        if(optionalDepartment.isPresent()) {
+        if (optionalDepartment.isPresent()) {
             throw new BadRequestException(DepartmentMessage.EXISTED_NAME);
         }
 
@@ -78,14 +78,16 @@ public class DepartmentService {
         return this.departmentMapper.toDTO(department);
     }
 
-    public DepartmentDTO update(UpdateDepartmentRequestDTO updateDepartmentRequestDTO) throws EntityNotFoundException, BadRequestException {
+    public DepartmentDTO update(UpdateDepartmentRequestDTO updateDepartmentRequestDTO)
+            throws EntityNotFoundException, BadRequestException {
         Department department = this.departmentDAO
                 .findActiveDepartmentById(updateDepartmentRequestDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
 
-        Optional<Department> optionalDepartment = this.departmentDAO.findByDepartmentName(updateDepartmentRequestDTO.getDepartmentName().toLowerCase().trim());
+        Optional<Department> optionalDepartment = this.departmentDAO
+                .findByDepartmentName(updateDepartmentRequestDTO.getDepartmentName().toLowerCase().trim());
 
-        if(optionalDepartment.isPresent()
+        if (optionalDepartment.isPresent()
                 && !Objects.equals(optionalDepartment.get().getId(), updateDepartmentRequestDTO.getId())) {
             throw new BadRequestException(DepartmentMessage.EXISTED_NAME);
         }
@@ -99,7 +101,8 @@ public class DepartmentService {
         return this.departmentMapper.toDTO(updatedDepartment);
     }
 
-    public DeleteSuccessMessage deleteSoftly(DeleteDepartmentRequestDTO deleteDepartmentRequestDTO) throws EntityNotFoundException {
+    public DeleteSuccessMessage deleteSoftly(DeleteDepartmentRequestDTO deleteDepartmentRequestDTO)
+            throws EntityNotFoundException {
 
         Department department = this.departmentDAO
                 .findActiveDepartmentById(deleteDepartmentRequestDTO.getId())

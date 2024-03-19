@@ -5,7 +5,7 @@ import com.axonactive.dojo.enums.Role;
 import com.axonactive.dojo.enums.Status;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter

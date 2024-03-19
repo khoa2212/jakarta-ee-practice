@@ -14,11 +14,11 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("relatives")
 @Api(tags = "Relatives API")
@@ -31,35 +31,38 @@ public class RelativeResource {
 
     @GET
     @Path("employee/{employeeId}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Get all relative list with pagination")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Get all relative list successfully", response = RelativeListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response findRelativesByEmployeeId(@PathParam("employeeId") long employeeId,
-                                              @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
-                                              @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
+            @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+            @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
         logger.info(LoggerMessage.findPaginatedListMessage("relative"));
 
-        RelativeListResponseDTO relativeListResponseDTO = this.relativeService.findRelativesByEmployeeId(employeeId, pageNumber, pageSize);
+        RelativeListResponseDTO relativeListResponseDTO = this.relativeService.findRelativesByEmployeeId(employeeId,
+                pageNumber, pageSize);
         return Response.ok().entity(relativeListResponseDTO).build();
     }
 
     @GET
     @Path("reports/employees")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Get all relative list by employees not assigned")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Get all relative list successfully", response = RelativeListResponseDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     @Secure
-    @RolesAllowed({"ADMIN", "USER"})
-    public Response findRelivesByEmployeesNotAssigned(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber, @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
+    @RolesAllowed({ "ADMIN", "USER" })
+    public Response findRelivesByEmployeesNotAssigned(@DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
+            @DefaultValue("10") @QueryParam("pageSize") int pageSize) throws EntityNotFoundException {
         logger.info("Attempting to get all relative list by employees not assigned");
 
-        RelativeListResponseDTO relativeListResponseDTO = this.relativeService.findRelivesByEmployeesNotAssigned(pageNumber, pageSize);
+        RelativeListResponseDTO relativeListResponseDTO = this.relativeService
+                .findRelivesByEmployeesNotAssigned(pageNumber, pageSize);
         return Response.ok().entity(relativeListResponseDTO).build();
     }
 }

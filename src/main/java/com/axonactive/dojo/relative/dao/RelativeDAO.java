@@ -5,10 +5,10 @@ import com.axonactive.dojo.department_location.entity.DepartmentLocation;
 import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.relative.entity.Relative;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityGraph;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 @Stateless
@@ -28,7 +28,7 @@ public class RelativeDAO extends BaseDAO<Relative> {
     public long findTotalCount(long employeeId) {
         Query query = entityManager.createNamedQuery(Relative.FIND_TOTAL_COUNT);
         query.setParameter("employeeId", employeeId);
-        return (long)query.getSingleResult();
+        return (long) query.getSingleResult();
     }
 
     public List<Relative> findRelivesByEmployeesNotAssigned(int offset, int pageSize) {
@@ -36,21 +36,21 @@ public class RelativeDAO extends BaseDAO<Relative> {
         relativeEntityGraph.addAttributeNodes("employee");
         relativeEntityGraph.addSubgraph("employee").addAttributeNodes("department");
 
-        TypedQuery<Relative> query =  entityManager.createQuery("select r from Relative r " +
-                        "join fetch Employee e on e.id = r.employee.id " +
-                        "left join fetch Assignment a on e.id = a.employee.id " +
-                        "where a.project.id is null",
+        TypedQuery<Relative> query = entityManager.createQuery("select r from Relative r " +
+                "join fetch Employee e on e.id = r.employee.id " +
+                "left join fetch Assignment a on e.id = a.employee.id " +
+                "where a.project.id is null",
                 Relative.class).setFirstResult(offset).setMaxResults(pageSize);
-        query.setHint("javax.persistence.loadgraph", relativeEntityGraph);
+        query.setHint("jakarta.persistence.loadgraph", relativeEntityGraph);
 
         return query.getResultList();
     }
 
     public long findTotalCountRelivesByEmployeesNotAssigned() {
-        TypedQuery<Long> query =  entityManager.createQuery("select count(r.id) from Relative r " +
-                        "join fetch Employee e on e.id = r.employee.id " +
-                        "left join fetch Assignment a on e.id = a.employee.id " +
-                        "where a.project.id is null",
+        TypedQuery<Long> query = entityManager.createQuery("select count(r.id) from Relative r " +
+                "join fetch Employee e on e.id = r.employee.id " +
+                "left join fetch Assignment a on e.id = a.employee.id " +
+                "where a.project.id is null",
                 Long.class);
 
         return query.getSingleResult();

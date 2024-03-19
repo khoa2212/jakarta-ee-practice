@@ -7,26 +7,20 @@ import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.filter.Secure;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.base.message.LoggerMessage;
-import com.axonactive.dojo.department.dto.DepartmentDTO;
-import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
-import com.axonactive.dojo.employee.rest.EmployeeResource;
 import io.swagger.annotations.*;
-import lombok.Getter;
-import lombok.Value;
+import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.json.JsonObject;
-import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.annotation.security.RolesAllowed;
+
+import jakarta.validation.Valid;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.util.List;
 
 @Path("assignments")
 @Api(tags = "Assignments API")

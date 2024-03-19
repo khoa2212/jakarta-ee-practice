@@ -5,10 +5,10 @@ import com.axonactive.dojo.enums.Gender;
 import lombok.*;
 import org.jetbrains.annotations.Nullable;
 
-import javax.json.bind.annotation.JsonbDateFormat;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
+import jakarta.json.bind.annotation.JsonbDateFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import java.time.LocalDate;
 
 @Setter

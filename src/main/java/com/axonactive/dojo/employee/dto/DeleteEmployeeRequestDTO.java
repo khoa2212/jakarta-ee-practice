@@ -2,7 +2,7 @@ package com.axonactive.dojo.employee.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Getter
 @Setter

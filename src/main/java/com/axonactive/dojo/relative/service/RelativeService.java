@@ -12,8 +12,8 @@ import com.axonactive.dojo.relative.entity.Relative;
 import com.axonactive.dojo.relative.mapper.RelativeMapper;
 import lombok.*;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +29,8 @@ public class RelativeService {
     @Inject
     private RelativeMapper relativeMapper;
 
-    public RelativeListResponseDTO findRelativesByEmployeeId(long employeeId, int pageNumber, int pageSize) throws EntityNotFoundException {
+    public RelativeListResponseDTO findRelativesByEmployeeId(long employeeId, int pageNumber, int pageSize)
+            throws EntityNotFoundException {
         Employee employee = this.employeeDAO
                 .findActiveEmployeeById(employeeId)
                 .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
@@ -43,21 +44,22 @@ public class RelativeService {
                 .builder()
                 .relatives(this.relativeMapper.toListDTO(relatives))
                 .totalCount(totalCount)
-                .lastPage(((int)totalCount / pageSize) + 1)
+                .lastPage(((int) totalCount / pageSize) + 1)
                 .build();
     }
 
     public RelativeListResponseDTO findRelivesByEmployeesNotAssigned(int pageNumber, int pageSize) {
         int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
 
-        List<RelativeDTO> relativeDTOS = relativeMapper.toListDTO(relativeDAO.findRelivesByEmployeesNotAssigned(offset, pageSize));
+        List<RelativeDTO> relativeDTOS = relativeMapper
+                .toListDTO(relativeDAO.findRelivesByEmployeesNotAssigned(offset, pageSize));
         long totalCount = relativeDAO.findTotalCountRelivesByEmployeesNotAssigned();
 
         return RelativeListResponseDTO
                 .builder()
                 .relatives(relativeDTOS)
                 .totalCount(totalCount)
-                .lastPage(((int)totalCount / pageSize) + 1)
+                .lastPage(((int) totalCount / pageSize) + 1)
                 .build();
     }
 }
