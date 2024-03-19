@@ -17,6 +17,7 @@ import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
+import jakarta.enterprise.inject.Default;
 import netscape.javascript.JSObject;
 
 import jakarta.ejb.Stateless;
@@ -38,6 +39,7 @@ public class EmployeeService {
     private EmployeeMapper employeeMapper;
 
     @Inject
+    @Default
     private AssignmentMapper assignmentMapper;
 
     public EmployeeListResponseDTO findEmployees(long departmentId, int pageNumber, int pageSize, String name)

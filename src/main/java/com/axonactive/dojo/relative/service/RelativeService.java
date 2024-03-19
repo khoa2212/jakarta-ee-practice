@@ -10,6 +10,7 @@ import com.axonactive.dojo.relative.dto.RelativeDTO;
 import com.axonactive.dojo.relative.dto.RelativeListResponseDTO;
 import com.axonactive.dojo.relative.entity.Relative;
 import com.axonactive.dojo.relative.mapper.RelativeMapper;
+import jakarta.enterprise.inject.Default;
 import lombok.*;
 
 import jakarta.ejb.Stateless;
@@ -27,6 +28,7 @@ public class RelativeService {
     private EmployeeDAO employeeDAO;
 
     @Inject
+    @Default
     private RelativeMapper relativeMapper;
 
     public RelativeListResponseDTO findRelativesByEmployeeId(long employeeId, int pageNumber, int pageSize)

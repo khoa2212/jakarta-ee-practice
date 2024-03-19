@@ -17,6 +17,7 @@ import com.axonactive.dojo.project.entity.Project;
 import com.axonactive.dojo.project.message.ProjectMessage;
 
 import jakarta.ejb.Stateless;
+import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import java.util.List;
@@ -28,6 +29,7 @@ public class AssignmentService {
         private AssignmentDAO assignmentDAO;
 
         @Inject
+        @Default
         private AssignmentMapper assignmentMapper;
 
         @Inject

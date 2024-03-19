@@ -10,6 +10,7 @@ import com.axonactive.dojo.project.dto.*;
 import com.axonactive.dojo.project.entity.Project;
 import com.axonactive.dojo.project.mapper.ProjectMapper;
 import com.axonactive.dojo.project.message.ProjectMessage;
+import jakarta.enterprise.inject.Default;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -34,6 +35,7 @@ public class ProjectService {
     private DepartmentDAO departmentDAO;
 
     @Inject
+    @Default
     private ProjectMapper projectMapper;
 
     public List<ProjectDTO> findAll() {

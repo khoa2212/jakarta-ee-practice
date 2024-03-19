@@ -3,19 +3,16 @@ package com.axonactive.dojo.department.service;
 import com.axonactive.dojo.base.exception.BadRequestException;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
-import com.axonactive.dojo.department.message.DepartmentMessage;
+import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.department.dto.*;
 import com.axonactive.dojo.department.entity.Department;
-import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.department.mapper.DepartmentMapper;
-import com.axonactive.dojo.employee.dto.EmployeeDTO;
+import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.enums.Status;
-
 import jakarta.ejb.Stateless;
+import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,6 +23,7 @@ public class DepartmentService {
     private DepartmentDAO departmentDAO;
 
     @Inject
+    @Default
     private DepartmentMapper departmentMapper;
 
     public List<DepartmentDTO> findAll() {

@@ -16,9 +16,9 @@ import jakarta.persistence.*;
 @Table(uniqueConstraints = {
         @UniqueConstraint(name = "UQ_employee_id_project_id", columnNames = { "employee_id", "project_id" }) })
 @NamedQueries({
-        @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_PROJECT_ID, query = "select a from Assignment a left join fetch a.employee e left join fetch e.department left join fetch a.project p left join fetch p.department where a.project.id = :projectId"),
-        @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_EMPLOYEE_ID, query = "select a from Assignment a left join fetch a.employee e left join fetch e.department left join fetch a.project p left join fetch p.department where a.employee.id = :employeeId"),
-        @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_EMPLOYEE_ID_AND_PROJECT_ID, query = "select a from Assignment a left join fetch a.employee e left join fetch e.department left join fetch a.project p left join fetch p.department where a.project.id = :projectId and a.employee.id = :employeeId"),
+        @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_PROJECT_ID, query = "select a from Assignment a left join fetch a.employee left join fetch a.project where a.project.id = :projectId"),
+        @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_EMPLOYEE_ID, query = "select a from Assignment a left join fetch a.employee left join fetch a.project where a.employee.id = :employeeId"),
+        @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_EMPLOYEE_ID_AND_PROJECT_ID, query = "select a from Assignment a left join fetch a.employee left join fetch a.project where a.project.id = :projectId and a.employee.id = :employeeId"),
         @NamedQuery(name = Assignment.FIND_TOTAL_COUNT_BY_PROJECT_ID, query = "select count(a.id) from Assignment a where a.project.id = :projectId"),
         @NamedQuery(name = Assignment.FIND_TOTAL_COUNT_BY_EMPLOYEE_ID, query = "select count(a.id) from Assignment a where a.employee.id = :employeeId")
 })
