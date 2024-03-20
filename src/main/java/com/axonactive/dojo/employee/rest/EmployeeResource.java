@@ -74,7 +74,7 @@ public class EmployeeResource {
     })
     @Secure
     @RolesAllowed({"ADMIN", "USER"})
-    public Response findEmployeesByHoursInProjectMangedByDepartment(@DefaultValue("1") @QueryParam("departmentId") long departmentId,
+    public Response findEmployeesByHoursInProjectMangedByDepartment(@DefaultValue("0") @QueryParam("departmentId") long departmentId,
                                                                     @DefaultValue("1") @QueryParam("pageNumber") int pageNumber,
                                                                     @DefaultValue("10") @QueryParam("pageSize") int pageSize,
                                                                     @DefaultValue("0") @QueryParam("numberOfHour") int numberOfHour) throws EntityNotFoundException {

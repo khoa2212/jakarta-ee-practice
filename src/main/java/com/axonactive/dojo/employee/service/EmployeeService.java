@@ -162,14 +162,20 @@ public class EmployeeService {
     }
 
     public EmployeeListResponseDTO findEmployeesByHoursInProjectMangedByDepartment(long departmentId, int pageNumber, int pageSize, int numberOfHour) throws EntityNotFoundException {
-        Department department = departmentDAO.findActiveDepartmentById(departmentId)
-                .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
-
         int offset = (pageNumber <= 1 ? 0 : pageNumber - 1) * pageSize;
+        List<Object[]> objects = new ArrayList<>();
+        long totalCount = 0L;
 
-        long totalCount = employeeDAO.findTotalCountEmployeesByHoursInProjectMangedByDepartment(departmentId, numberOfHour);
-
-        List<Object[]> objects = employeeDAO.findEmployeesByHoursInProjectMangedByDepartment(department.getId(), offset, pageSize, numberOfHour);
+        if(departmentId != 0) {
+            Department department = departmentDAO.findActiveDepartmentById(departmentId)
+                    .orElseThrow(() -> new EntityNotFoundException(DepartmentMessage.NOT_FOUND_DEPARTMENT));
+            totalCount = employeeDAO.findTotalCountEmployeesByHoursInProjectMangedByDepartment(departmentId, numberOfHour);
+            objects = employeeDAO.findEmployeesByHoursInProjectMangedByDepartment(department.getId(), offset, pageSize, numberOfHour);
+        }
+        else {
+            totalCount = employeeDAO.findTotalCountEmployeesByHoursInProject(numberOfHour);
+            objects = employeeDAO.findEmployeesByHoursInProject(offset, pageSize, numberOfHour);
+        }
 
         Map<Long, EmployeeDTO> map = new HashMap<>();
         List<AssignmentDTO> assignmentDTOS = new ArrayList<>();

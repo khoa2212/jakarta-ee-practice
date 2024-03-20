@@ -1,5 +1,6 @@
 package com.axonactive.dojo.auth.service;
 
+import com.axonactive.dojo.auth.cache.AuthCache;
 import com.axonactive.dojo.auth.dao.AuthDAO;
 import com.axonactive.dojo.auth.dto.*;
 import com.axonactive.dojo.auth.message.AuthMessage;
@@ -33,47 +34,75 @@ public class AuthService {
     @Inject
     private EmailService emailService;
 
+    @Inject
+    private AuthCache authCache;
+
+    private void blockEmailWhenReach3TimesBadCredential(Optional<User> user, String email) {
+        if(authCache.getCacheValue(email) == null) {
+            authCache.setBadCredentialTimes(email);
+            return;
+        }
+
+        if(authCache.getCacheValue(email).size() == 3) {
+            if(user.isEmpty()) {
+                authDAO.add(User.builder().email(email)
+                        .role(Role.USER)
+                        .status(Status.BLOCKED).build());
+            }
+            else {
+                user.get().setStatus(Status.BLOCKED);
+                authDAO.update(user.get());
+            }
+        }
+        else {
+            authCache.setBadCredentialTimes(email);
+        }
+
+    }
+
     public LoginResponseDTO login(LoginRequestDTO requestDTO) throws BadRequestException {
-        User user = authDAO
-                .findActiveUserByEmail(requestDTO.getEmail())
-                .orElseThrow(() -> new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT));
+        Optional<User> user = authDAO.findActiveUserByEmail(requestDTO.getEmail());
 
-        boolean isValidPassword = BCrypt.checkpw(requestDTO.getPassword(), user.getPassword());
-
-        if(!isValidPassword) {
+        if(user.isEmpty()) {
+            blockEmailWhenReach3TimesBadCredential(user, requestDTO.getEmail());
             throw new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT);
         }
 
+        boolean isValidPassword = BCrypt.checkpw(requestDTO.getPassword(), user.get().getPassword());
 
+        if(!isValidPassword) {
+            blockEmailWhenReach3TimesBadCredential(user, requestDTO.getEmail());
+            throw new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT);
+        }
 
         String accessToken = jwtService.generateToken(TokenPayload
                 .builder()
                 .tokenType(TokenType.ACCESS_TOKEN)
-                .displayName(user.getDisplayName())
-                .email(user.getEmail())
-                .role(user.getRole())
+                .displayName(user.get().getDisplayName())
+                .email(user.get().getEmail())
+                .role(user.get().getRole())
                 .build());
 
         String refreshToken = jwtService.generateToken(TokenPayload
                 .builder()
                 .tokenType(TokenType.REFRESH_TOKEN)
-                .displayName(user.getDisplayName())
-                .email(user.getEmail())
-                .role(user.getRole())
+                .displayName(user.get().getDisplayName())
+                .email(user.get().getEmail())
+                .role(user.get().getRole())
                 .build());
 
-        user.setRefreshToken(refreshToken);
+        user.get().setRefreshToken(refreshToken);
 
-        authDAO.update(user);
+        authDAO.update(user.get());
 
         return LoginResponseDTO
                 .builder()
-                .displayName(user.getDisplayName())
-                .email(user.getEmail())
-                .avatar(user.getAvatar())
-                .role(user.getRole())
+                .displayName(user.get().getDisplayName())
+                .email(user.get().getEmail())
+                .avatar(user.get().getAvatar())
+                .role(user.get().getRole())
                 .accessToken(accessToken)
-                .refreshToken(user.getRefreshToken())
+                .refreshToken(user.get().getRefreshToken())
                 .build();
     }
 

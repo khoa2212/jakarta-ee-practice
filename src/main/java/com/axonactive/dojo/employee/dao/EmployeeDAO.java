@@ -88,6 +88,29 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                 .getResultList().stream().findFirst();
     }
 
+    public List<Object[]> findEmployeesByHoursInProject(int offset, int pageSize, int numberOfHour) {
+        Query query = entityManager.createQuery("select e, a from Employee e " +
+                        "join fetch Assignment a on a.employee.id = e.id " +
+                        "join fetch Project p on a.project.id = p.id " +
+                        "join fetch Department d on p.department.id = d.id " +
+                        "where a.numberOfHour >= :numberOfHour")
+                .setParameter("numberOfHour", numberOfHour)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize);
+
+        return query.getResultList();
+    }
+
+    public long findTotalCountEmployeesByHoursInProject(int numberOfHour) {
+        return entityManager.createQuery("select count(distinct e.id) from Employee e " +
+                        "join Assignment a on a.employee.id = e.id " +
+                        "join Project p on a.project.id = p.id " +
+                        "join Department d on p.department.id = d.id " +
+                        "where a.numberOfHour >= :numberOfHour", Long.class)
+                .setParameter("numberOfHour", numberOfHour)
+                .getSingleResult();
+    }
+
     public List<Object[]> findEmployeesByHoursInProjectMangedByDepartment(long departmentId, int offset, int pageSize, int numberOfHour) {
         Query query = entityManager.createQuery("select e, a from Employee e " +
                 "join fetch Assignment a on a.employee.id = e.id " +

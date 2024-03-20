@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class BaseCache<E> {
     public static final int MAXIMUM_SIZE = 100;
     public static final int DURATION = 10;
-    private final Cache<String, List<E>> cache;
+    protected final Cache<String, List<E>> cache;
 
     protected BaseCache() {
         cache = Caffeine.newBuilder()
