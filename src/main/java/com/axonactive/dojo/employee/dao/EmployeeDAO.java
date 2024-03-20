@@ -93,7 +93,7 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                         "join fetch Assignment a on a.employee.id = e.id " +
                         "join fetch Project p on a.project.id = p.id " +
                         "join fetch Department d on p.department.id = d.id " +
-                        "where a.numberOfHour >= :numberOfHour")
+                        "where coalesce(a.numberOfHour) >= :numberOfHour")
                 .setParameter("numberOfHour", numberOfHour)
                 .setFirstResult(offset)
                 .setMaxResults(pageSize);
@@ -106,7 +106,7 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                         "join Assignment a on a.employee.id = e.id " +
                         "join Project p on a.project.id = p.id " +
                         "join Department d on p.department.id = d.id " +
-                        "where a.numberOfHour >= :numberOfHour", Long.class)
+                        "where coalesce(a.numberOfHour) >= :numberOfHour", Long.class)
                 .setParameter("numberOfHour", numberOfHour)
                 .getSingleResult();
     }
@@ -116,7 +116,7 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                 "join fetch Assignment a on a.employee.id = e.id " +
                 "join fetch Project p on a.project.id = p.id " +
                 "join fetch Department d on p.department.id = d.id " +
-                "where d.id = :departmentId and a.numberOfHour >= :numberOfHour")
+                "where d.id = :departmentId and coalesce(a.numberOfHour) >= :numberOfHour")
                 .setParameter("departmentId", departmentId)
                 .setParameter("numberOfHour", numberOfHour)
                 .setFirstResult(offset)
@@ -130,7 +130,7 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                         "join Assignment a on a.employee.id = e.id " +
                         "join Project p on a.project.id = p.id " +
                         "join Department d on p.department.id = d.id " +
-                        "where d.id = :departmentId and a.numberOfHour >= :numberOfHour", Long.class)
+                        "where d.id = :departmentId and coalesce(a.numberOfHour) >= :numberOfHour", Long.class)
                 .setParameter("departmentId", departmentId)
                 .setParameter("numberOfHour", numberOfHour)
                 .getSingleResult();
