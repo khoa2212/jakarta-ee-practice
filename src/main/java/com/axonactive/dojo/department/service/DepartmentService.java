@@ -23,7 +23,6 @@ public class DepartmentService {
     private DepartmentDAO departmentDAO;
 
     @Inject
-    @Default
     private DepartmentMapper departmentMapper;
 
     public List<DepartmentDTO> findAll() {

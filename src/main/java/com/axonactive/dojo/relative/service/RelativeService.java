@@ -28,7 +28,6 @@ public class RelativeService {
     private EmployeeDAO employeeDAO;
 
     @Inject
-    @Default
     private RelativeMapper relativeMapper;
 
     public RelativeListResponseDTO findRelativesByEmployeeId(long employeeId, int pageNumber, int pageSize)

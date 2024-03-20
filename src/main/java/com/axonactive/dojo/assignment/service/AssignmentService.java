@@ -29,7 +29,6 @@ public class AssignmentService {
         private AssignmentDAO assignmentDAO;
 
         @Inject
-        @Default
         private AssignmentMapper assignmentMapper;
 
         @Inject

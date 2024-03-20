@@ -6,6 +6,6 @@ import com.axonactive.dojo.employee.entity.Employee;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "jakarta")
+@Mapper(componentModel = "cdi")
 public interface EmployeeMapper extends BaseMapper<EmployeeDTO, Employee> {
 }

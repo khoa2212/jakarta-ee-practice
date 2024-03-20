@@ -5,7 +5,7 @@ import com.axonactive.dojo.relative.dto.RelativeDTO;
 import com.axonactive.dojo.relative.entity.Relative;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "jakarta")
+@Mapper(componentModel = "cdi")
 public interface RelativeMapper extends BaseMapper<RelativeDTO, Relative> {
 
 }

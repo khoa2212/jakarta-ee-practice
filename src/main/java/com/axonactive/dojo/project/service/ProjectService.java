@@ -35,7 +35,6 @@ public class ProjectService {
     private DepartmentDAO departmentDAO;
 
     @Inject
-    @Default
     private ProjectMapper projectMapper;
 
     public List<ProjectDTO> findAll() {

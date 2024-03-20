@@ -5,6 +5,6 @@ import com.axonactive.dojo.department_location.dto.DepartmentLocationDTO;
 import com.axonactive.dojo.department_location.entity.DepartmentLocation;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "jakarta")
+@Mapper(componentModel = "cdi")
 public interface DepartmentLocationMapper extends BaseMapper<DepartmentLocationDTO, DepartmentLocation> {
 }

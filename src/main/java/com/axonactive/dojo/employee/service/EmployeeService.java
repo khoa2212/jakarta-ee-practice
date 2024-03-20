@@ -39,7 +39,6 @@ public class EmployeeService {
     private EmployeeMapper employeeMapper;
 
     @Inject
-    @Default
     private AssignmentMapper assignmentMapper;
 
     public EmployeeListResponseDTO findEmployees(long departmentId, int pageNumber, int pageSize, String name)

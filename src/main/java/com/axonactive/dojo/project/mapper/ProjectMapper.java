@@ -6,7 +6,7 @@ import com.axonactive.dojo.project.entity.Project;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "jakarta")
+@Mapper(componentModel = "cdi")
 public interface ProjectMapper extends BaseMapper<ProjectDTO, Project> {
 
 }
