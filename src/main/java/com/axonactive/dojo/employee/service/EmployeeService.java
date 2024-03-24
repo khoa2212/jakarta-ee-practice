@@ -3,6 +3,7 @@ package com.axonactive.dojo.employee.service;
 import com.axonactive.dojo.assignment.dto.AssignmentDTO;
 import com.axonactive.dojo.assignment.entity.Assignment;
 import com.axonactive.dojo.assignment.mapper.AssignmentMapper;
+import com.axonactive.dojo.base.cache.BaseCache;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.base.message.LoggerMessage;
@@ -18,6 +19,8 @@ import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import netscape.javascript.JSObject;
 
@@ -26,9 +29,11 @@ import javax.inject.Inject;
 import javax.json.JsonObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -234,26 +239,15 @@ public class EmployeeService {
             employeeDTO.setAssignments(assignmentDTOS.stream().filter((assignmentDTO -> Objects.equals(assignmentDTO.getEmployee().getId(), employeeDTO.getId()))).toList());
         }).toList();
 
-        ByteArrayOutputStream outputStream1 = exportEmployeeProfile(employeeDTOS.get(0));
-        ByteArrayOutputStream outputStream2 = exportEmployeeProfile(employeeDTOS.get(1));
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ZipOutputStream zos = new ZipOutputStream(baos);
+        Map<String, ByteArrayOutputStream> pdfFiles = new HashMap<>();
 
-        ZipEntry entry = new ZipEntry("employee-profiles1.pdf");
-        entry.setSize(outputStream1.toByteArray().length);
-        zos.putNextEntry(entry);
-        zos.write(outputStream1.toByteArray());
+        for(EmployeeDTO employeeDTO : employeeDTOS) {
+            ByteArrayOutputStream outputStream = exportEmployeeProfile(employeeDTO);
+            pdfFiles.put(UUID.randomUUID() + "_" + "employee" + "_" + "profile.pdf", outputStream);
+        }
 
-        ZipEntry entry1 = new ZipEntry("employee-profiles2.pdf");
-        entry.setSize(outputStream2.toByteArray().length);
-        zos.putNextEntry(entry1);
-        zos.write(outputStream2.toByteArray());
-
-        zos.closeEntry();
-        zos.close();
-
-        return baos;
+        return createZipFile(pdfFiles);
     }
 
     private ByteArrayOutputStream exportEmployeeProfile(EmployeeDTO employeeDTO) throws DocumentException {
@@ -261,12 +255,102 @@ public class EmployeeService {
         Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
 
+        Font fontTittle = FontFactory.getFont(FontFactory.TIMES_ROMAN, 20, BaseColor.BLACK);
+        Font fontSubTittle = FontFactory.getFont(FontFactory.TIMES_ROMAN, 15, BaseColor.BLACK);
+        Font fontTable = FontFactory.getFont(FontFactory.TIMES_ROMAN, 13, BaseColor.BLACK);
+
         document.open();
-        Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
-        Chunk chunk = new Chunk(String.format("%d %s %s %s", employeeDTO.getId(), employeeDTO.getMiddleName(), employeeDTO.getFirstName(), employeeDTO.getLastName()), font);
-        document.add(chunk);
+
+        // Tittle
+        Chunk tittle = new Chunk(String.format("%s's profiles", employeeDTO.getFirstName()), fontTittle);
+        Phrase phrase = new Phrase();
+        phrase.add(tittle);
+
+        Paragraph para = new Paragraph();
+        para.add(phrase);
+        para.setAlignment(Element.ALIGN_CENTER);
+
+        // Sub-tittle1
+        Chunk subTittleInfo = new Chunk("\n\n1. Information\n\n", fontSubTittle);
+        Phrase phraseInfo = new Phrase();
+        phraseInfo.add(subTittleInfo);
+
+        Paragraph paraInfo = new Paragraph();
+        paraInfo.add(phraseInfo);
+        paraInfo.setAlignment(Element.ALIGN_LEFT);
+
+
+        // table info
+        PdfPTable tableInfo = new PdfPTable(2);
+
+        tableInfo.addCell(new PdfPCell(new Phrase(String.format("First name: %s", employeeDTO.getFirstName()), fontTable)));
+        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Last name: %s", employeeDTO.getLastName()), fontTable)));
+        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Middle name: %s", employeeDTO.getMiddleName()), fontTable)));
+        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Date of birth: %s", employeeDTO.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))), fontTable)));
+        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Salary: %f", employeeDTO.getSalary()), fontTable)));
+        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Department: %s", employeeDTO.getDepartment().getDepartmentName()), fontTable)));
+        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Gender: %s", employeeDTO.getGender().toString().toLowerCase()), fontTable)));
+        tableInfo.addCell("");
+
+        // Sub-tittle2
+        Chunk subTittleAssignment = new Chunk("2. Assignments\n\n", fontSubTittle);
+        Phrase phraseAssignment = new Phrase();
+        phraseAssignment.add(subTittleAssignment);
+
+        Paragraph paraAssignment = new Paragraph();
+        paraAssignment.add(phraseAssignment);
+        paraAssignment.setAlignment(Element.ALIGN_LEFT);
+
+        // table assignments
+        PdfPTable tableAssignment = new PdfPTable(5);
+
+        Stream.of("No.", "Project's name", "Area", "Number of hours", "Project's department")
+                .forEach(columnTittle -> {
+                    PdfPCell header = new PdfPCell();
+                    header.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    header.setPhrase(new Phrase(columnTittle, fontTable));
+                    tableAssignment.addCell(header);
+                });
+
+        List<AssignmentDTO> assignmentDTOS = employeeDTO.getAssignments();
+
+        for(int i = 0; i < assignmentDTOS.size(); i++) {
+            AssignmentDTO assignmentDTO = assignmentDTOS.get(i);
+            tableAssignment.addCell(new PdfPCell(new Phrase(String.format("%d", i + 1), fontTable)));
+            tableAssignment.addCell(new PdfPCell(new Phrase(assignmentDTO.getProject().getProjectName(), fontTable)));
+            tableAssignment.addCell(new PdfPCell(new Phrase(assignmentDTO.getProject().getArea(), fontTable)));
+            tableAssignment.addCell(new PdfPCell(new Phrase(String.format("%d", assignmentDTO.getNumberOfHour()), fontTable)));
+            tableAssignment.addCell(new PdfPCell(new Phrase(assignmentDTO.getProject().getDepartment().getDepartmentName(), fontTable)));
+        }
+
+        document.add(para);
+        document.add(paraInfo);
+        document.add(tableInfo);
+        document.add(paraAssignment);
+        document.add(tableAssignment);
         document.close();
 
         return outputStream;
+    }
+
+    private void createZipEntry(ZipOutputStream zos, ByteArrayOutputStream pdfFile, String filename) throws IOException {
+        ZipEntry entry = new ZipEntry(filename);
+        entry.setSize(pdfFile.toByteArray().length);
+        zos.putNextEntry(entry);
+        zos.write(pdfFile.toByteArray());
+    }
+
+    private ByteArrayOutputStream createZipFile(Map<String, ByteArrayOutputStream> pdfFiles) throws IOException {
+        ByteArrayOutputStream zipFile = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(zipFile);
+
+        for(Map.Entry<String, ByteArrayOutputStream> entry : pdfFiles.entrySet()) {
+            createZipEntry(zos, entry.getValue(), entry.getKey());
+        }
+
+        zos.closeEntry();
+        zos.close();
+
+        return zipFile;
     }
 }
