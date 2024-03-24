@@ -114,7 +114,7 @@ public class ProjectResource {
     @Produces({MediaType.APPLICATION_OCTET_STREAM})
     @ApiOperation(value = "Export excel projects with employees, total salaries, total hours")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Get project list successfully", response = ProjectsWithEmployeesListDTO.class),
+            @ApiResponse(code = 200, message = "Export excel projects with employees, total salaries, total hours"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
     public Response exportExcelProjectsWithEmployeesSalariesHours(@DefaultValue("0") @QueryParam("numberOfEmployees") long numberOfEmployees,

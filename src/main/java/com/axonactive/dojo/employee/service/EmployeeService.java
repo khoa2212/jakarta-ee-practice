@@ -17,13 +17,20 @@ import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
 import netscape.javascript.JSObject;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonObject;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Stateless
 public class EmployeeService {
@@ -194,5 +201,72 @@ public class EmployeeService {
                 .totalCount(totalCount)
                 .lastPage(((int)totalCount / pageSize) + 1)
                 .build();
+    }
+
+    public ByteArrayOutputStream exportEmployeeProfilesByHoursInProjectMangedByDepartment(long departmentId, int numberOfHour, String employeeIdsParam) throws DocumentException, IOException {
+        List<Long> employeeIds = new ArrayList<>();
+
+        String[] arr = employeeIdsParam.split(",");
+
+        for(int i = 1; i< arr.length; i++) {
+            employeeIds.add(Long.valueOf(arr[i]));
+        }
+
+        List<Object[]> objects = new ArrayList<>();
+
+        if(departmentId != 0) {
+            objects = employeeDAO.findEmployeesByHoursInProjectMangedByDepartment(departmentId, numberOfHour, employeeIds, arr[0]);
+        }
+        else {
+            objects = employeeDAO.findEmployeesByHoursInProject(numberOfHour, employeeIds, arr[0]);
+        }
+
+        Map<Long, EmployeeDTO> map = new HashMap<>();
+        List<AssignmentDTO> assignmentDTOS = new ArrayList<>();
+        objects.forEach(object -> {
+            EmployeeDTO employeeDTO = employeeMapper.toDTO((Employee) object[0]);
+            AssignmentDTO assignmentDTO = assignmentMapper.toDTO((Assignment) object[1]);
+            map.put(employeeDTO.getId(),employeeDTO);
+            assignmentDTOS.add(assignmentDTO);
+        });
+
+        List<EmployeeDTO> employeeDTOS = map.values().stream().peek(employeeDTO -> {
+            employeeDTO.setAssignments(assignmentDTOS.stream().filter((assignmentDTO -> Objects.equals(assignmentDTO.getEmployee().getId(), employeeDTO.getId()))).toList());
+        }).toList();
+
+        ByteArrayOutputStream outputStream1 = exportEmployeeProfile(employeeDTOS.get(0));
+        ByteArrayOutputStream outputStream2 = exportEmployeeProfile(employeeDTOS.get(1));
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+
+        ZipEntry entry = new ZipEntry("employee-profiles1.pdf");
+        entry.setSize(outputStream1.toByteArray().length);
+        zos.putNextEntry(entry);
+        zos.write(outputStream1.toByteArray());
+
+        ZipEntry entry1 = new ZipEntry("employee-profiles2.pdf");
+        entry.setSize(outputStream2.toByteArray().length);
+        zos.putNextEntry(entry1);
+        zos.write(outputStream2.toByteArray());
+
+        zos.closeEntry();
+        zos.close();
+
+        return baos;
+    }
+
+    private ByteArrayOutputStream exportEmployeeProfile(EmployeeDTO employeeDTO) throws DocumentException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document();
+        PdfWriter.getInstance(document, outputStream);
+
+        document.open();
+        Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+        Chunk chunk = new Chunk(String.format("%d %s %s %s", employeeDTO.getId(), employeeDTO.getMiddleName(), employeeDTO.getFirstName(), employeeDTO.getLastName()), font);
+        document.add(chunk);
+        document.close();
+
+        return outputStream;
     }
 }

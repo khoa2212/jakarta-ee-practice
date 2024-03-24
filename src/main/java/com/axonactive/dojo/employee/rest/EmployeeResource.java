@@ -6,6 +6,7 @@ import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.employee.dto.*;
 import com.axonactive.dojo.employee.service.EmployeeService;
+import com.itextpdf.text.DocumentException;
 import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +18,8 @@ import javax.mail.Header;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -83,6 +86,29 @@ public class EmployeeResource {
         EmployeeListResponseDTO employeeListResponseDTO = this.employeeService.findEmployeesByHoursInProjectMangedByDepartment(departmentId, pageNumber, pageSize, numberOfHour);
         return Response.ok().entity(employeeListResponseDTO).build();
     }
+
+    @GET
+    @Path("reports/total-hours/department/export-profiles")
+    @Produces({MediaType.APPLICATION_OCTET_STREAM})
+    @ApiOperation(value = "Export employee's profiles by hours in project managed by a department")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Export employee's profiles successfully"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+    })
+    @Secure
+    @RolesAllowed({"ADMIN", "USER"})
+    public Response exportEmployeeProfilesByHoursInProjectMangedByDepartment(@DefaultValue("0") @QueryParam("departmentId") long departmentId,
+                                                                    @DefaultValue("0") @QueryParam("numberOfHour") int numberOfHour,
+                                                                    @QueryParam("employeeIdsParam") String employeeIdsParam) throws EntityNotFoundException, DocumentException, IOException {
+        logger.info("Attempting to export employee's profiles by hours in project managed by a department");
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment;filename=employee-profiles.zip";
+
+        ByteArrayOutputStream outputStream = this.employeeService.exportEmployeeProfilesByHoursInProjectMangedByDepartment(departmentId, numberOfHour, employeeIdsParam);
+        return Response.ok(outputStream.toByteArray(), "application/octet-stream").header(headerKey, headerValue).build();
+    }
+
 
     @POST
     @Path("add")

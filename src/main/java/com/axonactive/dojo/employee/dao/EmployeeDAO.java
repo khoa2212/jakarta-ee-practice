@@ -135,4 +135,70 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                 .setParameter("numberOfHour", numberOfHour)
                 .getSingleResult();
     }
+
+    public List<Object[]> findEmployeesByHoursInProjectMangedByDepartment(long departmentId, int numberOfHour, List<Long> employeeIds, String option) {
+        return switch (option) {
+            case "all" -> entityManager.createQuery("select e, a from Employee e " +
+                            "join fetch Assignment a on a.employee.id = e.id " +
+                            "join fetch Project p on a.project.id = p.id " +
+                            "join fetch Department d on p.department.id = d.id " +
+                            "where d.id = :departmentId and coalesce(a.numberOfHour) >= :numberOfHour")
+                    .setParameter("departmentId", departmentId)
+                    .setParameter("numberOfHour", numberOfHour).getResultList();
+            case "in" -> entityManager.createQuery("select e, a from Employee e " +
+                            "join fetch Assignment a on a.employee.id = e.id " +
+                            "join fetch Project p on a.project.id = p.id " +
+                            "join fetch Department d on p.department.id = d.id " +
+                            "where d.id = :departmentId and coalesce(a.numberOfHour) >= :numberOfHour and e.id in :employeeIds")
+                    .setParameter("departmentId", departmentId)
+                    .setParameter("numberOfHour", numberOfHour)
+                    .setParameter("employeeIds", employeeIds).getResultList();
+            case "notIn" -> entityManager.createQuery("select e, a from Employee e " +
+                            "join fetch Assignment a on a.employee.id = e.id " +
+                            "join fetch Project p on a.project.id = p.id " +
+                            "join fetch Department d on p.department.id = d.id " +
+                            "where d.id = :departmentId and coalesce(a.numberOfHour) >= :numberOfHour and e.id not in :employeeIds")
+                    .setParameter("departmentId", departmentId)
+                    .setParameter("numberOfHour", numberOfHour)
+                    .setParameter("employeeIds", employeeIds).getResultList();
+            default -> entityManager.createQuery("select e, a from Employee e " +
+                            "join fetch Assignment a on a.employee.id = e.id " +
+                            "join fetch Project p on a.project.id = p.id " +
+                            "join fetch Department d on p.department.id = d.id " +
+                            "where d.id = :departmentId and coalesce(a.numberOfHour) >= :numberOfHour")
+                    .setParameter("departmentId", departmentId)
+                    .setParameter("numberOfHour", numberOfHour).getResultList();
+        };
+    }
+
+    public List<Object[]> findEmployeesByHoursInProject(int numberOfHour, List<Long> employeeIds, String option) {
+        return switch (option) {
+            case "all" -> entityManager.createQuery("select e, a from Employee e " +
+                            "join fetch Assignment a on a.employee.id = e.id " +
+                            "join fetch Project p on a.project.id = p.id " +
+                            "join fetch Department d on p.department.id = d.id " +
+                            "where coalesce(a.numberOfHour) >= :numberOfHour")
+                    .setParameter("numberOfHour", numberOfHour).getResultList();
+            case "in" -> entityManager.createQuery("select e, a from Employee e " +
+                            "join fetch Assignment a on a.employee.id = e.id " +
+                            "join fetch Project p on a.project.id = p.id " +
+                            "join fetch Department d on p.department.id = d.id " +
+                            "where coalesce(a.numberOfHour) >= :numberOfHour and e.id in :employeeIds")
+                    .setParameter("numberOfHour", numberOfHour)
+                    .setParameter("employeeIds", employeeIds).getResultList();
+            case "notIn" -> entityManager.createQuery("select e, a from Employee e " +
+                            "join fetch Assignment a on a.employee.id = e.id " +
+                            "join fetch Project p on a.project.id = p.id " +
+                            "join fetch Department d on p.department.id = d.id " +
+                            "where coalesce(a.numberOfHour) >= :numberOfHour and e.id not in :employeeIds")
+                    .setParameter("numberOfHour", numberOfHour)
+                    .setParameter("employeeIds", employeeIds).getResultList();
+            default -> entityManager.createQuery("select e, a from Employee e " +
+                            "join fetch Assignment a on a.employee.id = e.id " +
+                            "join fetch Project p on a.project.id = p.id " +
+                            "join fetch Department d on p.department.id = d.id " +
+                            "where coalesce(a.numberOfHour) >= :numberOfHour")
+                    .setParameter("numberOfHour", numberOfHour).getResultList();
+        };
+    }
 }
