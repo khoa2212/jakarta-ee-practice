@@ -37,24 +37,29 @@ public class AuthService {
     @Inject
     private AuthCache authCache;
 
+    private static final int DEFAULT_MAX_INVALID_CREDENTIALS = 3;
+
     private void blockEmailWhenReach3TimesBadCredential(Optional<User> user, String email) {
         if(authCache.getCacheValue(email) == null) {
             authCache.setBadCredentialTimes(email);
             return;
         }
 
-        if(authCache.getCacheValue(email).size() == 3) {
+        if(authCache.getCacheValue(email).size() == DEFAULT_MAX_INVALID_CREDENTIALS) {
             if(user.isEmpty()) {
                 authDAO.add(User.builder().email(email)
                         .role(Role.USER)
+                        .displayName("BLOCKED USER")
+                        .password("BLOCKED")
                         .status(Status.BLOCKED).build());
             }
             else {
                 user.get().setStatus(Status.BLOCKED);
                 authDAO.update(user.get());
             }
+            authCache.setBadCredentialTimes(email);
         }
-        else {
+        else if(authCache.getCacheValue(email).size() < DEFAULT_MAX_INVALID_CREDENTIALS) {
             authCache.setBadCredentialTimes(email);
         }
 
@@ -65,14 +70,20 @@ public class AuthService {
 
         if(user.isEmpty()) {
             blockEmailWhenReach3TimesBadCredential(user, requestDTO.getEmail());
-            throw new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT);
+
+            int tries = DEFAULT_MAX_INVALID_CREDENTIALS + 1 - authCache.getCacheValue(requestDTO.getEmail()).size();
+
+            throw new BadRequestException(AuthMessage.badCredentialMessage(Math.max(tries, 0)));
         }
 
         boolean isValidPassword = BCrypt.checkpw(requestDTO.getPassword(), user.get().getPassword());
 
         if(!isValidPassword) {
             blockEmailWhenReach3TimesBadCredential(user, requestDTO.getEmail());
-            throw new BadRequestException(AuthMessage.PASSWORD_OR_EMAIL_IS_NOT_CORRECT);
+
+            int tries = DEFAULT_MAX_INVALID_CREDENTIALS + 1 - authCache.getCacheValue(requestDTO.getEmail()).size();
+
+            throw new BadRequestException(AuthMessage.badCredentialMessage(Math.max(tries, 0)));
         }
 
         String accessToken = jwtService.generateToken(TokenPayload

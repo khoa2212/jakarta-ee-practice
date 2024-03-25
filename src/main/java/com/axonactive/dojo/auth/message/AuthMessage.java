@@ -12,4 +12,12 @@ public class AuthMessage {
     public static final String PASSWORDS_MUST_MATCH = "Passwords must be matched";
 
     public static final String PASSWORD_OR_EMAIL_IS_NOT_CORRECT = "Password or email is not correct";
+
+    public static String badCredentialMessage(int tries) {
+        if(tries == 0) {
+            return "Your email has been blocked";
+        }
+
+        return String.format("%s. You have %d tries", PASSWORD_OR_EMAIL_IS_NOT_CORRECT, tries);
+    }
 }

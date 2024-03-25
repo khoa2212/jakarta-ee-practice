@@ -42,8 +42,6 @@ public class EmailService {
 
             message.setContent(htmlMessage, "text/html; charset=utf-8");
 
-            // send message
-            //System.out.println(htmlMessage);
             // Transport.send(message);
         }
         catch (MessagingException exception) {

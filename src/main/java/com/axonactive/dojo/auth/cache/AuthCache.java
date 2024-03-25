@@ -4,7 +4,9 @@ import com.axonactive.dojo.base.cache.BaseCache;
 import com.axonactive.dojo.user.entity.User;
 
 import javax.ejb.Singleton;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 public class AuthCache extends BaseCache<Integer> {
@@ -24,7 +26,9 @@ public class AuthCache extends BaseCache<Integer> {
             return;
         }
 
-        value.add(0);
-        cache.put(email, value);
+        List<Integer> newList = new ArrayList<>(value);
+        newList.add(0);
+
+        cache.put(email, newList);
     }
 }
