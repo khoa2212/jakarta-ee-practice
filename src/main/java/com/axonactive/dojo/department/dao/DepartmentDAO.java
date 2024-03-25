@@ -6,6 +6,7 @@ import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.entity.Project;
 
 import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -13,13 +14,16 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
+
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-@Stateless
+@RequestScoped
+@Transactional
 public class DepartmentDAO extends BaseDAO<Department> {
     public DepartmentDAO() {
         super(Department.class);

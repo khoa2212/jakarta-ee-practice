@@ -10,14 +10,17 @@ import com.axonactive.dojo.department.mapper.DepartmentMapper;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.enums.Status;
 import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Stateless
+@RequestScoped
+@Transactional
 public class DepartmentService {
     @Inject
     private DepartmentDAO departmentDAO;
