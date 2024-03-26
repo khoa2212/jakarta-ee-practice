@@ -45,21 +45,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 !authHeader.startsWith("Bearer ") ||
                 authHeader.split(" ")[1].trim().isEmpty()
         ) {
-
-            reqCtx.abortWith(
-                    Response.status(Response.Status.UNAUTHORIZED)
-                            .type(MediaType.APPLICATION_JSON)
-                            .entity(ExceptionContent
-                                            .builder()
-                                            .errorKey(Response.Status.UNAUTHORIZED.getReasonPhrase())
-                                            .success(false)
-                                            .statusCode(Response.Status.UNAUTHORIZED.getStatusCode())
-                                            .message("Invalid token")
-                                            .build()
-                                    )
-                            .build()
-            );
-
             throw new UnauthorizedException("Invalid token");
         }
 

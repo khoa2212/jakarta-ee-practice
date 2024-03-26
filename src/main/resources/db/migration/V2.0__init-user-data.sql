@@ -1,2 +1,2 @@
-insert into users (email, password, display_name) values ('nguyenkhoa438@gmail.com', '$2a$10$FrYaLZHmfnXqrbL/pSvJiu47uzeVRYcF9doy8OSB0nfvUA1bXwczm', 'Nguyen Tuan Khoa');
+insert into users (email, password, display_name) values ('nguyenkhoa123@gmail.com', '$2a$10$FrYaLZHmfnXqrbL/pSvJiu47uzeVRYcF9doy8OSB0nfvUA1bXwczm', 'Nguyen Tuan Khoa');
 insert into users (email, password, display_name) values ('user@example.com', '$2a$10$FrYaLZHmfnXqrbL/pSvJiu47uzeVRYcF9doy8OSB0nfvUA1bXwczm','User');

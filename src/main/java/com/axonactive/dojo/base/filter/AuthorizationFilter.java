@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
+import java.security.Principal;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 
@@ -28,6 +29,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
     private SecurityContext securityContext;
 
     @Override
+    @SneakyThrows
     public void filter(ContainerRequestContext reqCtx) throws IOException {
 
         RolesAllowed methodRoles = info.getResourceMethod().getAnnotation(RolesAllowed.class);
@@ -37,47 +39,22 @@ public class AuthorizationFilter implements ContainerRequestFilter {
         }
 
         if(!isLogin()) {
-            reqCtx.abortWith(Response
-                    .status(Response.Status.UNAUTHORIZED)
-                    .entity(ExceptionContent
-                            .builder()
-                            .errorKey(Response.Status.UNAUTHORIZED.getReasonPhrase())
-                            .success(false)
-                            .statusCode(Response.Status.UNAUTHORIZED.getStatusCode())
-                            .message("Invalid token")
-                            .build()
-                    )
-                    .build()
-            );
-            return;
+            throw new UnauthorizedException("Invalid token");
         }
 
         if(isNotAllowed(methodRoles)) {
-            reqCtx.abortWith(Response
-                    .status(Response.Status.FORBIDDEN)
-                    .entity(ExceptionContent
-                            .builder()
-                            .errorKey(Response.Status.FORBIDDEN.getReasonPhrase())
-                            .success(false)
-                            .statusCode(Response.Status.FORBIDDEN.getStatusCode())
-                            .message("Not Allowed")
-                            .build()
-                    )
-                    .build()
-            );
+            throw new ForbiddenException("Not Allowed");
         }
     }
 
-    @SneakyThrows
     public boolean isLogin() {
-        String user = securityContext.getUserPrincipal().getName();
+        Principal user = securityContext.getUserPrincipal();
         if (user == null) {
-           throw new UnauthorizedException("Invalid token");
+           return false;
         }
         return true;
     }
 
-    @SneakyThrows
     public boolean isNotAllowed(RolesAllowed anno) {
         if (anno == null) {
             return false;
@@ -91,6 +68,6 @@ public class AuthorizationFilter implements ContainerRequestFilter {
             }
         }
 
-        throw new ForbiddenException("Not Allowed");
+        return true;
     }
 }
