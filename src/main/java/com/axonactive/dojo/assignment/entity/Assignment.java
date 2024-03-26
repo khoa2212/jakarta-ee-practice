@@ -18,10 +18,10 @@ import javax.persistence.*;
         @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_PROJECT_ID, query = "select " +
                 "new com.axonactive.dojo.assignment.dto.AssignmentDTO(a.id, a.numberOfHour, a.employee, a.project) " +
                 "from Assignment a " +
-                "left join fetch Employee e on a.employee.id = e.id " +
-                "left join fetch Department d1 on e.department.id = d1.id " +
-                "left join fetch Project p on a.project.id = p.id " +
-                "left join fetch Department d2 on p.department.id = d2.id " +
+                "join fetch Employee e on a.employee.id = e.id " +
+                "join fetch Department d1 on e.department.id = d1.id " +
+                "join fetch Project p on a.project.id = p.id " +
+                "join fetch Department d2 on p.department.id = d2.id " +
                 "where a.project.id = :projectId"),
         @NamedQuery(name = Assignment.FIND_ASSIGNMENTS_BY_EMPLOYEE_ID, query = "select a " +
                 "from Assignment a left join fetch a.employee e left join fetch e.department d1 left join fetch a.project p left join fetch p.department d2 " +
