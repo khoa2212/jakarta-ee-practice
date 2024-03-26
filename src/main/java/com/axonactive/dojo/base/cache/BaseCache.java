@@ -26,6 +26,7 @@ public abstract class BaseCache<E> {
     }
 
     public List<E> getCacheValue(String key) {
+        System.out.println(cache.estimatedSize());
         return cache.getIfPresent(key);
     }
 
