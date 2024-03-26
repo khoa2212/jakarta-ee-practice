@@ -31,9 +31,8 @@ public class AuthorizationFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext reqCtx) throws IOException {
 
         RolesAllowed methodRoles = info.getResourceMethod().getAnnotation(RolesAllowed.class);
-        RolesAllowed classRoles = info.getResourceClass().getAnnotation(RolesAllowed.class);
 
-        if (methodRoles == null && classRoles == null) {
+        if (methodRoles == null) {
             return;
         }
 
