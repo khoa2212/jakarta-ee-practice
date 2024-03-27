@@ -19,9 +19,7 @@ import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.*;
 import netscape.javascript.JSObject;
 
 import javax.ejb.Stateless;
@@ -250,16 +248,24 @@ public class EmployeeService {
         return createZipFile(pdfFiles);
     }
 
+
+
     private ByteArrayOutputStream exportEmployeeProfile(EmployeeDTO employeeDTO) throws DocumentException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Document document = new Document();
-        PdfWriter.getInstance(document, outputStream);
+        Document document = new Document(PageSize.A4);
+        PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+        HeaderFooterPageEvent headerFooterPageEvent = new HeaderFooterPageEvent();
 
-        Font fontTittle = FontFactory.getFont(FontFactory.TIMES_ROMAN, 20, BaseColor.BLACK);
-        Font fontSubTittle = FontFactory.getFont(FontFactory.TIMES_ROMAN, 15, BaseColor.BLACK);
-        Font fontTable = FontFactory.getFont(FontFactory.TIMES_ROMAN, 13, BaseColor.BLACK);
+        Font fontTittle = FontFactory.getFont(FontFactory.HELVETICA, 25, BaseColor.BLACK);
+        fontTittle.setStyle(Font.BOLD);
+        Font fontSubTittle = FontFactory.getFont(FontFactory.HELVETICA, 15, BaseColor.RED);
+        fontSubTittle.setStyle(Font.ITALIC);
+        Font fontTable = FontFactory.getFont(FontFactory.HELVETICA, 13, BaseColor.BLACK);
 
         document.open();
+
+        // make header and footer
+        writer.setPageEvent(headerFooterPageEvent);
 
         // Tittle
         Chunk tittle = new Chunk(String.format("%s's profiles", employeeDTO.getFirstName()), fontTittle);
@@ -269,9 +275,11 @@ public class EmployeeService {
         Paragraph para = new Paragraph();
         para.add(phrase);
         para.setAlignment(Element.ALIGN_CENTER);
+        para.setSpacingBefore(20);
+        para.setSpacingAfter(15);
 
         // Sub-tittle1
-        Chunk subTittleInfo = new Chunk("\n\n1. Information\n\n", fontSubTittle);
+        Chunk subTittleInfo = new Chunk("1. Information", fontSubTittle);
         Phrase phraseInfo = new Phrase();
         phraseInfo.add(subTittleInfo);
 
@@ -279,21 +287,58 @@ public class EmployeeService {
         paraInfo.add(phraseInfo);
         paraInfo.setAlignment(Element.ALIGN_LEFT);
 
-
         // table info
         PdfPTable tableInfo = new PdfPTable(2);
 
-        tableInfo.addCell(new PdfPCell(new Phrase(String.format("First name: %s", employeeDTO.getFirstName()), fontTable)));
-        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Last name: %s", employeeDTO.getLastName()), fontTable)));
-        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Middle name: %s", employeeDTO.getMiddleName()), fontTable)));
-        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Date of birth: %s", employeeDTO.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))), fontTable)));
-        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Salary: %f", employeeDTO.getSalary()), fontTable)));
-        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Department: %s", employeeDTO.getDepartment().getDepartmentName()), fontTable)));
-        tableInfo.addCell(new PdfPCell(new Phrase(String.format("Gender: %s", employeeDTO.getGender().toString().toLowerCase()), fontTable)));
-        tableInfo.addCell("");
+        tableInfo.setSpacingBefore(15);
+        tableInfo.setSpacingAfter(10);
+
+        tableInfo.setWidthPercentage(100);
+
+        PdfPCell pdfPCellFirstName = new PdfPCell(new Phrase(String.format("First name: %s", employeeDTO.getFirstName()), fontTable));
+        pdfPCellFirstName.setPaddingBottom(10);
+        pdfPCellFirstName.setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell pdfPCellLastName = new PdfPCell(new Phrase(String.format("Last name: %s", employeeDTO.getLastName()), fontTable));
+        pdfPCellLastName.setPaddingBottom(10);
+        pdfPCellLastName.setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell pdfPCellMiddleName = new PdfPCell(new Phrase(String.format("Middle name: %s", employeeDTO.getMiddleName() == null ? "" : employeeDTO.getMiddleName()), fontTable));
+        pdfPCellMiddleName.setPaddingBottom(10);
+        pdfPCellMiddleName.setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell pdfPCellDateOfBirth = new PdfPCell(new Phrase(String.format("Date of birth: %s", employeeDTO.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))), fontTable));
+        pdfPCellDateOfBirth.setPaddingBottom(10);
+        pdfPCellDateOfBirth.setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell pdfPCellSalary = new PdfPCell(new Phrase(String.format("Salary: %f", employeeDTO.getSalary()), fontTable));
+        pdfPCellSalary.setPaddingBottom(10);
+        pdfPCellSalary.setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell pdfPCellDepartment = new PdfPCell(new Phrase(String.format("Department: %s", employeeDTO.getDepartment().getDepartmentName()), fontTable));
+        pdfPCellDepartment.setPaddingBottom(10);
+        pdfPCellDepartment.setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell pdfPCellGender = new PdfPCell(new Phrase(String.format("Gender: %s", employeeDTO.getGender().toString().toLowerCase()), fontTable));
+        pdfPCellGender.setPaddingBottom(10);
+        pdfPCellGender.setBorder(Rectangle.NO_BORDER);
+
+
+        PdfPCell pdfPCellNone = new PdfPCell();
+        pdfPCellNone.setPaddingBottom(10);
+        pdfPCellNone.setBorder(Rectangle.NO_BORDER);
+
+        tableInfo.addCell(pdfPCellFirstName);
+        tableInfo.addCell(pdfPCellLastName);
+        tableInfo.addCell(pdfPCellMiddleName);
+        tableInfo.addCell(pdfPCellDateOfBirth);
+        tableInfo.addCell(pdfPCellSalary);
+        tableInfo.addCell(pdfPCellDepartment);
+        tableInfo.addCell(pdfPCellGender);
+        tableInfo.addCell(pdfPCellNone);
 
         // Sub-tittle2
-        Chunk subTittleAssignment = new Chunk("2. Assignments\n\n", fontSubTittle);
+        Chunk subTittleAssignment = new Chunk("2. Assignments", fontSubTittle);
         Phrase phraseAssignment = new Phrase();
         phraseAssignment.add(subTittleAssignment);
 
@@ -303,6 +348,13 @@ public class EmployeeService {
 
         // table assignments
         PdfPTable tableAssignment = new PdfPTable(5);
+
+        tableAssignment.setSpacingBefore(15);
+        tableAssignment.setSpacingAfter(10);
+
+        tableAssignment.setWidthPercentage(100);
+        tableAssignment.setWidths(new int[] {10,25,15,25,25});
+        tableAssignment.setHeaderRows(0);
 
         Stream.of("No.", "Project's name", "Area", "Number of hours", "Project's department")
                 .forEach(columnTittle -> {
@@ -323,6 +375,7 @@ public class EmployeeService {
             tableAssignment.addCell(new PdfPCell(new Phrase(assignmentDTO.getProject().getDepartment().getDepartmentName(), fontTable)));
         }
 
+        document.add(new Chunk(""));
         document.add(para);
         document.add(paraInfo);
         document.add(tableInfo);

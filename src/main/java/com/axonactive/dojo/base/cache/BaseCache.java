@@ -18,10 +18,10 @@ public abstract class BaseCache<E> {
                 .build();
     }
 
-    protected BaseCache(int cacheSize, int expiredDays) {
+    protected BaseCache(int cacheSize, int expiredTimes) {
         cache = Caffeine.newBuilder()
                 .maximumSize(cacheSize)
-                .expireAfterWrite(expiredDays, TimeUnit.MINUTES)
+                .expireAfterWrite(expiredTimes, TimeUnit.MINUTES)
                 .build();
     }
 
