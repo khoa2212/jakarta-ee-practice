@@ -6,10 +6,7 @@ import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.department.dto.DepartmentDTO;
 import com.axonactive.dojo.department.dto.DepartmentListResponseDTO;
 import com.axonactive.dojo.employee.rest.EmployeeResource;
-import com.axonactive.dojo.project.dto.ProjectDTO;
-import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
-import com.axonactive.dojo.project.dto.ProjectsWithEmployeesDTO;
-import com.axonactive.dojo.project.dto.ProjectsWithEmployeesListDTO;
+import com.axonactive.dojo.project.dto.*;
 import com.axonactive.dojo.project.service.ProjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +14,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -26,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.security.interfaces.RSAKey;
 import java.util.Arrays;
@@ -129,5 +129,14 @@ public class ProjectResource {
         ByteArrayOutputStream outputStream = this.projectService.exportExcelProjectsWithEmployeesSalariesHours(numberOfEmployees, totalHours, totalSalaries, projectIdsParam);
 
         return Response.ok(outputStream.toByteArray(), "application/octet-stream").header(headerKey, headerValue).build();
+    }
+
+    @POST
+    @Path("upload-excel")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadExcel(@MultipartForm ExcelFormDataDTO excelFormDataDTO) throws IOException, InvalidFormatException {
+        projectService.readExcelFile(excelFormDataDTO.getFile());
+        return Response.ok().build();
     }
 }

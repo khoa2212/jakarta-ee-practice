@@ -220,6 +220,12 @@
 			<version>${caffeine-version}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-multipart-provider -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
+			<version>6.2.4.Final</version>
+		</dependency>
 	</dependencies>
 
 	<build>

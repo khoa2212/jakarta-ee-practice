@@ -11,19 +11,19 @@ import com.axonactive.dojo.project.dto.*;
 import com.axonactive.dojo.project.entity.Project;
 import com.axonactive.dojo.project.mapper.ProjectMapper;
 import com.axonactive.dojo.project.message.ProjectMessage;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Stateless
 public class ProjectService {
@@ -204,5 +204,64 @@ public class ProjectService {
                 }
             }
         }
+    }
+
+    public ExcelResponseDTO readExcelFile(File file) throws IOException, InvalidFormatException {
+        FileInputStream inputStream = new FileInputStream(file);
+        Workbook wb = WorkbookFactory.create(inputStream);
+        Sheet sheet = wb.getSheet("ClassTestResult");
+
+        String courseTitle = sheet.getRow(0).getCell(0).getStringCellValue();
+        String validFrom = sheet.getRow(1).getCell(1).getStringCellValue();
+        String expiredFrom = sheet.getRow(2).getCell(1).getStringCellValue();
+
+        System.out.println(sheet.getLastRowNum());
+
+        Iterator<Row> rowIterator = sheet.iterator();
+        int i = 0;
+        int phoneColumnIndex = 0;
+
+        while (rowIterator.hasNext())
+        {
+            i++;
+            Row row = rowIterator.next();
+
+            if(i < 6) {
+                continue;
+            }
+
+            Iterator<Cell> cellIterator = row.cellIterator();
+            EmployeeResultDTO employeeResultDTO = new EmployeeResultDTO();
+
+            while (cellIterator.hasNext())
+            {
+                Cell cell = cellIterator.next();
+                if(i == 6 && Objects.equals(cell.getStringCellValue(), "Phone")) {
+                    phoneColumnIndex = cell.getColumnIndex();
+                }
+                else {
+                    switch (cell.getCellType())
+                    {
+                        case NUMERIC:
+                            if(cell.getColumnIndex() == phoneColumnIndex) {
+                                DataFormatter dataFormatter = new DataFormatter();
+                                String formattedCellStr = dataFormatter.formatCellValue(cell);
+                                System.out.println(formattedCellStr);
+                            }
+                            else {
+                                System.out.println(cell.getNumericCellValue());
+                            }
+                            break;
+                        case STRING:
+                            System.out.println(cell.getRichStringCellValue().getString());
+                            break;
+                        case BLANK:
+                            break;
+                    }
+                }
+            }
+        }
+        inputStream.close();
+        return null;
     }
 }
