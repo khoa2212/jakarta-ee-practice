@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 
 @Path("employees")
@@ -60,7 +61,7 @@ public class EmployeeResource {
             @ApiResponse(code = 200, message = "Get employee successfully", response = EmployeeDTO.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response findActiveEmployeeById(@PathParam("id") long id) throws EntityNotFoundException {
+    public Response findActiveEmployeeById(@PathParam("id") long id) throws EntityNotFoundException, IOException, TimeoutException {
         logger.info(LoggerMessage.findByIdMessage("employee", id));
 
         EmployeeDTO employeeDTO = this.employeeService.findActiveEmployeeById(id);

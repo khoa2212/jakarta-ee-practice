@@ -7,6 +7,7 @@ import com.axonactive.dojo.base.cache.BaseCache;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
 import com.axonactive.dojo.base.message.LoggerMessage;
+import com.axonactive.dojo.base.producer.RabbitMQProducer;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.message.DepartmentMessage;
 import com.axonactive.dojo.employee.dto.*;
@@ -18,6 +19,7 @@ import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import netscape.javascript.JSObject;
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -49,6 +52,11 @@ public class EmployeeService {
 
     @Inject
     private AssignmentMapper assignmentMapper;
+
+    @Inject
+    private RabbitMQProducer rabbitMQProducer;
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public EmployeeListResponseDTO findEmployees(long departmentId, int pageNumber, int pageSize, String name) throws EntityNotFoundException {
         List<Employee> employees;
@@ -106,12 +114,15 @@ public class EmployeeService {
                 .build();
     }
 
-    public EmployeeDTO findActiveEmployeeById(long id) throws EntityNotFoundException {
+    public EmployeeDTO findActiveEmployeeById(long id) throws EntityNotFoundException, IOException, TimeoutException {
         Employee employee = this.employeeDAO
                 .findActiveEmployeeById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-        return this.employeeMapper.toDTO(employee);
+        EmployeeDTO employeeDTO =  this.employeeMapper.toDTO(employee);
+        mapper.findAndRegisterModules();
+        rabbitMQProducer.sendMessage(mapper.writeValueAsString(employeeDTO));
+        return employeeDTO;
     }
 
     public EmployeeDTO add(CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
