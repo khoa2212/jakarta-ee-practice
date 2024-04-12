@@ -47,7 +47,7 @@ public class RabbitMQProducer {
     public void sendMessageFanoutExchange(String message) throws IOException, TimeoutException {
         Channel channel = connection.createChannel();
         channel.exchangeDeclare(FANOUT_EXCHANGE_NAME, BuiltinExchangeType.FANOUT, true);
-        channel(FIRST_QUEUE_NAME, true, false, false, null);
+        channel.queueDeclare(FIRST_QUEUE_NAME, true, false, false, null);
         channel.queueDeclare(SECOND_QUEUE_NAME, true, false, false, null);
 
         channel.queueBind(FIRST_QUEUE_NAME, FANOUT_EXCHANGE_NAME, "");
@@ -61,7 +61,9 @@ public class RabbitMQProducer {
         Channel channel = connection.createChannel();
         channel.exchangeDeclare(DIRECT_EXCHANGE_NAME, BuiltinExchangeType.DIRECT, true);
 
-        channel.queueDeclare(FIRST_QUEUE_NAME, )
+        channel.queueDeclare(FIRST_QUEUE_NAME, true, false, false, null);
+
+        channel.queueBind(FIRST_QUEUE_NAME, DIRECT_EXCHANGE_NAME, routingKey);
 
         System.out.println("Start sending message with direct exchange");
         channel.basicPublish(DIRECT_EXCHANGE_NAME, routingKey, null, message.getBytes());
