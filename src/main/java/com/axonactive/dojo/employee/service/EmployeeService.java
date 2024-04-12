@@ -19,6 +19,7 @@ import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
 import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
@@ -119,10 +120,7 @@ public class EmployeeService {
                 .findActiveEmployeeById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
 
-        EmployeeDTO employeeDTO =  this.employeeMapper.toDTO(employee);
-        mapper.findAndRegisterModules();
-        rabbitMQProducer.sendMessage(mapper.writeValueAsString(employeeDTO));
-        return employeeDTO;
+        return this.employeeMapper.toDTO(employee);
     }
 
     public EmployeeDTO add(CreateEmployeeRequestDTO reqDTO) throws EntityNotFoundException {
@@ -416,5 +414,33 @@ public class EmployeeService {
         zos.close();
 
         return zipFile;
+    }
+
+    public void registerInformation(long employeeId, String exchange) throws EntityNotFoundException, IOException, TimeoutException {
+        Employee employee = this.employeeDAO
+                .findActiveEmployeeById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException(EmployeeMessage.NOT_FOUND_EMPLOYEE));
+
+        EmployeeDTO employeeDTO =  this.employeeMapper.toDTO(employee);
+        mapper.findAndRegisterModules();
+        String message = mapper.writeValueAsString(employeeDTO);
+
+        switch (exchange) {
+            case "fanout": {
+                rabbitMQProducer.sendMessageFanoutExchange(message);
+                break;
+            }
+            case "direct": {
+                String[] routingKeys = { "firstKey", "secondKey" };
+                for(String routingKey : routingKeys) {
+                    rabbitMQProducer.sendMessageDirectExchange(message, routingKey);
+                }
+                break;
+            }
+            default: {
+                rabbitMQProducer.sendMessage(message);
+                break;
+            }
+        }
     }
 }
