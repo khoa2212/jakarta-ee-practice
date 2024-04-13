@@ -14,7 +14,7 @@ public class DirectExchangeChannel implements IExchangeChannel {
         this.exchangeName = exchangeName;
     }
     public void declareExchange() throws IOException {
-        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT, true);
+        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT, true);
     }
 
     public void closeExchange() throws IOException, TimeoutException {

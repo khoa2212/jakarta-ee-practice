@@ -26,6 +26,7 @@ public class RabbitMQProducer {
     private static final String GENERAL_ROUTING_KEY = "#.general.com";
     private static final String DIRECT_EXCHANGE_NAME = "VamosDirectExchange";
     private static final String QVAMOS = "QVAMOS";
+    private static final String VAMOS_ROUTING_KEY = "Vamos";
 
     private Connection connection;
     private IExchangeChannel exchangeChannel;
@@ -59,11 +60,10 @@ public class RabbitMQProducer {
                 exchangeChannel.performQueueBinding(QGENERAL, GENERAL_ROUTING_KEY);
             }
             case DIRECT -> {
-                exchangeChannel = new DirectExchangeChannel(connection.createChannel(), TOPIC_EXCHANGE_NAME);
+                exchangeChannel = new DirectExchangeChannel(connection.createChannel(), DIRECT_EXCHANGE_NAME);
                 exchangeChannel.declareExchange();
                 exchangeChannel.declareQueues(QVAMOS);
-                exchangeChannel.performQueueBinding(QJAVA, JAVA_ROUTING_KEY);
-                exchangeChannel.performQueueBinding(QGENERAL, GENERAL_ROUTING_KEY);
+                exchangeChannel.performQueueBinding(QVAMOS, VAMOS_ROUTING_KEY);
             }
         }
     }
