@@ -174,21 +174,4 @@ public class EmployeeResource {
         DeleteSuccessMessage result = this.employeeService.deleteSoftly(reqDTO);
         return Response.noContent().build();
     }
-
-
-    @POST
-    @Path("send-message/{employeeId}")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "Send message")
-    @ApiModelProperty
-    @ApiResponses({
-            @ApiResponse(code = 204, message = ""),
-            @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
-            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
-    })
-    public Response registerInformation(@PathParam("employeeId") long employeeId, @QueryParam("exchange") String exchange) throws EntityNotFoundException, IOException, TimeoutException {
-        this.employeeService.registerInformation(employeeId, exchange);
-        return Response.noContent().build();
-    }
 }
