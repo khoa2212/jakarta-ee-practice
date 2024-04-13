@@ -62,4 +62,12 @@ public class RelativeResource {
         RelativeListResponseDTO relativeListResponseDTO = this.relativeService.findRelivesByEmployeesNotAssigned(pageNumber, pageSize);
         return Response.ok().entity(relativeListResponseDTO).build();
     }
+
+    @GET
+    @Path("consume")
+    @ApiOperation(value = "Consume message from kafka cluster")
+    public Response consumeMessage() {
+        relativeService.consumeMessage();
+        return Response.ok().build();
+    }
 }

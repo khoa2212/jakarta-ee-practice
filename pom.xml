@@ -54,6 +54,7 @@
 		</sonar.coverage.exclusions>
 		<caffeine-version>3.1.8</caffeine-version>
 		<itextpdf-version>5.5.13.3</itextpdf-version>
+		<kafka-clients-version>3.0.0</kafka-clients-version>
 	</properties>
 
 	<distributionManagement>
@@ -220,6 +221,12 @@
 			<version>${caffeine-version}</version>
 		</dependency>
 
+		<!-- Add message broker kafka-->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>${kafka-clients-version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
