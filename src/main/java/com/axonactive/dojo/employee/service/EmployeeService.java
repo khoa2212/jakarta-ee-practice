@@ -3,38 +3,34 @@ package com.axonactive.dojo.employee.service;
 import com.axonactive.dojo.assignment.dto.AssignmentDTO;
 import com.axonactive.dojo.assignment.entity.Assignment;
 import com.axonactive.dojo.assignment.mapper.AssignmentMapper;
-import com.axonactive.dojo.base.cache.BaseCache;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
 import com.axonactive.dojo.base.message.DeleteSuccessMessage;
-import com.axonactive.dojo.base.message.LoggerMessage;
 import com.axonactive.dojo.base.producer.RabbitMQProducer;
+import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.department.message.DepartmentMessage;
+import com.axonactive.dojo.employee.dao.EmployeeDAO;
 import com.axonactive.dojo.employee.dto.*;
 import com.axonactive.dojo.employee.entity.Employee;
-import com.axonactive.dojo.employee.dao.EmployeeDAO;
-import com.axonactive.dojo.department.dao.DepartmentDAO;
 import com.axonactive.dojo.employee.mapper.EmployeeMapper;
 import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.enums.Gender;
 import com.axonactive.dojo.enums.Status;
-import com.axonactive.dojo.project.dto.ProjectListResponseDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
-import netscape.javascript.JSObject;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.rabbitmq.client.BuiltinExchangeType;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.json.JsonObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -416,6 +412,11 @@ public class EmployeeService {
         return zipFile;
     }
 
+    public static final String JAVA_EE_MSG_KEY = "java.ee.general.com";
+    public static final String JAVA_CORE_MSG_KEY = "java.core.general.com";
+    public static final String DESIGN_PATTERN_MSG_KEY = "design-pattern.general.com";
+    public static final String NOT_MATCHING_MSG_KEY = "java.collection.general.com.vn";
+
     public void registerInformation(long employeeId, String exchange) throws EntityNotFoundException, IOException, TimeoutException {
         Employee employee = this.employeeDAO
                 .findActiveEmployeeById(employeeId)
@@ -430,15 +431,15 @@ public class EmployeeService {
                 rabbitMQProducer.sendMessageFanoutExchange(message);
                 break;
             }
-            case "direct": {
-                String[] routingKeys = { "firstKey", "secondKey" };
-                for(String routingKey : routingKeys) {
-                    rabbitMQProducer.sendMessageDirectExchange(message, routingKey);
-                }
+            case "topic": {
+                rabbitMQProducer.start(BuiltinExchangeType.TOPIC);
+                rabbitMQProducer.send("[1] A new Java EE topic is published", JAVA_EE_MSG_KEY);
+                rabbitMQProducer.send("[2] A new Java Core topic is published", JAVA_CORE_MSG_KEY);
+                rabbitMQProducer.send("[3] A new Design Pattern topic is published", DESIGN_PATTERN_MSG_KEY);
+                rabbitMQProducer.send("[4] Not matching any routing key", NOT_MATCHING_MSG_KEY);
                 break;
             }
             default: {
-                rabbitMQProducer.sendMessage(message);
                 break;
             }
         }

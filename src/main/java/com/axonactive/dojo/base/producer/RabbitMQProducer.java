@@ -16,13 +16,16 @@ import java.util.concurrent.TimeoutException;
 @Startup
 public class RabbitMQProducer {
 
-    private final String FIRST_QUEUE_NAME = "DVamos";
-    private final String SECOND_QUEUE_NAME = "Vamos 2";
-    private final String FANOUT_EXCHANGE_NAME = "fanout-exchange-name";
-    private final String DIRECT_EXCHANGE_NAME = "direct-exchange-name";
-    private final String TOPIC_EXCHANGE_NAME = "topic-exchange-name";
-
+    private final String QFANOUT1 = "QFANOUT1";
+    private final String QFANOUT2 = "QFANOUT2";
+    private final String FANOUT_EXCHANGE_NAME = "VamosFanoutExchange";
+    private final String QJAVA = "QJAVA";
+    private final String QGENERAL = "QGENERAL";
+    private final String TOPIC_EXCHANGE_NAME = "VamosTopicExchange";
+    public static final String JAVA_ROUTING_KEY = "java.*.general.com";
+    public static final String GENERAL_ROUTING_KEY = "#.general.com";
     private Connection connection;
+    private IExchangeChannel exchangeChannel;
 
     @PostConstruct
     private void init() throws IOException, TimeoutException {
@@ -36,36 +39,33 @@ public class RabbitMQProducer {
         connection = factory.newConnection("Producer");
     }
 
-    public void sendMessage(String message) throws  IOException, TimeoutException {
-        Channel channel = connection.createChannel();
-        channel.queueDeclare(FIRST_QUEUE_NAME, true, false, false, null);
-
-        System.out.println("Start sending message");
-        channel.basicPublish("", FIRST_QUEUE_NAME, null, message.getBytes()); // Default exchange
+    public void start(BuiltinExchangeType type) throws IOException {
+        switch (type) {
+            case TOPIC -> {
+                exchangeChannel = new TopicExchangeChannel(connection.createChannel(), TOPIC_EXCHANGE_NAME);
+                exchangeChannel.declareExchange();
+                exchangeChannel.declareQueues(QJAVA, QGENERAL);
+                exchangeChannel.performQueueBinding(QJAVA, JAVA_ROUTING_KEY);
+                exchangeChannel.performQueueBinding(QGENERAL, GENERAL_ROUTING_KEY);
+            }
+        }
     }
 
     public void sendMessageFanoutExchange(String message) throws IOException, TimeoutException {
         Channel channel = connection.createChannel();
+
         channel.exchangeDeclare(FANOUT_EXCHANGE_NAME, BuiltinExchangeType.FANOUT, true);
-        channel.queueDeclare(FIRST_QUEUE_NAME, true, false, false, null);
-        channel.queueDeclare(SECOND_QUEUE_NAME, true, false, false, null);
+        channel.queueDeclare(QFANOUT1, true, false, false, null);
+        channel.queueDeclare(QFANOUT2, true, false, false, null);
 
-        channel.queueBind(FIRST_QUEUE_NAME, FANOUT_EXCHANGE_NAME, "");
-        channel.queueBind(SECOND_QUEUE_NAME, FANOUT_EXCHANGE_NAME, "");
+        channel.queueBind(QFANOUT1, FANOUT_EXCHANGE_NAME, "");
+        channel.queueBind(QFANOUT2, FANOUT_EXCHANGE_NAME, "");
 
-        System.out.println("Start sending message with fanout exchange");
+        System.out.println("Start sending message");
         channel.basicPublish(FANOUT_EXCHANGE_NAME, "", null, message.getBytes());
     }
 
-    public void sendMessageDirectExchange(String message, String routingKey) throws IOException, TimeoutException {
-        Channel channel = connection.createChannel();
-        channel.exchangeDeclare(DIRECT_EXCHANGE_NAME, BuiltinExchangeType.DIRECT, true);
-
-        channel.queueDeclare(FIRST_QUEUE_NAME, true, false, false, null);
-
-        channel.queueBind(FIRST_QUEUE_NAME, DIRECT_EXCHANGE_NAME, routingKey);
-
-        System.out.println("Start sending message with direct exchange");
-        channel.basicPublish(DIRECT_EXCHANGE_NAME, routingKey, null, message.getBytes());
+    public void send(String message, String messageKey) throws IOException {
+        exchangeChannel.publishMessage(message, messageKey);
     }
 }
