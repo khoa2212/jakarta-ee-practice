@@ -1,21 +1,20 @@
 package com.axonactive.dojo.base.producer;
 
-
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class TopicExchangeChannel implements IExchangeChannel {
+public class FanoutExchangeChannel implements IExchangeChannel {
     private Channel channel;
     private String exchangeName;
 
-    public TopicExchangeChannel(Channel channel, String exchangeName) {
+    public FanoutExchangeChannel(Channel channel, String exchangeName) {
         this.channel = channel;
         this.exchangeName = exchangeName;
     }
     public void declareExchange() throws IOException {
-        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC, true);
+        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT, true);
     }
 
     public void closeExchange() throws IOException, TimeoutException {

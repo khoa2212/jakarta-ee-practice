@@ -8,3 +8,5 @@ Khi consumer thao tác xong sẽ đưa về client bằng cách gì
 Khi consumber bị lỗi sẽ xử lý như thế nào
 
 Tìm hiểu thêm các tham số của hàm basic consume và basic publish, queue declare
+
+Tìm hiểu về round robin

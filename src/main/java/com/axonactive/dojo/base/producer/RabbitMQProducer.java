@@ -48,24 +48,21 @@ public class RabbitMQProducer {
                 exchangeChannel.performQueueBinding(QJAVA, JAVA_ROUTING_KEY);
                 exchangeChannel.performQueueBinding(QGENERAL, GENERAL_ROUTING_KEY);
             }
+            case FANOUT -> {
+                exchangeChannel = new TopicExchangeChannel(connection.createChannel(), FANOUT_EXCHANGE_NAME);
+                exchangeChannel.declareExchange();
+                exchangeChannel.declareQueues(QFANOUT1, QFANOUT2);
+                exchangeChannel.performQueueBinding(QFANOUT1, "");
+                exchangeChannel.performQueueBinding(QFANOUT2, "");
+            }
         }
     }
 
-    public void sendMessageFanoutExchange(String message) throws IOException, TimeoutException {
-        Channel channel = connection.createChannel();
-
-        channel.exchangeDeclare(FANOUT_EXCHANGE_NAME, BuiltinExchangeType.FANOUT, true);
-        channel.queueDeclare(QFANOUT1, true, false, false, null);
-        channel.queueDeclare(QFANOUT2, true, false, false, null);
-
-        channel.queueBind(QFANOUT1, FANOUT_EXCHANGE_NAME, "");
-        channel.queueBind(QFANOUT2, FANOUT_EXCHANGE_NAME, "");
-
-        System.out.println("Start sending message");
-        channel.basicPublish(FANOUT_EXCHANGE_NAME, "", null, message.getBytes());
+    public void send(String message, String messageKey) throws IOException, TimeoutException {
+        exchangeChannel.publishMessage(message, messageKey);
     }
 
-    public void send(String message, String messageKey) throws IOException {
-        exchangeChannel.publishMessage(message, messageKey);
+    public void closeChannel() throws IOException, TimeoutException {
+        exchangeChannel.closeExchange();
     }
 }

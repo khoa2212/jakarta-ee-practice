@@ -428,7 +428,9 @@ public class EmployeeService {
 
         switch (exchange) {
             case "fanout": {
-                rabbitMQProducer.sendMessageFanoutExchange(message);
+                rabbitMQProducer.start(BuiltinExchangeType.FANOUT);
+                rabbitMQProducer.send(message, "");
+                rabbitMQProducer.closeChannel();
                 break;
             }
             case "topic": {
@@ -437,6 +439,7 @@ public class EmployeeService {
                 rabbitMQProducer.send("[2] A new Java Core topic is published", JAVA_CORE_MSG_KEY);
                 rabbitMQProducer.send("[3] A new Design Pattern topic is published", DESIGN_PATTERN_MSG_KEY);
                 rabbitMQProducer.send("[4] Not matching any routing key", NOT_MATCHING_MSG_KEY);
+                rabbitMQProducer.closeChannel();
                 break;
             }
             default: {
