@@ -41,19 +41,19 @@ public class RabbitMQProducer {
 
     public void start(BuiltinExchangeType type) throws IOException {
         switch (type) {
+            case FANOUT -> {
+                exchangeChannel = new FanoutExchangeChannel(connection.createChannel(), FANOUT_EXCHANGE_NAME);
+                exchangeChannel.declareExchange();
+                exchangeChannel.declareQueues(QFANOUT1, QFANOUT2);
+                exchangeChannel.performQueueBinding(QFANOUT1, "");
+                exchangeChannel.performQueueBinding(QFANOUT2, "");
+            }
             case TOPIC -> {
                 exchangeChannel = new TopicExchangeChannel(connection.createChannel(), TOPIC_EXCHANGE_NAME);
                 exchangeChannel.declareExchange();
                 exchangeChannel.declareQueues(QJAVA, QGENERAL);
                 exchangeChannel.performQueueBinding(QJAVA, JAVA_ROUTING_KEY);
                 exchangeChannel.performQueueBinding(QGENERAL, GENERAL_ROUTING_KEY);
-            }
-            case FANOUT -> {
-                exchangeChannel = new TopicExchangeChannel(connection.createChannel(), FANOUT_EXCHANGE_NAME);
-                exchangeChannel.declareExchange();
-                exchangeChannel.declareQueues(QFANOUT1, QFANOUT2);
-                exchangeChannel.performQueueBinding(QFANOUT1, "");
-                exchangeChannel.performQueueBinding(QFANOUT2, "");
             }
         }
     }
