@@ -10,3 +10,5 @@ Khi consumber bị lỗi sẽ xử lý như thế nào
 Tìm hiểu thêm các tham số của hàm basic consume và basic publish, queue declare
 
 Tìm hiểu về round robin
+
+moi consumer la 1 channel, ko nen dong channel khi consume, nen dong channel khi produce

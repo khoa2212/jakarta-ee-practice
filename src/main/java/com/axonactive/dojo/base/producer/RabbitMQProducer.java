@@ -16,12 +16,12 @@ import java.util.concurrent.TimeoutException;
 @Startup
 public class RabbitMQProducer {
 
-    private final String QFANOUT1 = "QFANOUT1";
-    private final String QFANOUT2 = "QFANOUT2";
-    private final String FANOUT_EXCHANGE_NAME = "VamosFanoutExchange";
-    private final String QJAVA = "QJAVA";
-    private final String QGENERAL = "QGENERAL";
-    private final String TOPIC_EXCHANGE_NAME = "VamosTopicExchange";
+    private static final String QFANOUT1 = "QFANOUT1";
+    private static final String QFANOUT2 = "QFANOUT2";
+    private static final String FANOUT_EXCHANGE_NAME = "VamosFanoutExchange";
+    private static final String QJAVA = "QJAVA";
+    private static final String QGENERAL = "QGENERAL";
+    private static final String TOPIC_EXCHANGE_NAME = "VamosTopicExchange";
     private static final String JAVA_ROUTING_KEY = "java.*.general.com";
     private static final String GENERAL_ROUTING_KEY = "#.general.com";
     private static final String DIRECT_EXCHANGE_NAME = "VamosDirectExchange";
