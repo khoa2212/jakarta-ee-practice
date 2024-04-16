@@ -64,10 +64,10 @@ public class RelativeResource {
     }
 
     @GET
-    @Path("consume")
+    @Path("consume/{id}")
     @ApiOperation(value = "Consume message from kafka cluster")
-    public Response consumeMessage() {
-        relativeService.consumeMessage();
+    public Response consumeMessage(@PathParam("id") Long consumerId) {
+        relativeService.consumeMessage(consumerId);
         return Response.ok().build();
     }
 }

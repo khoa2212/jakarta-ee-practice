@@ -27,8 +27,6 @@ import java.util.List;
 @Stateless
 public class RelativeService {
 
-    private static final Logger logger = LogManager.getLogger(RelativeResource.class);
-
     @Inject
     private RelativeDAO relativeDAO;
 
@@ -70,22 +68,25 @@ public class RelativeService {
                 .build();
     }
 
-    public void consumeMessage() {
+    public void consumeMessage(Long consumerId) {
         KafkaConsumer<String, RelativeMessageDTO> consumer =
                 new KafkaConsumer<>(KafkaMessageBroker.getConsumerProperties());
         consumer.subscribe(Collections.singleton(KafkaConfig.TOPIC));
 
-        while (true) {
+        // TODO: change this variable depend on business logic
+        boolean isRunning = true;
+
+        while (isRunning) {
             ConsumerRecords<String, RelativeMessageDTO> records = consumer.poll(Duration.ofMillis(500));
             records.forEach(record -> {
-                System.out.println("Receive message \n" +
+                System.out.println("----Receive message---- \n" +
+                        "Consumer: " + consumerId + "\n" +
                         "Topic: " + record.topic() + "\n" +
                         "Key: " + record.key() + "\n" +
                         "Value full name: " + record.value().getFullName() + "\n" +
                         "Value gender: " + record.value().getGender() + "\n" +
                         "Partition: " + record.partition() + "\n" +
-                        "Offset: " + record.offset() + "\n" +
-                        "Timestamp: " + record.timestamp());
+                        "Offset: " + record.offset() + "\n");
             });
         }
     }
