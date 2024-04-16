@@ -1,14 +1,15 @@
 package com.axonactive.dojo.relative.service;
 
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
+import com.axonactive.dojo.base.messagebroker.KafkaConfig;
 import com.axonactive.dojo.base.messagebroker.KafkaMessageBroker;
-import com.axonactive.dojo.base.messagebroker.MessageBrokerConfig;
 import com.axonactive.dojo.employee.dao.EmployeeDAO;
 import com.axonactive.dojo.employee.entity.Employee;
 import com.axonactive.dojo.employee.message.EmployeeMessage;
 import com.axonactive.dojo.relative.dao.RelativeDAO;
 import com.axonactive.dojo.relative.dto.RelativeDTO;
 import com.axonactive.dojo.relative.dto.RelativeListResponseDTO;
+import com.axonactive.dojo.relative.dto.RelativeMessageDTO;
 import com.axonactive.dojo.relative.entity.Relative;
 import com.axonactive.dojo.relative.mapper.RelativeMapper;
 import com.axonactive.dojo.relative.rest.RelativeResource;
@@ -36,9 +37,6 @@ public class RelativeService {
 
     @Inject
     private RelativeMapper relativeMapper;
-
-    @Inject
-    private KafkaMessageBroker kafkaMessageBroker;
 
     public RelativeListResponseDTO findRelativesByEmployeeId(long employeeId, int pageNumber, int pageSize) throws EntityNotFoundException {
         Employee employee = this.employeeDAO
@@ -73,11 +71,12 @@ public class RelativeService {
     }
 
     public void consumeMessage() {
-        KafkaConsumer<String, Relative> consumer = kafkaMessageBroker.getConsumer();
-        consumer.subscribe(Collections.singleton(MessageBrokerConfig.TOPIC));
+        KafkaConsumer<String, RelativeMessageDTO> consumer =
+                new KafkaConsumer<>(KafkaMessageBroker.getConsumerProperties());
+        consumer.subscribe(Collections.singleton(KafkaConfig.TOPIC));
 
-//        while (true) {
-            ConsumerRecords<String, Relative> records = consumer.poll(Duration.ofMillis(500));
+        while (true) {
+            ConsumerRecords<String, RelativeMessageDTO> records = consumer.poll(Duration.ofMillis(500));
             records.forEach(record -> {
                 System.out.println("Receive message \n" +
                         "Topic: " + record.topic() + "\n" +
@@ -88,7 +87,6 @@ public class RelativeService {
                         "Offset: " + record.offset() + "\n" +
                         "Timestamp: " + record.timestamp());
             });
-            consumer.close();
-//        }
+        }
     }
 }

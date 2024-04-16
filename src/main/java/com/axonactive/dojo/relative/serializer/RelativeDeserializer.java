@@ -1,5 +1,6 @@
 package com.axonactive.dojo.relative.serializer;
 
+import com.axonactive.dojo.relative.dto.RelativeMessageDTO;
 import com.axonactive.dojo.relative.entity.Relative;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -8,20 +9,18 @@ import java.util.Map;
 
 public class RelativeDeserializer implements Deserializer {
     @Override
-    public void configure(Map configs, boolean isKey) {
-        Deserializer.super.configure(configs, isKey);
-    }
+    public void configure(Map configs, boolean isKey) {}
 
     @Override
-    public Relative deserialize(String s, byte[] bytes) {
+    public RelativeMessageDTO deserialize(String s, byte[] bytes) {
         ObjectMapper mapper = new ObjectMapper();
-        Relative relative = null;
+        RelativeMessageDTO relativeMessageDTO = null;
         try {
-            relative = mapper.readValue(bytes, Relative.class);
+            relativeMessageDTO = mapper.readValue(bytes, RelativeMessageDTO.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return relative;
+        return relativeMessageDTO;
     }
 
     @Override
