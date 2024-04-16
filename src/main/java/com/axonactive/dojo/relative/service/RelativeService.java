@@ -73,20 +73,22 @@ public class RelativeService {
     }
 
     public void consumeMessage() {
-        KafkaConsumer<String, String> consumer = kafkaMessageBroker.getConsumer();
+        KafkaConsumer<String, Relative> consumer = kafkaMessageBroker.getConsumer();
         consumer.subscribe(Collections.singleton(MessageBrokerConfig.TOPIC));
 
-        while (true) {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+//        while (true) {
+            ConsumerRecords<String, Relative> records = consumer.poll(Duration.ofMillis(500));
             records.forEach(record -> {
-                System.out.println("Receive new metadata \n" +
+                System.out.println("Receive message \n" +
                         "Topic: " + record.topic() + "\n" +
                         "Key: " + record.key() + "\n" +
-                        "Value: " + record.value() + "\n" +
+                        "Value full name: " + record.value().getFullName() + "\n" +
+                        "Value gender: " + record.value().getGender() + "\n" +
                         "Partition: " + record.partition() + "\n" +
                         "Offset: " + record.offset() + "\n" +
                         "Timestamp: " + record.timestamp());
             });
-        }
+            consumer.close();
+//        }
     }
 }
