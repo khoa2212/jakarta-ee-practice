@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  elastic-search:
+    container_name: elastic-search
+    image: elasticsearch:8.13.0
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - "9200:9200"
+    networks:
+      - elastic
+
+  kibana:
+    container_name: kibana
+    image: kibana:8.13.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elastic-search:9200
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elastic-search
+    networks:
+      - elastic
+
+  log-stash:
+    container_name: log-stash
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    depends_on:
+      - elastic-search
+    networks:
+      - elastic
+
+networks:
+  elastic:

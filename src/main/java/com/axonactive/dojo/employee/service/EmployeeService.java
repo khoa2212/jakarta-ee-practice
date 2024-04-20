@@ -1,5 +1,8 @@
 package com.axonactive.dojo.employee.service;
 
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.axonactive.dojo.assignment.dto.AssignmentDTO;
 import com.axonactive.dojo.assignment.entity.Assignment;
 import com.axonactive.dojo.assignment.mapper.AssignmentMapper;
@@ -408,5 +411,9 @@ public class EmployeeService {
         zos.close();
 
         return zipFile;
+    }
+
+    public List<EmployeeDTO> findEmployeesByName(String firstName, String middleName, String lastName) throws IOException {
+        return employeeMapper.toListDTO(employeeDAO.findEmployeesByName(firstName, middleName, lastName));
     }
 }

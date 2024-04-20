@@ -53,6 +53,21 @@ public class EmployeeResource {
         EmployeeListResponseDTO employeeListResponseDTO = this.employeeService.findEmployees(departmentId, pageNumber, pageSize, name);
         return Response.ok().entity(employeeListResponseDTO).build();
     }
+
+    @GET
+    @Path("elastic-search")
+    @Produces({ MediaType.APPLICATION_JSON })
+    @ApiOperation(value = "Get all employee list with pagination")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Get all employee list successfully", response = EmployeeListResponseDTO.class, responseContainer = "List"),
+            @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
+    })
+    public Response findEmployees() throws IOException {
+        logger.info("Get employee by elasticsearch");
+
+        List<EmployeeDTO> employeeDTOS = this.employeeService.findEmployeesByName("Corty", "Phil", "Ashmole" );
+        return Response.ok().entity(employeeDTOS).build();
+    }
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})

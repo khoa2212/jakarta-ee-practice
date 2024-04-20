@@ -226,7 +226,12 @@
 			<version>5.20.0</version>
 		</dependency>
 
-
+		<!--		elasticsearch-->
+		<dependency>
+			<groupId>co.elastic.clients</groupId>
+			<artifactId>elasticsearch-java</artifactId>
+			<version>8.13.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

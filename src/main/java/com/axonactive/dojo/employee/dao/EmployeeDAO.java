@@ -1,18 +1,28 @@
 package com.axonactive.dojo.employee.dao;
 
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.axonactive.dojo.base.dao.BaseDAO;
+import com.axonactive.dojo.base.elastic_search.ElasticSearchService;
 import com.axonactive.dojo.department.entity.Department;
 import com.axonactive.dojo.employee.entity.Employee;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.*;
 import javax.validation.constraints.Null;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 @Stateless
 public class EmployeeDAO extends BaseDAO<Employee> {
+
+    @Inject
+    private ElasticSearchService elasticSearchService;
+
     public EmployeeDAO() {
         super(Employee.class);
     }
@@ -200,5 +210,26 @@ public class EmployeeDAO extends BaseDAO<Employee> {
                             "where coalesce(a.numberOfHour) >= :numberOfHour")
                     .setParameter("numberOfHour", numberOfHour).getResultList();
         };
+    }
+
+    public List<Employee> findEmployeesByName(String firstName, String middleName, String lastName) throws IOException {
+        if (elasticSearchService.getElasticSearchConnection()) {
+            SearchResponse<Employee> response = elasticSearchService.getClient().search(search ->
+                            search
+                                    .index("employee")
+                                    .size(10000)
+                                    .sort(sort -> sort.field(f -> f.field("id").order(SortOrder.Asc)))
+                                    .query(query ->
+                                            query.bool(bool -> bool
+                                                    .must(must -> must.match(match -> match.field("first_name").query(firstName)))
+                                                    .must(must -> must.wildcard(wildcard -> wildcard.field("middle_name").value("*" + middleName + "*")))
+                                                    .must(must -> must.match(match -> match.field("last_name").query(lastName)))
+                                            ))
+                    , Employee.class
+            );
+            return response.hits().hits().stream().map(Hit::source).toList();
+        } else {
+            return List.of();
+        }
     }
 }
