@@ -23,17 +23,6 @@ public class KafkaMessageBroker {
         return propertiesProducer;
     }
 
-    public static Properties getConsumerProperties() {
-        Properties propertiesConsumer = new Properties();
-        propertiesConsumer.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConfig.SERVER);
-        propertiesConsumer.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        propertiesConsumer.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, RelativeDeserializer.class.getName());
-        propertiesConsumer.setProperty(ConsumerConfig.GROUP_ID_CONFIG, KafkaConfig.GROUP_ID);
-        propertiesConsumer.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, KafkaConfig.AUTO_OFFSET_RESET_CONFIG);
-
-        return propertiesConsumer;
-    }
-
     public static void send(ProducerRecord record, Producer producer) {
         producer.send(record, (recordMetadata, e) -> {
             if (e == null) {
