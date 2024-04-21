@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class RelativeMessage extends BaseMessage {
-
+    public static final String RELATIVE_NOT_FOUND = "Relative not found";
 }

@@ -1,8 +1,6 @@
-package com.axonactive.dojo.demo_rabbitmq;
+package com.axonactive.dojo.demo_kafka;
 
-import com.axonactive.dojo.base.email.EmailService;
 import com.axonactive.dojo.base.exception.EntityNotFoundException;
-import com.axonactive.dojo.employee.service.EmployeeService;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -15,11 +13,11 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-@Path("demo-rabbitmq")
-public class DemoRabbitMQResource {
+@Path("demo-kafka")
+public class DemoKafkaResource {
 
     @Inject
-    private DemoRabbitMQService demoRabbitMQService;
+    private DemoKafkaService demoKafkaService;
 
     @POST
     @Path("send-message/{employeeId}")
@@ -32,8 +30,8 @@ public class DemoRabbitMQResource {
             @ApiResponse(code = 400, message = "Request sent to the server is invalid"),
             @ApiResponse(code = 500, message = "Request cannot be fulfilled through browser due to server-side problems")
     })
-    public Response demoRabbitMQ(@PathParam("employeeId") long employeeId, @QueryParam("exchange") String exchange) throws EntityNotFoundException, IOException, TimeoutException {
-        this.demoRabbitMQService.demoRabbitMQ(employeeId, exchange);
+    public Response demoRabbitMQ(@PathParam("employeeId") long employeeId, @QueryParam("key") String key) throws EntityNotFoundException, IOException, TimeoutException {
+        this.demoKafkaService.demoKafka(employeeId, key);
         return Response.noContent().build();
     }
 }

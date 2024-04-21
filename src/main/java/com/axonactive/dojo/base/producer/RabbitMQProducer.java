@@ -31,7 +31,6 @@ public class RabbitMQProducer {
     private Connection connection;
     private IExchangeChannel exchangeChannel;
 
-    @PostConstruct
     private void init() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setVirtualHost(RabbitMQConfig.VIRTUAL_HOST);
