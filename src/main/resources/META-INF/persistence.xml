@@ -4,7 +4,7 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
              version="2.2">
     <persistence-unit name="dojo" transaction-type="JTA">
-        <jta-data-source>java:/PostgresDS</jta-data-source>
+        <jta-data-source>java:/EmployeeDS</jta-data-source>
         <properties>
             <!-- Add any additional properties if needed -->
             <property name="jakarta.persistence.schema-generation.database.action"

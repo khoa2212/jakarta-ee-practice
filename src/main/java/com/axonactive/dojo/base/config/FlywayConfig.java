@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 @TransactionManagement(TransactionManagementType.BEAN)
 public class FlywayConfig {
 
-    @Resource(lookup = "java:/PostgresDS")
+    @Resource(lookup = "java:/EmployeeDS")
     DataSource dataSource;
 
     @PostConstruct

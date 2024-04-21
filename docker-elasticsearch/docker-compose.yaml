@@ -1,6 +1,19 @@
 version: "3"
 
 services:
+  postgres:
+    container_name: postgres
+    image: postgres:14
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: employee
+      TZ: "Asia/Ho_Chi_Minh"
+    ports:
+      - "5432:5432"
+    networks:
+      - elastic
+
   elastic-search:
     container_name: elastic-search
     image: elasticsearch:8.13.0
@@ -37,6 +50,7 @@ services:
       - TZ=Asia/Ho_Chi_Minh
     depends_on:
       - elastic-search
+      - postgres
     networks:
       - elastic
 

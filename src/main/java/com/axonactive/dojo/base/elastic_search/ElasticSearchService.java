@@ -27,7 +27,6 @@ public class ElasticSearchService {
     @Inject
     private JacksonConfig jacksonConfig;
 
-    @PostConstruct
     void init() {
         RestClient restClient = RestClient.builder(HttpHost.create(urlServer)).build();
         ElasticsearchTransport elasticsearchTransport = new RestClientTransport(restClient,
