@@ -1,4 +1,4 @@
-package com.axonactive.dojo.base.kafka_serializer.relative;
+package com.axonactive.dojo.relative.dto;
 
 import lombok.*;
 
