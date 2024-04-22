@@ -12,6 +12,8 @@ services:
       - TZ=Asia/Ho_Chi_Minh
     ports:
       - "9200:9200"
+    networks:
+      - elastic
 
   kibana:
     container_name: kibana
@@ -23,6 +25,8 @@ services:
       - "5601:5601"
     depends_on:
       - elastic-search
+    networks:
+      - elastic
 
   log-stash:
     container_name: log-stash
@@ -33,3 +37,8 @@ services:
       - TZ=Asia/Ho_Chi_Minh
     depends_on:
       - elastic-search
+    networks:
+      - elastic
+
+networks:
+  elastic:
