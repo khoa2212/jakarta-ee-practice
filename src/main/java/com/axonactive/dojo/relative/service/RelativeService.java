@@ -12,6 +12,7 @@ import com.axonactive.dojo.relative.dto.RelativeListResponseDTO;
 import com.axonactive.dojo.relative.dto.RelativeMessageDTO;
 import com.axonactive.dojo.relative.entity.Relative;
 import com.axonactive.dojo.relative.mapper.RelativeMapper;
+import com.axonactive.dojo.relative.messagebroker.RelativeConsumer;
 import com.axonactive.dojo.relative.rest.RelativeResource;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -68,26 +69,11 @@ public class RelativeService {
                 .build();
     }
 
-    public void consumeMessage(Long consumerId) {
-        KafkaConsumer<String, RelativeMessageDTO> consumer =
-                new KafkaConsumer<>(KafkaMessageBroker.getConsumerProperties());
-        consumer.subscribe(Collections.singleton(KafkaConfig.TOPIC));
-
-        // TODO: change this variable depend on business logic
-        boolean isRunning = true;
-
-        while (isRunning) {
-            ConsumerRecords<String, RelativeMessageDTO> records = consumer.poll(Duration.ofMillis(500));
-            records.forEach(record -> {
-                System.out.println("----Receive message---- \n" +
-                        "Consumer: " + consumerId + "\n" +
-                        "Topic: " + record.topic() + "\n" +
-                        "Key: " + record.key() + "\n" +
-                        "Value full name: " + record.value().getFullName() + "\n" +
-                        "Value gender: " + record.value().getGender() + "\n" +
-                        "Partition: " + record.partition() + "\n" +
-                        "Offset: " + record.offset() + "\n");
-            });
+    public void consumeMessage(Long consumerId) throws InterruptedException {
+        RelativeConsumer consumer = new RelativeConsumer(KafkaMessageBroker.getConsumerProperties(), List.of(KafkaConfig.TOPIC));
+        while (consumer.getCountMessage() <= 1) {
+            consumer.run();
         }
+        consumer.shutdown();
     }
 }

@@ -31,8 +31,8 @@ public class AuthorizationFilter implements ContainerRequestFilter {
     @Override
     @SneakyThrows
     public void filter(ContainerRequestContext reqCtx) throws IOException {
-
         RolesAllowed methodRoles = info.getResourceMethod().getAnnotation(RolesAllowed.class);
+//        RolesAllowed classRoles = info.getResourceClass().getAnnotation(RolesAllowed.class);
 
         if (methodRoles == null) {
             return;
@@ -49,10 +49,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
     public boolean isLogin() {
         Principal user = securityContext.getUserPrincipal();
-        if (user == null) {
-           return false;
-        }
-        return true;
+        return user != null;
     }
 
     public boolean isNotAllowed(RolesAllowed anno) {

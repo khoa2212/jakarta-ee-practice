@@ -66,7 +66,7 @@ public class RelativeResource {
     @GET
     @Path("consume/{id}")
     @ApiOperation(value = "Consume message from kafka cluster")
-    public Response consumeMessage(@PathParam("id") Long consumerId) {
+    public Response consumeMessage(@PathParam("id") Long consumerId) throws InterruptedException {
         relativeService.consumeMessage(consumerId);
         return Response.ok().build();
     }
