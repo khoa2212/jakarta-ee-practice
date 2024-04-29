@@ -19,15 +19,15 @@ public class RelativeConsumer extends BasicConsumeLoop<RelativeMessageDTO> {
     @Override
     public void process(ConsumerRecord<String, RelativeMessageDTO> record) {
         System.out.println("Key: " + record.key());
-        System.out.println("Full name: " + record.value().getFullName());
+        System.out.println("Message count: " + countMessage);
+        System.out.println("Id: " + record.value().getId());
+        System.out.println("Full Name: " + record.value().getFullName());
+        System.out.println("Gender: " + record.value().getGender());
+        System.out.println("Phone Number: " + record.value().getPhoneNumber());
 
         this.countMessage += 1;
-        if (countMessage == 5) {
-            try {
-                shutdown();
-            } catch (InterruptedException e) {
-                System.out.println(e);
-            }
+        if (countMessage == 10) {
+            shutdown();
         }
     }
 }
