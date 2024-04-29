@@ -34,6 +34,7 @@ public abstract class BasicConsumeLoop<T> implements Runnable {
                 ConsumerRecords<String, T> records = consumer.poll(Duration.of(1, ChronoUnit.SECONDS));
                 records.forEach(this::process);
             }
+            System.out.println("Chay roi ne");
         } finally {
             consumer.close();
             shutdownLatch.countDown();

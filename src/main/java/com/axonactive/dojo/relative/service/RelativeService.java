@@ -71,9 +71,6 @@ public class RelativeService {
 
     public void consumeMessage(Long consumerId) throws InterruptedException {
         RelativeConsumer consumer = new RelativeConsumer(KafkaMessageBroker.getConsumerProperties(), List.of(KafkaConfig.TOPIC));
-        while (consumer.getCountMessage() <= 1) {
-            consumer.run();
-        }
-        consumer.shutdown();
+        consumer.run();
     }
 }
