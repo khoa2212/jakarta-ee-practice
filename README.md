@@ -1,6 +1,13 @@
 <h1 align="center">🏛️ Emp manage</h1>
 <h3 align="center">Java EE 8.0.0, wildfly 26.1.3, postgres SQL 14</h3>
 
+# About
+- A website manage employees in every department
+
+# Features
+
+# Demo
+
 # ⚙️ Set up to run project
 - Add path bin folder of wildfly to environment variable
 - Add path to folder of java, maven, wildfly in system variable as JAVA_HOME, MAVEN_HOME, JBOSS_HOME
