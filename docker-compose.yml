@@ -4,8 +4,8 @@ services:
     image: postgres:14.4
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=vamos
-      - POSTGRES_PASSWORD=Vamos123!@#
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=andy9999
       - POSTGRES_DB=postgres
   api:
     build:

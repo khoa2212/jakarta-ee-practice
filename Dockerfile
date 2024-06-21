@@ -20,13 +20,13 @@ FROM quay.io/wildfly/wildfly:26.1.3.Final-jdk17 as deployer
 
 # Appserver
 ENV WILDFLY_USER admin
-ENV WILDFLY_PASS Aavn@123
+ENV WILDFLY_PASS andy9999
 ENV DATASOURCE_NAME Postgres
 
 # Database
 ENV DB_NAME postgres
-ENV DB_USER vamos
-ENV DB_PASS Vamos123!@#
+ENV DB_USER postgres
+ENV DB_PASS andy9999
 ENV DB_URI db:5432
 
 ENV POSTGRES_DRIVER postgresql-42.7.1
