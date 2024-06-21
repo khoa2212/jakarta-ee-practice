@@ -1,8 +1,8 @@
 version: '3'
 services:
   db:
-    image: postgres:14.4
-    restart: unless-stopped
+    image: postgres:14
+    container_name: emp-manage-db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=andy9999
