@@ -4,9 +4,9 @@ services:
     container_name: postgres
     image: postgres:14
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: employee
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: andy9999
+      POSTGRES_DB: postgres
       TZ: "Asia/Ho_Chi_Minh"
     ports:
       - "5432:5432"

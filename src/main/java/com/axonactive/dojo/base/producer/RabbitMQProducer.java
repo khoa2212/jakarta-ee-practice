@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.concurrent.TimeoutException;
 @Singleton
-@Startup
 public class RabbitMQProducer {
 
     private static final String QFANOUT1 = "QFANOUT1";

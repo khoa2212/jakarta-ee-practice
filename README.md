@@ -1,4 +1,4 @@
-<h1 align="center">🏛️ Department management</h1>
+<h1 align="center">🏛️ Emp manage</h1>
 <h3 align="center">Java EE 8.0.0, wildfly 26.1.3, postgres SQL 14</h3>
 
 # ⚙️ Set up to run project
