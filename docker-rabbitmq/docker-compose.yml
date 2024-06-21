@@ -1,0 +1,13 @@
+# docker run -d --name rabbitmq -e RABBITMQ_DEFAULT_USER=Vamos -e RABBITMQ_DEFAULT_PASS=Aavn123!@# -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management
+version: "3"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=andy9999
