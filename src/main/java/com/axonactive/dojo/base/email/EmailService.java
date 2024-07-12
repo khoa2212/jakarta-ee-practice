@@ -42,7 +42,7 @@ public class EmailService {
 
             message.setContent(htmlMessage, "text/html; charset=utf-8");
 
-            // Transport.send(message);
+            Transport.send(message);
         }
         catch (MessagingException exception) {
             throw new ServerErrorException(SEND_EMAIL_FAILED, Response.Status.INTERNAL_SERVER_ERROR, exception);
